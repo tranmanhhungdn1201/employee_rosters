@@ -19,7 +19,8 @@ class CreateTableShifts extends Migration
             $table->time('tim_start');
             $table->time('time_finish');
             $table->tinyInteger('user_type_id');
-            $table->date('user_created_id');
+            $table->date('date');
+            $table->integer('user_created_id');
             $table->integer('amount');
             $table->tinyInteger('status');
             $table->timestamps();
