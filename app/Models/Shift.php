@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Shift extends Model
 {
@@ -21,5 +22,13 @@ class Shift extends Model
     
     public function userShifts(){
         return $this->hasMany(UserShift::class);
+    }
+
+    public function workTime(){
+        $start = Carbon::parse($this->time_start);
+        $end = Carbon::parse($this->time_finish);
+        $hours = $end->diffInHours($start);
+
+        return $hours;
     }
 }

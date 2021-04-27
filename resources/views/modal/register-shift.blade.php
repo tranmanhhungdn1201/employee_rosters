@@ -11,7 +11,7 @@
         <p>Bạn muốn đăng ký ca?</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary">Đăng ký</button>
+        <button type="button" class="btn btn-primary" id="register-shift">Đăng ký</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
       </div>
     </div>

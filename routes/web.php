@@ -13,6 +13,7 @@ Route::group(['middleware' => 'checkLogin'], function() {
     Route::get('/', function () {
         return view('create_roster');
     });
+    Route::get('/shifts/check-slot/{id}','ShiftController@registerShift')->name('registerShift');
     Route::get('/shifts/{id}','ShiftController@getShiftById')->name('getShiftById');
     Route::post('/shifts','ShiftController@addShift')->name('addShift');
     Route::post('/shifts/{id}/update-amount','ShiftController@updateAmountShift')->name('updateAmountShift');

@@ -55,7 +55,7 @@
                                         $bgColor = '';
                                 }
                             ?>
-                            <td class="{{$bgColor . ' text-white day_' . $indexDay . ' shift_' . $day->id}} shift-date">
+                            <td class="{{$bgColor . ' text-white day_' . $indexDay . ' shift_' . $day->id}} shift-date" data-id="{{ $day->id }}">
                                 <div class="d-flex justify-content-around" data-id="{{ $day->id }}">
                                     <div>
                                         <span>{{$day->user_shifts_count}}/{{ $day->amount }}</span>
@@ -324,9 +324,42 @@
 
         });
 
-        $('.shift-date').not( ".btn-edit-shift" ).on('click', function(){
+        $('.shift-date').not( ".btn-edit-shift").on('click', function(){
             $('#register-shift-modal').modal('show');
+            let idShift = $(this).attr('data-id');
+            if(!idShift) return;
+            $('#register-shift').attr('data-id', idShift);
         })
+
+        $('#register-shift').click(function(){
+            let idShift = $(this).attr('data-id');
+            if(!idShift) return;
+            registerShift(idShift);
+        })
+
+        function registerShift(shiftID) {
+            if(!shiftID) return;
+            let url = "{{route('registerShift', ':id')}}";
+            url = url.replace(':id', shiftID);
+            const options = {
+                url,
+                method: 'GET',
+                data: {
+                    shiftID
+                },
+                success: function(res) {
+                    if(res.Status === 'Success') {
+                        console.log('Success');
+                    }
+                    $('#register-shift-modal').modal('hide');
+                },
+                error: function(err) {
+                    console.error(err.message);
+                }
+            }
+            location.reload();
+            $.ajax(options);
+        }
     });
 </script>
 @endsection

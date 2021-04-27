@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Shift;
+use App\Models\UserShift;
 use DB;
 use Carbon\Carbon;
 use Config;
@@ -108,6 +109,29 @@ class ShiftController extends Controller
         return response()->json([
             'Status' => 'Fail',
             'Message' => 'Del shift fail'
+        ]);
+    }
+
+    public function registerShift($id) {
+        $shift = Shift::find($id);
+        if($shift->status === Config::get('constants.status_shift.OPEN')) {
+            $data = [
+                'shift_id' => $id,
+                'user_id' => auth()->user()->id,
+                'status' => Config::get('constants.status_shift_user.OPEN'),
+                'work_time' => $shift->workTime(),
+            ];
+            UserShift::create($data);
+
+            return response()->json([
+                'Status' => 'Success',
+                'Message' => 'Register shift successfully'
+            ]);
+        }
+
+        return response()->json([
+            'Status' => 'Fail',
+            'Message' => 'Register shift fail'
         ]);
     }
 }
