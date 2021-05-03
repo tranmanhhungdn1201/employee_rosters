@@ -2,15 +2,10 @@
 @include('header')
 @section('content')
 <div class="container container-content">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb purple lighten-4">
-            <li class="breadcrumb-item"><a class="black-text" href="#">Home</a><i class="fa fa-angle-right mx-2" aria-hidden="true"></i></li>
-            <li class="breadcrumb-item"><a class="black-text" href="#">Library</a><i class="fa fa-angle-right mx-2" aria-hidden="true"></i></li>
-            <li class="breadcrumb-item active">Data</li>
-        </ol>
-    </nav>
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Create roster</h1>
+    </div>
     <div class="roster">
-        <h1 class="roster-title">Create roster</h1>
         <div class="roster-time">
             <div class="row justify-content-center align-self-center">
                 <input type="date" class="form-control col-3 m-3" name="roster_start" value="2021-02-28"/>

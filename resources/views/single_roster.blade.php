@@ -27,6 +27,7 @@
                 </tr>
             </thead>
             <tbody>
+                @if(auth()->user()->isAdmin() || (auth()->user()->isManager() && auth()->user()->id === $roster->user_created_id))
                 <tr>
                     <td scope="row">
                         <button class="form-control" id="add-row">Thêm</button>
@@ -34,6 +35,7 @@
                     <td colspan="8">
                     </td>
                 </tr>
+                @endif
                 @if (is_array($shifts))
                     @foreach($shifts as $key => $shift)
                     <tr data-shift="{{ $shift[0] }}">
@@ -335,6 +337,7 @@
             let idShift = $(this).attr('data-id');
             if(!idShift) return;
             registerShift(idShift);
+            location.reload();
         })
 
         function registerShift(shiftID) {
@@ -357,7 +360,6 @@
                     console.error(err.message);
                 }
             }
-            location.reload();
             $.ajax(options);
         }
     });
