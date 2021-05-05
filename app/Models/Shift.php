@@ -19,6 +19,10 @@ class Shift extends Model
         'amount',
         'status',
     ];
+
+    protected $appends = [
+        'isRegistered'
+    ];
     
     public function userShifts(){
         return $this->hasMany(UserShift::class);
@@ -30,5 +34,11 @@ class Shift extends Model
         $hours = $end->diffInHours($start);
 
         return $hours;
+    }
+
+    public function getIsRegisteredAttribute()
+    {
+        $isRegistered = $this->userShifts->contains('user_id', auth()->user()->id);
+        return $this->attributes['isRegistered'] = $isRegistered;
     }
 }

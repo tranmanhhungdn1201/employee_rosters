@@ -42,4 +42,20 @@ class User extends Authenticatable
         return false;
     }
 
+    public function isStaff() {
+        $arr = [Config::get('constants.user.manager'), Config::get('constants.user.admin')];
+        if(!in_array($this->user_type_id, $arr)) {
+            return true;
+        }
+        return false;
+    }
+
+    public function isRegisted() {
+        $arr = [Config::get('constants.user.manager'), Config::get('constants.user.admin')];
+        if(!in_array($this->user_type_id, $arr)) {
+            return true;
+        }
+        return false;
+    }
+
 }

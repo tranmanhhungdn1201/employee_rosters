@@ -114,10 +114,17 @@ class ShiftController extends Controller
 
     public function registerShift($id) {
         $shift = Shift::find($id);
+        $idUser = auth()->user()->id;
+        $isRegisted = $this->checkRegistered($id, $idUser);
+        if($isRegisted) 
+            return response()->json([
+                'Status' => 'Fail',
+                'Message' => 'You have registered shift'
+            ]);
         if($shift->status === Config::get('constants.status_shift.OPEN')) {
             $data = [
                 'shift_id' => $id,
-                'user_id' => auth()->user()->id,
+                'user_id' => $idUser,
                 'status' => Config::get('constants.status_shift_user.OPEN'),
                 'work_time' => $shift->workTime(),
             ];
@@ -132,6 +139,29 @@ class ShiftController extends Controller
         return response()->json([
             'Status' => 'Fail',
             'Message' => 'Register shift fail'
+        ]);
+    }
+
+    public function checkRegistered($idShift, $idUser){
+        $isRegisted = UserShift::where('shift_id', $idShift)
+                                ->where('user_id', $idUser)
+                                ->first();
+        return empty($isRegisted) ? false : true;
+    }
+
+    public function removeShift($id) {
+        $idUser = auth()->user()->id;
+        $shift = UserShift::where('shift_id', $id)
+                         ->where('user_id', $idUser)->delete();
+        if($shift)
+            return response()->json([
+                'Status' => 'Success',
+                'Message' => 'Remove shift successfully'
+            ]);
+
+        return response()->json([
+            'Status' => 'Fail',
+            'Message' => 'Remove shift fail'
         ]);
     }
 }

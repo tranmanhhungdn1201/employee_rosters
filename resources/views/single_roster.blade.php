@@ -43,7 +43,12 @@
                         <td class="shift-row type">{{ $shift[0]->user_type_id }}</td>
                         @foreach($shift as $indexDay => $day)
                             <?php
+                                $state = '';
                                 switch($day->status){
+                                    case $day->isRegistered:
+                                        $bgColor = 'bg-warning';
+                                        $state = 'isRegistered';
+                                        break;
                                     case 1:
                                         $bgColor = 'bg-success';
                                         break;
@@ -57,7 +62,7 @@
                                         $bgColor = '';
                                 }
                             ?>
-                            <td class="{{$bgColor . ' text-white day_' . $indexDay . ' shift_' . $day->id}} shift-date" data-id="{{ $day->id }}">
+                            <td data-state ="{{$state}}" class="{{$bgColor . ' text-white day_' . $indexDay . ' shift_' . $day->id}} shift-date" data-id="{{ $day->id }}">
                                 <div class="d-flex justify-content-around" data-id="{{ $day->id }}">
                                     <div>
                                         <span>{{$day->user_shifts_count}}/{{ $day->amount }}</span>
@@ -95,8 +100,10 @@
 @include('modal.shift');
 @include('modal.create-row-shift');
 @include('modal.register-shift');
+@include('modal.remove-shift');
 <script type="text/javascript">
     $(document).ready(function () {
+        const isStaff = "{{ auth()->user()->isStaff() }}";
         let dayStart = new Date("{{$roster->day_start}}");
         if(dayStart){
             let dayWeekStart = dayStart.getDay();
@@ -327,17 +334,25 @@
         });
 
         $('.shift-date').not( ".btn-edit-shift").on('click', function(){
-            $('#register-shift-modal').modal('show');
+            if(!isStaff) return;
             let idShift = $(this).attr('data-id');
             if(!idShift) return;
-            $('#register-shift').attr('data-id', idShift);
+            let isRegistered = $(this).attr('data-state');
+            if(isRegistered === 'isRegistered') {
+                $('#remove-shift-modal').modal('show');
+                $('#remove-shift').attr('data-id', idShift);
+            } else {
+                $('#register-shift-modal').modal('show');
+                $('#register-shift').attr('data-id', idShift);
+            }
         })
 
         $('#register-shift').click(function(){
             let idShift = $(this).attr('data-id');
             if(!idShift) return;
-            registerShift(idShift);
-            location.reload();
+            registerShift(idShift).then(function(res){
+                location.reload();
+            });
         })
 
         function registerShift(shiftID) {
@@ -347,9 +362,6 @@
             const options = {
                 url,
                 method: 'GET',
-                data: {
-                    shiftID
-                },
                 success: function(res) {
                     if(res.Status === 'Success') {
                         console.log('Success');
@@ -360,7 +372,36 @@
                     console.error(err.message);
                 }
             }
-            $.ajax(options);
+            return $.ajax(options);
+        }
+
+        $('#remove-shift').click(function(){
+            let idShift = $(this).attr('data-id');
+            if(!idShift) return;
+            removeShift(idShift).then(function(res){
+                console.log(res);
+                location.reload();
+            });
+        })
+
+        function removeShift(shiftID) {
+            if(!shiftID) return;
+            let url = "{{route('removeShift', ':id')}}";
+            url = url.replace(':id', shiftID);
+            const options = {
+                url,
+                method: 'GET',
+                success: function(res) {
+                    if(res.Status === 'Success') {
+                        console.log('Success');
+                    }
+                    $('#remove-shift-modal').modal('hide');
+                },
+                error: function(err) {
+                    console.error(err.message);
+                }
+            }
+            return $.ajax(options);
         }
     });
 </script>
