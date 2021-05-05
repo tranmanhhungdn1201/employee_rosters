@@ -25,9 +25,9 @@ Route::group(['middleware' => 'checkLogin'], function() {
     Route::post('/rosters','RosterController@createRoster')->name('createRoster');
     Route::get('/rosters/{id}','RosterController@singleRoster')->name('singleRoster');
 
-    Route::get('/users','UserController@userList')->name('userList');
     Route::post('/users/create','UserController@createUser')->name('createUser');
-
+    Route::get('/users','UserController@userList')->name('userList');
+    
     Route::get('/logout','UserController@logout')->name('logout');
 });
 Route::get('/login','UserController@login')->name('login');

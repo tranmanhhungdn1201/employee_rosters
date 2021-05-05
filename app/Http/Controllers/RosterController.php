@@ -20,10 +20,13 @@ class RosterController extends Controller
             'day_finish' => $timeStart['timeFinish'],
             'time_open' => $timeOpen['timeOpen'],
             'time_close' => $timeOpen['timeClose'],
-            'status' => Config::get('constants.status_roster.OPEN'), 
+            'status' => Config::get('constants.status_roster.PENDING'),
+            'user_created_id' => auth()->user()->id,
+            'user_updated_id' => auth()->user()->id,
             'branch_id' => 1       
         ];
         DB::beginTransaction();
+        $rosterId = null;
         try {
             //create roster and get id
             $rosterId = Roster::insertGetId($dataR);
@@ -46,7 +49,8 @@ class RosterController extends Controller
                         'user_type_id' => $shift['type'],
                         'date' => $date,
                         'amount' => $shift['day_' . $i],
-                        'status' => Config::get('constants.status_shift.OPEN'), 
+                        'status' => Config::get('constants.status_shift.OPEN'),
+                        'user_created_id' => auth()->user()->id, 
                     ];
                     Shift::create($data);
                 }
@@ -62,14 +66,16 @@ class RosterController extends Controller
         }
         
         return response()->json([
-            'Status' => 'OK',
-            'Message' => 'Create roster successfully'
+            'Status' => 'Success',
+            'Message' => 'Create roster successfully',
+            'rosterID' => $rosterId,
         ]);
     }
 
     public function singleRoster($id){
         if(empty($id)) return;
         $roster = Roster::find($id);
+        if(empty($roster)) return redirect()->back();
         $shifts = $this->getDataShift($id);
         $shifts = $this->formatDataShift($shifts);
 

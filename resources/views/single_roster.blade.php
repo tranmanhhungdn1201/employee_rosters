@@ -96,11 +96,11 @@
         </div>
     </div>
 </div>
-@include('modal.shift-time');
-@include('modal.shift');
-@include('modal.create-row-shift');
-@include('modal.register-shift');
-@include('modal.remove-shift');
+@include('modal.shift-time')
+@include('modal.shift')
+@include('modal.create-row-shift')
+@include('modal.register-shift')
+@include('modal.remove-shift')
 <script type="text/javascript">
     $(document).ready(function () {
         const isStaff = "{{ auth()->user()->isStaff() }}";
@@ -237,6 +237,7 @@
         }
 
         $('.shift-row').on('click', function(){
+            if(isStaff) return;
             $('#shift-time-modal').modal('show');
             let data = JSON.parse($(this).closest('tr').attr('data-shift'));
             $('#shift-time-modal #shift-time-form').find('[name="shift_time"]').val(data.time_start + ' - ' + data.time_finish);

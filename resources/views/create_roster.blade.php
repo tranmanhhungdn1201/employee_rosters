@@ -8,11 +8,11 @@
     <div class="roster">
         <div class="roster-time">
             <div class="row justify-content-center align-self-center">
-                <input type="date" class="form-control col-3 m-3" name="roster_start" value="2021-02-28"/>
+                <input type="date" class="form-control col-3 m-3" name="roster_start" value="<?php echo date('Y-m-d'); ?>"/>
                 <div class="">
                     <p class="roster-time-line">-</p>
                 </div>
-                <input type="date" class="form-control col-3 m-3" name="roster_end" value="2021-03-05"/>
+                <input type="date" class="form-control col-3 m-3" name="roster_end" value="<?php echo date('Y-m-d', strtotime(date('Y-m-d'). ' + 7 days')); ?>" disabled/>
             </div>
         </div>
         <table class="table table-bordered table-hover" id="roster-table">
@@ -58,6 +58,7 @@
 @include('modal.create-row-shift');
 <script type="text/javascript">
     $(document).ready(function () {
+        $("[name='roster_start']").trigger("change");
         localStorage.setItem('dataRoster', "[]");
         $('#roster-table>tbody').on('click', 'tr', function(){
             let id = $(this).attr('data-id');
@@ -150,7 +151,7 @@
         }
 
         $('#btn-submit').click(function(){
-            const url = window.location.href + 'rosters';
+            const url = "{{ route('createRoster') }}";
             const dataRoster = JSON.parse(localStorage.getItem('dataRoster'));
             if(!dataRoster)  return;
             const data = {
@@ -170,6 +171,11 @@
                 method: 'POST',
                 data: data,
                 success: (res) => {
+                    if(res.Status === 'Success' && res.rosterID) {
+                        let urlRoster = "{{ route('singleRoster', ':id') }}";
+                        urlRoster = urlRoster.replace(':id', res.rosterID);
+                        location.href = urlRoster;
+                    }
                     console.log(res);
                 },
                 error: (res) => {
@@ -178,10 +184,9 @@
             }
             $.ajax(options);
         })
-
-        $(".roster-time [name='roster_start']").change(function(){
-            alert('oke');
+        $("[name='roster_start']").change(function(){
             let dayStart = new Date($(this).val());
+            $('[name="roster_end"]').val(moment(dayStart).add(7, 'days').format('YYYY-MM-DD'));
             let dayWeekStart = dayStart.getDay();
             if(dayWeekStart === 1) return;
             let colDateEles =  $('#roster-table th').splice(2);

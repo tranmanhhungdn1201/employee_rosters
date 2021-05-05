@@ -129,7 +129,7 @@ class ShiftController extends Controller
                 'work_time' => $shift->workTime(),
             ];
             UserShift::create($data);
-
+            $changeStatus = $this->changeStatus($id, $shift->amount);
             return response()->json([
                 'Status' => 'Success',
                 'Message' => 'Register shift successfully'
@@ -151,9 +151,11 @@ class ShiftController extends Controller
 
     public function removeShift($id) {
         $idUser = auth()->user()->id;
-        $shift = UserShift::where('shift_id', $id)
+        $userShift = UserShift::where('shift_id', $id)
                          ->where('user_id', $idUser)->delete();
-        if($shift)
+        $shift = Shift::find($id);
+        $changeStatus = $this->changeStatus($id, $shift->amount);
+        if($userShift)
             return response()->json([
                 'Status' => 'Success',
                 'Message' => 'Remove shift successfully'
@@ -163,5 +165,15 @@ class ShiftController extends Controller
             'Status' => 'Fail',
             'Message' => 'Remove shift fail'
         ]);
+    }
+
+    public function changeStatus($id, $amount) {
+        $countUserRegister = UserShift::where('shift_id', $id)->count();
+        if($amount === $countUserRegister) {
+            Shift::find($id)->update(['status' => Config::get('constants.status_shift.FULL')]);
+            return true;
+        }
+        Shift::find($id)->update(['status' => Config::get('constants.status_shift.OPEN')]);
+        return false;
     }
 }

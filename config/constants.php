@@ -2,10 +2,13 @@
 
 return [
 	'status_roster' => [
-        'OPEN' => 1
+        'PENDING' => 1,
+        'OPEN' => 2,
+        'CLOSE' => 3
     ],
     'status_shift' => [
-        'OPEN' => 1
+        'OPEN' => 1,
+        'FULL' => 2
     ],
     'user' => [
         'admin' => 0,

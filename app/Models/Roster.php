@@ -19,15 +19,13 @@ class Roster extends Model
         'branch_id',
     ];
 
-    public function setUserCreatedIdAttribute($value)
+    public function setUserCreatedIdAttribute()
     {
-        // $this->attributes['user_created_id'] = Auth::user()->id;
-        $this->attributes['user_created_id'] = 1;
+        $this->attributes['user_created_id'] = auth()->user()->id;
     }
 
-    public function setUserUpdatedIdAttribute($value)
+    public function setUserUpdatedIdAttribute()
     {
-        // $this->attributes['user_updated_id'] = Auth::user()->id;
-        $this->attributes['user_updated_id'] = 1;
+        $this->attributes['user_updated_id'] = auth()->user()->id;
     }
 }

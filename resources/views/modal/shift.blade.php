@@ -8,7 +8,7 @@
           </div>
           <div class="form-group row">
             <label class="col-4">Số lượng:</label>
-            <input type="number" class="form-control col-4 amount" value="2" name=""></input>
+            <input type="number" class="form-control col-4 amount" value="2" name=""/>
           </div>
           <div class="form-group row">
             <label class="col-4">Trạng thái:</label>
