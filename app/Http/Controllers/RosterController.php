@@ -11,6 +11,15 @@ use DB;
 
 class RosterController extends Controller
 {
+    public function listRoster($branchID){
+        $rosters = Roster::where('branch_id', $branchID)->get();
+        return response()->view('listRoster', ['rosters' => $rosters]);
+    }
+
+    public function viewCreateRoster(Request $request){
+        return response()->view('create_roster');
+    }
+
     public function createRoster(Request $request){
         $dataRoster = $request->dataRoster;
         $timeStart = $request->timeStart;

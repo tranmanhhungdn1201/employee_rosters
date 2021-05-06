@@ -10,9 +10,7 @@
 |
 */
 Route::group(['middleware' => 'checkLogin'], function() {
-    Route::get('/', function () {
-        return view('create_roster');
-    });
+    Route::get('/','MasterController@index')->name('index');
     
     Route::get('/shifts/remove-shift-register/{id}','ShiftController@removeShift')->name('removeShift');
     Route::get('/shifts/check-slot/{id}','ShiftController@registerShift')->name('registerShift');
@@ -22,7 +20,9 @@ Route::group(['middleware' => 'checkLogin'], function() {
     Route::post('/shifts/update-time','ShiftController@updateTimeShift')->name('updateTimeShift');
     Route::post('/shifts/delete','ShiftController@delShift')->name('delShift');
 
+    Route::post('/rosters/create','RosterController@viewCreateRoster')->name('viewCreateRoster');
     Route::post('/rosters','RosterController@createRoster')->name('createRoster');
+    Route::get('/rosters/{branchID}','RosterController@listRoster')->name('listRoster');
     Route::get('/rosters/{id}','RosterController@singleRoster')->name('singleRoster');
 
     Route::post('/users/create','UserController@createUser')->name('createUser');
