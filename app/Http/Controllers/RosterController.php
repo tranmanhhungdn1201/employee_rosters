@@ -12,7 +12,7 @@ use DB;
 class RosterController extends Controller
 {
     public function listRoster($branchID){
-        $rosters = Roster::where('branch_id', $branchID)->get();
+        $rosters = Roster::where('branch_id', $branchID)->orderBy('created_at', 'desc')->get();
         return response()->view('listRoster', ['rosters' => $rosters]);
     }
 

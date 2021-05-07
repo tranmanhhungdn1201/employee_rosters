@@ -26,6 +26,16 @@ class User extends Authenticatable
         'hire_date',
         'branch_id',
     ];
+
+    protected $append = [
+        'full_name',
+    ];
+
+    public function getFullNameAttribute()
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
+
     
     public function isAdmin() {
         if($this->user_type_id === Config::get('constants.user.admin')) {

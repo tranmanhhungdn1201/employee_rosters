@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Config;
 class Roster extends Model
 {
     protected $table = 'rosters';
@@ -19,6 +19,24 @@ class Roster extends Model
         'branch_id',
     ];
 
+    protected $append = [
+        'status_name',
+        'user_created_name',
+        'is_author'
+    ];
+
+    public function getStatusNameAttribute()
+    {
+        $status = Config::get('constants.status_roster_name');
+        return $status[$this->status];
+    }
+
+    public function getUserCreatedNameAttribute()
+    {
+        $user = User::find($this->user_created_id);
+        return empty($user->full_name) ? '' : $user->full_name ;
+    }
+
     public function setUserCreatedIdAttribute()
     {
         $this->attributes['user_created_id'] = auth()->user()->id;
@@ -27,5 +45,13 @@ class Roster extends Model
     public function setUserUpdatedIdAttribute()
     {
         $this->attributes['user_updated_id'] = auth()->user()->id;
+    }
+
+    public function isAuthor() {
+        $authID = auth()->user()->id;
+        if($authID === $this->user_created_id) {
+            return true;
+        }
+        return false;
     }
 }

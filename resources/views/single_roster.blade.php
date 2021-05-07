@@ -69,9 +69,9 @@
                                     </div>
                                     <div>
                                         @if(auth()->user()->isAdmin() || (auth()->user()->isManager() && auth()->user()->id === $roster->user_created_id))
-                                        <a href="#" class="btn-edit-shift" data-id="{{$day->id}}"><i class="fas fa-pencil-alt"></i></a>
+                                        <a href="#" data-action="edit" class="btn-edit-shift" data-id="{{$day->id}}"><i class="fas fa-pencil-alt"></i></a>
                                         @else
-                                        <!-- <a href="#" class="btn-view-shift" data-id="{{$day->id}}"><i class="far fa-eye"></i></a> -->
+                                        <a href="#" data-action="view" class="btn-edit-shift" data-id="{{$day->id}}"><i class="far fa-eye"></i></a>
                                         @endif
                                     </div>
                                 </div>
@@ -104,6 +104,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         const isStaff = "{{ auth()->user()->isStaff() }}";
+        const isAuthor = "{{ $roster->isAuthor() }}";
         let dayStart = new Date("{{$roster->day_start}}");
         if(dayStart){
             let dayWeekStart = dayStart.getDay();
@@ -130,9 +131,14 @@
 
         $('.btn-edit-shift').on('click', function(){
             const id = $(this).attr('data-id');
+            const modeEdit = $(this).attr('data-action') === 'edit' ? true : false;
             if(!id) return;
             getDataShift(id).then(res => {
                 if(res.Status === 'Success'){
+                    if(modeEdit) 
+                        editModeShiftModal();
+                    else 
+                        viewModeShiftModal();
                     $('#shift-modal').modal('show');
                     setDataShift(res.Data);
                 } else {
@@ -140,6 +146,14 @@
                 }
             });
         })
+
+        function viewModeShiftModal(){
+            $('#shift-modal .modal-footer').css('display', 'none');
+        }
+
+        function editModeShiftModal(){
+            $('#shift-modal .modal-footer').css('display', 'flex');
+        }
 
         function getDataShift(idShift){
             let url = "{{route('getShiftById', ':id')}}";
@@ -237,7 +251,7 @@
         }
 
         $('.shift-row').on('click', function(){
-            if(isStaff) return;
+            if(isStaff || !isAuthor) return;
             $('#shift-time-modal').modal('show');
             let data = JSON.parse($(this).closest('tr').attr('data-shift'));
             $('#shift-time-modal #shift-time-form').find('[name="shift_time"]').val(data.time_start + ' - ' + data.time_finish);

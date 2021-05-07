@@ -22,7 +22,7 @@ Route::group(['middleware' => 'checkLogin'], function() {
 
     Route::post('/rosters/create','RosterController@viewCreateRoster')->name('viewCreateRoster');
     Route::post('/rosters','RosterController@createRoster')->name('createRoster');
-    Route::get('/rosters/{branchID}','RosterController@listRoster')->name('listRoster');
+    Route::get('/rosters/list/{branchID}','RosterController@listRoster')->name('listRoster');
     Route::get('/rosters/{id}','RosterController@singleRoster')->name('singleRoster');
 
     Route::post('/users/create','UserController@createUser')->name('createUser');
