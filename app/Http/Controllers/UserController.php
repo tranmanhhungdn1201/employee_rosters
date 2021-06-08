@@ -4,10 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Roster;
+use Config;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Traits\RosterTrait;
 
 class UserController extends Controller
 {
+    use RosterTrait;
+
     public function login(){
         return view('login');
     }
@@ -16,8 +21,22 @@ class UserController extends Controller
         $credentials = $request->only('username', 'password');
 
         if (Auth::attempt($credentials)) {
+            switch(auth()->user()->user_type_id){
+                case 1:
+                case 2:
+                    return redirect()->intended('/');
+                default:
+                    $branchId = auth()->user()->branch_id;
+                    $this->checkAllRoster();
+                    $roster = Roster::where('branch_id', $branchId)
+                                    ->where('status', Config::get('constants.status_roster.OPEN'))
+                                    ->orderBy('created_at', 'desc')->first();
+                    if(empty($roster)){
+                        return view('noti')->with('content', 'Chưa có lịch đăng ký');
+                    }
 
-            return redirect()->intended('/');
+                    return redirect()->route('singleRoster', $roster->id);
+            }
         }
         return back()->withErrors(['login' => ['Fail']]);
     }

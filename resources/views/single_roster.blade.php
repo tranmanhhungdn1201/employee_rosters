@@ -9,7 +9,22 @@
         <div class="roster-time">
             <div class="row justify-content-center align-self-center align-items-center">
                 <span class="title">{{$roster->day_start}} - {{$roster->day_finish}}</span>
-                <a href="#"><span class="ml-2 badge badge-success">Active</span></a>
+                <?php
+                    switch($roster->status){
+                        case '1':
+                            $bgColor = 'badge-warning';
+                            break;
+                        case '2':
+                            $bgColor = 'badge-success';
+                            break;
+                        case '3':
+                            $bgColor = 'badge-dark';
+                            break;
+                        default:
+                            $bgColor = '';
+                    }
+                ?>
+                <a href="#"><span class="xxx {{'ml-2 badge ' . $bgColor}}">{{$roster->status_name}}</span></a>
             </div>
         </div>
         <table class="table table-bordered table-hover" id="roster-table">
@@ -40,7 +55,7 @@
                     @foreach($shifts as $key => $shift)
                     <tr data-shift="{{ $shift[0] }}">
                         <td class="shift-row shift_start shift_finish">{{ $key }}</td>
-                        <td class="shift-row type">{{ $shift[0]->user_type_id }}</td>
+                        <td class="shift-row type">{{ $shift[0]->user_type_name }}</td>
                         @foreach($shift as $indexDay => $day)
                             <?php
                                 $state = '';
@@ -71,7 +86,7 @@
                                         @if(auth()->user()->isAdmin() || (auth()->user()->isManager() && auth()->user()->id === $roster->user_created_id))
                                         <a href="#" data-action="edit" class="btn-edit-shift" data-id="{{$day->id}}"><i class="fas fa-pencil-alt"></i></a>
                                         @else
-                                        <a href="#" data-action="view" class="btn-edit-shift" data-id="{{$day->id}}"><i class="far fa-eye"></i></a>
+                                        {{-- <a href="#" data-action="view" class="btn-edit-shift" data-id="{{$day->id}}"><i class="far fa-eye"></i></a> --}}
                                         @endif
                                     </div>
                                 </div>
@@ -86,13 +101,16 @@
                 @endif
             </tbody>
         </table>
-        <div class="roster-action">
-            <div class="roster-time">
-                <div>
-                    <span class="roster-time-description">Thời gian đăng ký:</span><br>
-                    <span>{{ $roster->time_open }} - {{ $roster->time_close }}</span>
-                </div>
+        <div class="roster-action row">
+            <div class="col-10">
+                <span class="roster-time-description">Thời gian đăng ký:</span><br>
+                <span>{{ $roster->time_open }} - {{ $roster->time_close }}</span>
             </div>
+            {{-- @if(auth()->user()->isManager()) --}}
+                <div class="col-2">
+                    <button type="button" class="btn btn-dark btn-sm btn-export">Export</button>
+                </div>
+            {{-- @endif --}}
         </div>
     </div>
 </div>
@@ -106,9 +124,8 @@
         const isStaff = "{{ auth()->user()->isStaff() }}";
         const isAuthor = "{{ $roster->isAuthor() }}";
         let dayStart = new Date("{{$roster->day_start}}");
-        if(dayStart){
-            let dayWeekStart = dayStart.getDay();
-            if(dayWeekStart === 1) return;
+        let dayWeekStart = dayStart.getDay();
+        if(dayStart && dayWeekStart){
             let colDateEles =  $('#roster-table th').splice(2);
             const DATE = {
                0: 'Chủ nhật',
@@ -335,7 +352,6 @@
                 },
                 success: function(res) {
                     if(res.Status === 'Success') {
-                        alert('oke');
                         location.reload();
                     }
                     $('#shift-time-modal').modal('hide');
@@ -365,8 +381,9 @@
         $('#register-shift').click(function(){
             let idShift = $(this).attr('data-id');
             if(!idShift) return;
+            loading('show');
             registerShift(idShift).then(function(res){
-                location.reload();
+                loading('hide');
             });
         })
 
@@ -379,23 +396,46 @@
                 method: 'GET',
                 success: function(res) {
                     if(res.Status === 'Success') {
-                        console.log('Success');
+                        toastr.success(res.Message);
+                        updateInfoShift(res.Data.id, 0, 1);
+                    } else {
+                        updateInfoShift(res.Data.id, res.Data.status, 0);
+                        toastr.error(res.Message);
                     }
                     $('#register-shift-modal').modal('hide');
                 },
                 error: function(err) {
+                    toastr.error('Error!');
                     console.error(err.message);
                 }
             }
             return $.ajax(options);
         }
 
+        function updateInfoShift(id, status, amount) {
+            let bgColor = {
+                0: 'bg-warning',
+                1: 'bg-success',
+                2: 'bg-danger',
+                3: 'bg-dark',
+            }
+            let shiftDOM = $(`.shift_${id}`);
+            //update data-state
+            shiftDOM.attr('data-state', status === 0 ? 'isRegistered' : '');
+            let className = shiftDOM.attr('class');
+            className = className.replace(/bg-\w+\s/, `${bgColor[status]} `);
+            shiftDOM.attr('class', className);
+            let text = $('span', shiftDOM).text();
+            text = text.replace(/^\d/, +text[0] + amount);
+            $('span', shiftDOM).text(text);
+        }
+
         $('#remove-shift').click(function(){
             let idShift = $(this).attr('data-id');
             if(!idShift) return;
+            loading('show');
             removeShift(idShift).then(function(res){
-                console.log(res);
-                location.reload();
+                loading('hide');
             });
         })
 
@@ -408,16 +448,58 @@
                 method: 'GET',
                 success: function(res) {
                     if(res.Status === 'Success') {
-                        console.log('Success');
+                        toastr.success(res.Message);
+                        updateInfoShift(shiftID, 1, -1);
+                    } else {
+                        toastr.error(res.Message);
                     }
                     $('#remove-shift-modal').modal('hide');
                 },
                 error: function(err) {
+                    toastr.error(res.Message);
                     console.error(err.message);
                 }
             }
             return $.ajax(options);
         }
+
+        $('.btn-export').on('click', function () {
+        let url = "{{ route('exportRoster', ':id') }}";
+        let rosterId  = "{{ $roster->id }}";
+        url = url.replace(':id', rosterId);
+        loading('show');
+        if(rosterId){
+        //   $(this).prop('disabled', true);
+          let option = {
+            url: url,
+            type: 'get',
+            success: function(data) {
+              if(data.success){
+                let elementButtonDownload = document.createElement('a');
+                $('.btn-export').after(elementButtonDownload);
+                elementButtonDownload.setAttribute('href', data.url);
+                elementButtonDownload.setAttribute('download', data.fileName);
+                elementButtonDownload.click();
+                elementButtonDownload.remove();
+                toastr.success(data.message);
+              }else{
+                toastr.error(data.message);
+              }
+              loading('hide');
+              $('.btn-export').prop('disabled', false);
+            },
+            error: function() {
+                loading('hide');
+              toastr.error("Lỗi");
+              $('.btn-export').prop('disabled', false);
+            }
+          };
+          $.ajax(option);
+        }else{
+          loading('hide');
+          toastr.error("Lỗi");
+        }
+      });
     });
 </script>
 @endsection

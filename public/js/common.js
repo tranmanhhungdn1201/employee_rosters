@@ -7,3 +7,13 @@ function arrDataToObject(arr) {
             };
     }, {});
 }
+
+function loading(status) {
+    if (status == 'hide') {
+      $('.overlay').addClass('hidden');
+      $('.loader').addClass('hidden');
+    } else {
+      $('.overlay').removeClass('hidden');
+      $('.loader').removeClass('hidden');
+    }
+}

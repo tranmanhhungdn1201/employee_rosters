@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
-
+use App\Models\UserType;
 class Shift extends Model
 {
     protected $table = 'shifts';
@@ -21,7 +21,8 @@ class Shift extends Model
     ];
 
     protected $appends = [
-        'isRegistered'
+        'isRegistered',
+        'user_type_name'
     ];
     
     public function userShifts(){
@@ -40,5 +41,11 @@ class Shift extends Model
     {
         $isRegistered = $this->userShifts->contains('user_id', auth()->user()->id);
         return $this->attributes['isRegistered'] = $isRegistered;
+    }
+
+    public function getUserTypeNameAttribute()
+    {
+        $userType = UserType::find($this->user_type_id);
+        return $this->attributes['user_type_name'] = empty($userType) ? '' : $userType->name;
     }
 }

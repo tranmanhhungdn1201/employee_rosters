@@ -3,11 +3,9 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use App\Http\Traits\RosterTrait;
 
-class checkLogin
+class checkRole
 {
-    use RosterTrait;
     /**
      * Handle an incoming request.
      *
@@ -17,11 +15,12 @@ class checkLogin
      */
     public function handle($request, Closure $next)
     {
-        if (\Auth::check())
+        if (!auth()->user()->isStaff())
         {
-            $this->checkAllRoster();
             return $next($request);
+        } else {
+            die ("403 forbidden");
         }
-        return redirect()->route('login');
+        return $next($request);
     }
 }

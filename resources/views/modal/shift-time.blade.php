@@ -16,9 +16,9 @@
             <div class="form-group row">
               <label class="col-4">Bộ phận:</label>
               <select name="type" class="form-control col-4">
-                <option value="0">Lễ Tân</option>
-                <option value="1">Phục vụ</option>
-                <option value="2">Giữ xe</option>
+                @foreach ($userTypes as $userType)
+                  <option value="{{$userType->id}}">{{$userType->name}}</option>
+                @endforeach
               </select>
             </div>
           </div>

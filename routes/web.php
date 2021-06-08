@@ -10,24 +10,25 @@
 |
 */
 Route::group(['middleware' => 'checkLogin'], function() {
-    Route::get('/','MasterController@index')->name('index');
-    
-    Route::get('/shifts/remove-shift-register/{id}','ShiftController@removeShift')->name('removeShift');
-    Route::get('/shifts/check-slot/{id}','ShiftController@registerShift')->name('registerShift');
-    Route::get('/shifts/{id}','ShiftController@getShiftById')->name('getShiftById');
-    Route::post('/shifts','ShiftController@addShift')->name('addShift');
-    Route::post('/shifts/{id}/update-amount','ShiftController@updateAmountShift')->name('updateAmountShift');
-    Route::post('/shifts/update-time','ShiftController@updateTimeShift')->name('updateTimeShift');
-    Route::post('/shifts/delete','ShiftController@delShift')->name('delShift');
+        Route::get('/shifts/remove-shift-register/{id}','ShiftController@removeShift')->name('removeShift');
+        Route::get('/shifts/check-slot/{id}','ShiftController@registerShift')->name('registerShift');
+        Route::get('/rosters/{id}','RosterController@singleRoster')->name('singleRoster');
+    Route::group(['middleware' => 'checkRole'], function() {
+        Route::get('/','MasterController@index')->name('index');
+        Route::get('/shifts/{id}','ShiftController@getShiftById')->name('getShiftById');
+        Route::post('/shifts','ShiftController@addShift')->name('addShift');
+        Route::post('/shifts/{id}/update-amount','ShiftController@updateAmountShift')->name('updateAmountShift');
+        Route::post('/shifts/update-time','ShiftController@updateTimeShift')->name('updateTimeShift');
+        Route::post('/shifts/delete','ShiftController@delShift')->name('delShift');
 
-    Route::post('/rosters/create','RosterController@viewCreateRoster')->name('viewCreateRoster');
-    Route::post('/rosters','RosterController@createRoster')->name('createRoster');
-    Route::get('/rosters/list/{branchID}','RosterController@listRoster')->name('listRoster');
-    Route::get('/rosters/{id}','RosterController@singleRoster')->name('singleRoster');
+        Route::get('/create','RosterController@viewCreateRoster')->name('viewCreateRoster');
+        Route::get('/rosters/{branchID}/list','RosterController@listRoster')->name('listRoster');
+        Route::post('/rosters','RosterController@createRoster')->name('createRoster');
+        Route::get('/rosters/{id}/export','RosterController@exportRoster')->name('exportRoster');
 
-    Route::post('/users/create','UserController@createUser')->name('createUser');
-    Route::get('/users','UserController@userList')->name('userList');
-    
+        Route::post('/users/create','UserController@createUser')->name('createUser');
+        Route::get('/users','UserController@userList')->name('userList');
+    });
     Route::get('/logout','UserController@logout')->name('logout');
 });
 Route::get('/login','UserController@login')->name('login');

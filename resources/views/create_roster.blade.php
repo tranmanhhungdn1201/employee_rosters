@@ -54,10 +54,43 @@
             </div>
         </div>
     </div>
+    <form accept-charset="utf-8">
+        <input type="hidden" name="user_type" id="user_type" value="{{$userTypes}}">
+    </form>
 </div>
 @include('modal.create-row-shift');
 <script type="text/javascript">
+    const USER_TYPE = JSON.parse($("#user_type").val()).reduce((a,b) => {
+                        return {
+                                        ...a,
+                                        [b.id]: b.name
+                                };
+                        }, {});
     $(document).ready(function () {
+        $("body").on('change', "[name='roster_start']", function(){
+            let dayStart = new Date($(this).val());
+            $('[name="roster_end"]').val(moment(dayStart).add(7, 'days').format('YYYY-MM-DD'));
+            let dayWeekStart = dayStart.getDay();
+            //if(dayWeekStart === 1) return;
+            let colDateEles =  $('#roster-table th').splice(2);
+            const DATE = {
+               0: 'Chủ nhật',
+               1: 'Thứ 2',
+               2: 'Thứ 3',
+               3: 'Thứ 4',
+               4: 'Thứ 5',
+               5: 'Thứ 6',
+               6: 'Thứ 7',
+            };
+            let dayWeekBegin = dayWeekStart;
+            for(let col of colDateEles){
+                $(col).text(DATE[dayWeekBegin]);
+                dayWeekBegin++;
+                if(dayWeekBegin > 6) {
+                    dayWeekBegin = 0;
+                }
+            }
+        });
         $("[name='roster_start']").trigger("change");
         localStorage.setItem('dataRoster', "[]");
         $('#roster-table>tbody').on('click', 'tr', function(){
@@ -134,11 +167,7 @@
         }
 
         function setDataRow(data){
-            const type = {
-                '0':  'Lễ tân',
-                '1':  'Phục vụ',
-                '2':  'Giữ xe',
-            };
+            const type = USER_TYPE;
             return  '<td class="shift_start shift_finish">' + data.shift_start + '-' + data.shift_finish + '</td>' +
                     '<td class="type">' + type[data.type] + '</td>' +
                     '<td class="day_0">' + data.day_0 + '</td>' +
@@ -184,30 +213,6 @@
             }
             $.ajax(options);
         })
-        $("[name='roster_start']").change(function(){
-            let dayStart = new Date($(this).val());
-            $('[name="roster_end"]').val(moment(dayStart).add(7, 'days').format('YYYY-MM-DD'));
-            let dayWeekStart = dayStart.getDay();
-            if(dayWeekStart === 1) return;
-            let colDateEles =  $('#roster-table th').splice(2);
-            const DATE = {
-               0: 'Chủ nhật',
-               1: 'Thứ 2',
-               2: 'Thứ 3',
-               3: 'Thứ 4',
-               4: 'Thứ 5',
-               5: 'Thứ 6',
-               6: 'Thứ 7',
-            };
-            let dayWeekBegin = dayWeekStart;
-            for(let col of colDateEles){
-                $(col).text(DATE[dayWeekBegin]);
-                dayWeekBegin++;
-                if(dayWeekBegin > 6) {
-                    dayWeekBegin = 0;
-                }
-            }
-        });
     });
 
 </script>

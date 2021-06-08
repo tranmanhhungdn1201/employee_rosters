@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use Config;
 class Roster extends Model
 {
+    public $timestamps = true;
+
     protected $table = 'rosters';
 
     protected $fillable = [

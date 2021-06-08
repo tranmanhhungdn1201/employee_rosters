@@ -12,8 +12,8 @@
           <div class="form-group row">
             <label class="col-4">Chức vụ:</label>
             <select name="type" class="form-control col-4">
-              <option value="0">Admin</option>
-              <option value="0">Quản lý</option>
+              <option value="4">Admin</option>
+              <option value="5">Quản lý</option>
               <option value="1">Lễ tân</option>
               <option value="2">Phục vụ</option>
               <option value="3">Giữ xe</option>

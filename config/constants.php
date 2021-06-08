@@ -16,8 +16,8 @@ return [
         'FULL' => 2
     ],
     'user' => [
-        'admin' => 0,
-        'manager' => 1,
+        'admin' => 1,
+        'manager' => 2,
     ],
     'status_shift_user' => [
         'OPEN' => 1

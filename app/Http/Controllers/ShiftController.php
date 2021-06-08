@@ -8,9 +8,12 @@ use App\Models\UserShift;
 use DB;
 use Carbon\Carbon;
 use Config;
+use App\Http\Traits\RosterTrait;
 
 class ShiftController extends Controller
 {
+    use RosterTrait;
+
     public function getShiftById($id){
         if(empty($id)) 
             return response()->json([
@@ -115,11 +118,18 @@ class ShiftController extends Controller
     public function registerShift($id) {
         $shift = Shift::find($id);
         $idUser = auth()->user()->id;
+        $isExpireRoster = $this->checkRosterById($shift->roster_id);
+        if(!$isExpireRoster)
+            return response()->json([
+                'Status' => 'Fail',
+                'Message' => 'Roster is expire!'
+            ]);
         $isRegisted = $this->checkRegistered($id, $idUser);
         if($isRegisted) 
             return response()->json([
                 'Status' => 'Fail',
-                'Message' => 'You have registered shift'
+                'Message' => 'You registered shift',
+                'Data' => $shift
             ]);
         if($shift->status === Config::get('constants.status_shift.OPEN')) {
             $data = [
@@ -132,13 +142,15 @@ class ShiftController extends Controller
             $changeStatus = $this->changeStatus($id, $shift->amount);
             return response()->json([
                 'Status' => 'Success',
-                'Message' => 'Register shift successfully'
+                'Message' => 'Register shift successfully',
+                'Data' => $shift
             ]);
         }
 
         return response()->json([
             'Status' => 'Fail',
-            'Message' => 'Register shift fail'
+            'Message' => 'Register shift fail',
+            'Data' => $shift
         ]);
     }
 
