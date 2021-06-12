@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Roster;
+use App\Models\Branch;
 use Config;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Traits\RosterTrait;
+use App\models\UserType;
+use Datatables;
 
 class UserController extends Controller
 {
@@ -42,7 +45,28 @@ class UserController extends Controller
     }
     
     public function userList(){
-        return view('users');
+        $branches = Branch::all();
+        $userTypes = UserType::all();
+
+        return view('users', [
+            'branches' => $branches,
+            'userTypes' => $userTypes,
+        ]);
+    }
+
+    public function getUserListDatatables(){
+        return Datatables::of(User::with(['user_type', 'branch'])
+        ->select('id', 'first_name', 'last_name', 'branch_id', 'hire_date', 'phone', 'user_type_id')->get())
+        ->addColumn('action', function($data) {
+            $buttonEdit = '<button type="button" data-id="'.$data->id.'" class="btn btn-info btn-sm btn-edit"><i class="fas fa-edit"></i></button>';
+            $buttonDelete = '&nbsp;<button type="button" data-id="'.$data->id.'" class="btn btn-danger btn-sm btn-remove"><i class="fas fa-trash"></i></button>';
+            $button = $buttonEdit . $buttonDelete;
+            if(!$data->isStaff() && !auth()->user()->isAdmin() || auth()->user()->id === $data->id) {
+                $button = $buttonEdit;
+            }
+            return $button; 
+        })
+        ->make(true);
     }
 
     public function logout(){

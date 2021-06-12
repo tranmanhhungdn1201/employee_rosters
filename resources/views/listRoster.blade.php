@@ -7,7 +7,10 @@
   <div class="action">
     <a href="{{route('viewCreateRoster')}}" class="btn btn-info">Create roster</a>
   </div>
-  <table class="table">
+  <div class="mb-2 mt-2">
+    <input type="text" class="form-control" id="search" placeholder="Tìm kiếm">
+  </div>
+  <table id="rosters-table" class="table">
     <thead>
       <tr>
         <th scope="col">#</th>
@@ -22,25 +25,12 @@
       </tr>
     </thead>
     <tbody>
+{{--       
       @if(count($rosters) === 0)
         <td colspan="8" class="text-center">Chưa có lịch đăng ký nào.</td>
       @else
         @foreach ($rosters as $key => $roster)
-          <?php
-              switch($roster->status){
-                  case '1':
-                      $bgColor = 'badge-warning';
-                      break;
-                  case '2':
-                      $bgColor = 'badge-success';
-                      break;
-                  case '3':
-                      $bgColor = 'badge-dark';
-                      break;
-                  default:
-                      $bgColor = '';
-              }
-          ?>
+          
           <tr>
             <th scope="row"><a class="text-dark" href="{{ route('singleRoster', $roster->id) }}">{{$key + 1}}</a></th>
             <td>{{$roster->day_start}}</td>
@@ -52,9 +42,34 @@
             <td></td>
           </tr>
         @endforeach
-      @endif
-      
+      @endif --}}
     </tbody>
   </table>
 </div>
+<script type="text/javascript">
+  let branchID = "{!! $branchID !!}";
+  let url = '{!! route("getListRosterDatatables", ":id") !!}';
+  url = url.replace(':id', branchID);
+  let table = $('#rosters-table').DataTable({
+      processing: false,
+      searching: true,
+      lengthChange: false,
+      serverSide: true,
+      language: LANGUAGE,
+      ajax: url,
+      columns: [
+          { data: 'id', name: 'id' },
+          { data: 'day_start', name: 'day_start' },
+          { data: 'day_finish', name: 'day_finish' },
+          { data: 'status_roster', name: 'status_roster' },
+          { data: 'user_created_name', name: 'user_created_name' },
+          { data: 'created_at', name: 'created_at' },
+          { data: 'updated_at', name: 'updated_at' },
+          // { data: 'action', name: 'action' },
+      ]
+  });
+  $('#search').on('keyup', debounce(function () {
+    table.search(this.value).draw();
+  }, 300));
+</script>
 @endsection

@@ -189,3 +189,7 @@ a:visited {
 .dots:after {
   left: 3.5em;
 }
+
+#users-table_filter {
+    display: none;
+}

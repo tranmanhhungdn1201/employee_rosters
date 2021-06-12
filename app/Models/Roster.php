@@ -21,10 +21,9 @@ class Roster extends Model
         'branch_id',
     ];
 
-    protected $append = [
+    protected $appends = [
         'status_name',
         'user_created_name',
-        'is_author'
     ];
 
     public function getStatusNameAttribute()

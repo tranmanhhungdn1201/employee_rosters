@@ -9,6 +9,7 @@ use App\Models\Shift;
 use Config;
 use Carbon\Carbon;
 use DB;
+use Datatables;
 
 class RosterController extends Controller
 {
@@ -18,11 +19,32 @@ class RosterController extends Controller
     }
 
     public function listRoster($branchID){
-        // dd($branchID);
-        $rosters = Roster::where('branch_id', $branchID)->orderBy('created_at', 'desc')->get();
-        return response()->view('listRoster', ['rosters' => $rosters]);
+        return response()->view('listRoster', ['branchID' => $branchID]);
     }
 
+    public function getListRosterDatatables($branchID){
+        $rosters = Roster::where('branch_id', $branchID)->orderBy('created_at', 'desc')->get();
+        return Datatables::of($rosters)
+        ->addColumn('status_roster', function($data){
+            switch($data->status){
+                case '1':
+                    $bgColor = 'badge-warning';
+                    break;
+                case '2':
+                    $bgColor = 'badge-success';
+                    break;
+                case '3':
+                    $bgColor = 'badge-dark';
+                    break;
+                default:
+                    $bgColor = '';
+            }
+            $content = '<span class="badge ' . $bgColor. '">' . $data->status_name . '</span>';
+            return $content;
+        })
+        ->rawColumns(['status_roster'])
+        ->make(true);
+    }
 
     public function createRoster(Request $request){
         $dataRoster = $request->dataRoster;

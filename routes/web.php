@@ -23,11 +23,13 @@ Route::group(['middleware' => 'checkLogin'], function() {
 
         Route::get('/create','RosterController@viewCreateRoster')->name('viewCreateRoster');
         Route::get('/rosters/{branchID}/list','RosterController@listRoster')->name('listRoster');
+        Route::get('/rosters/{branchID}/datatables-list','RosterController@getListRosterDatatables')->name('getListRosterDatatables');
         Route::post('/rosters','RosterController@createRoster')->name('createRoster');
         Route::get('/rosters/{id}/export','RosterController@exportRoster')->name('exportRoster');
 
         Route::post('/users/create','UserController@createUser')->name('createUser');
         Route::get('/users','UserController@userList')->name('userList');
+        Route::get('/users/datatables/getList','UserController@getUserListDatatables')->name('getUserListDatatables');
     });
     Route::get('/logout','UserController@logout')->name('logout');
 });

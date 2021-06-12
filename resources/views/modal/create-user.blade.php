@@ -12,18 +12,17 @@
           <div class="form-group row">
             <label class="col-4">Chức vụ:</label>
             <select name="type" class="form-control col-4">
-              <option value="4">Admin</option>
-              <option value="5">Quản lý</option>
-              <option value="1">Lễ tân</option>
-              <option value="2">Phục vụ</option>
-              <option value="3">Giữ xe</option>
+              @foreach ($userTypes as $userType)
+                <option value="{{$userType->id}}">{{$userType->name}}</option>
+              @endforeach
             </select>
           </div>
           <div class="form-group row">
             <label class="col-4">Nhà hàng:</label>
             <select name="branch_id" class="form-control col-4">
-              <option value="0">PapaSteak 2/9</option>
-              <option value="1">PapaSteak Phan Thanh</option>
+              @foreach ($branches as $branch)
+              <option value="{{$branch->id}}">{{$branch->name}}</option>
+              @endforeach
             </select>
           </div>
           <div class="form-group row">

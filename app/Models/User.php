@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
+use App\models\UserType;
+use App\models\Branch;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Config;
 
@@ -27,9 +28,17 @@ class User extends Authenticatable
         'branch_id',
     ];
 
-    protected $append = [
-        'full_name',
+    protected $appends = [
+        'full_name'
     ];
+
+    public function user_type() {
+        return $this->hasOne(UserType::class, 'id', 'user_type_id');
+    }
+
+    public function branch() {
+        return $this->hasOne(Branch::class, 'id', 'branch_id');
+    }
 
     public function getFullNameAttribute()
     {
@@ -68,4 +77,9 @@ class User extends Authenticatable
         return false;
     }
 
+    // public function getUserTypeNameAttribute()
+    // {
+    //     $userType = $this->user_type;
+    //     return $this->attributes['user_type_name'] = empty($userType) ? '' : $userType->name;
+    // }
 }
