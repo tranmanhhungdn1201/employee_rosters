@@ -54,19 +54,44 @@
             </div>
         </div>
     </div>
-    <form accept-charset="utf-8">
-        <input type="hidden" name="user_type" id="user_type" value="{{$userTypes}}">
-    </form>
 </div>
 @include('modal.create-row-shift');
 <script type="text/javascript">
-    const USER_TYPE = JSON.parse($("#user_type").val()).reduce((a,b) => {
+    const dataUserType = {!! json_encode($userTypes) !!};
+    const USER_TYPE = dataUserType.reduce((a,b) => {
                         return {
                                         ...a,
                                         [b.id]: b.name
                                 };
                         }, {});
     $(document).ready(function () {
+        const dataCopy = {!! json_encode($data) !!};
+        localStorage.setItem('dataRoster', JSON.stringify(dataCopy));
+        //process apply data
+        if(dataCopy) {
+            let data = formatDataRoster(dataCopy);
+            data.forEach(function(item) {
+                addRowHtml(item);
+            })
+        }
+
+        function formatDataRoster(data){
+            let rs = [];
+            for(let i = 0; i < data.length / 7; i++) {
+                let item = {};
+                for(let j = 0; j < 7; j++) {
+                    let index = i*7 + j;
+                    item['shift_finish'] = data[index]['time_finish'];
+                    item['shift_start'] = data[index]['time_start'];
+                    item['type'] = data[index]['user_type_id'];
+                    console.log(data[index]['amount'])
+                    item['day_' + j] = data[index]['amount'];
+                }
+                rs.push(item);
+            }
+            return rs;
+        }
+
         $("body").on('change', "[name='roster_start']", function(){
             let dayStart = new Date($(this).val());
             $('[name="roster_end"]').val(moment(dayStart).add(7, 'days').format('YYYY-MM-DD'));

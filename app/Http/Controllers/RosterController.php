@@ -13,9 +13,17 @@ use Datatables;
 
 class RosterController extends Controller
 {
-    public function viewCreateRoster(){
+    public function viewCreateRoster(Request $request){
         $userTypes = UserType::skip(2)->take(10)->get();
-        return response()->view('create_roster', ['userTypes' => $userTypes]);
+        $copyID = $request['copy'];
+        $data = null;
+        if(!empty($copyID)) {
+            $data = Shift::select(['user_type_id', 'time_start', 'time_finish', 'amount'])->where('roster_id', $copyID)->get();
+        }
+        return response()->view('create_roster', [
+                'userTypes' => $userTypes,
+                'data' => $data
+            ]);
     }
 
     public function listRoster($branchID){
@@ -42,7 +50,13 @@ class RosterController extends Controller
             $content = '<span class="badge ' . $bgColor. '">' . $data->status_name . '</span>';
             return $content;
         })
-        ->rawColumns(['status_roster'])
+        ->addColumn('action', function($data) {
+            $buttonView = '<a href="'.route('singleRoster', $data->id) .'" class="btn btn-info btn-sm btn-view"><i class="fas fa-eye"></i></a>';
+            $buttonCopy = '&nbsp;<a href="' . route('viewCreateRoster') . '?copy='. $data->id .'" class="btn btn-info btn-sm btn-copy"><i class="fas fa-copy"></i></a>';
+            $button = $buttonView . $buttonCopy;
+            return $button; 
+        })
+        ->rawColumns(['status_roster', 'action'])
         ->make(true);
     }
 

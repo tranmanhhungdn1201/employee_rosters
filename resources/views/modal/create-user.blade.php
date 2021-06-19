@@ -9,6 +9,7 @@
       </div>
       <div class="modal-body">
         <form id="user-form">
+          <input type="hidden" name="user_id">
           <div class="form-group row">
             <label class="col-4">Chức vụ:</label>
             <select name="type" class="form-control col-4">
@@ -43,7 +44,7 @@
           </div>
           <div class="form-group row">
             <label class="col-4">Giới tính</label>
-            <input type="radio" value="1" name="sex">Nam</input>
+            <input type="radio" value="1" name="sex" checked>Nam</input>
             <input type="radio" value="0" name="sex">Nữ</input>
           </div>
           <div class="form-group row">
@@ -58,8 +59,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-        <button type="button" class="btn btn-primary" id="btn-add-user">Lưu</button>
-        <button type="button" class="btn btn-danger" id="btn-del-user">Xóa</button>
+        <button type="button" class="btn btn-primary" id="btn-save-user">Lưu</button>
       </div>
     </div>
   </div>
