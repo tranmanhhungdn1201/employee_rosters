@@ -57,6 +57,7 @@
     if(!isAdmin) {
       $('#user-form').find('[name="type"] option').filter(':eq(0), :eq(1)').attr('disabled', true);
     }
+    $('#user-form').find('.modal-title').val('Tạo mới tài khoản');
     $('#create-user-modal').modal('show');
   })
 
@@ -145,6 +146,7 @@
     userForm.find('[name="sex"]').filter('[value="'+ data.gender +'"]').click();
     userForm.find('[name="birth_date"]').val(data.birth_date);
     userForm.find('[name="phone"]').val(data.phone);
+    userForm.find('.modal-title').val('Chỉnh sửa tài khoản');
     $('#create-user-modal').modal('show');
   }
 

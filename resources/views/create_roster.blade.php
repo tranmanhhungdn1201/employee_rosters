@@ -65,14 +65,17 @@
                                 };
                         }, {});
     $(document).ready(function () {
+        $("[name='roster_start']").trigger("change");
         const dataCopy = {!! json_encode($data) !!};
-        localStorage.setItem('dataRoster', JSON.stringify(dataCopy));
         //process apply data
         if(dataCopy) {
             let data = formatDataRoster(dataCopy);
+            localStorage.setItem('dataRoster', JSON.stringify(data));
             data.forEach(function(item) {
                 addRowHtml(item);
             })
+        } else {
+            localStorage.setItem('dataRoster', "[]");
         }
 
         function formatDataRoster(data){
@@ -84,7 +87,7 @@
                     item['shift_finish'] = data[index]['time_finish'];
                     item['shift_start'] = data[index]['time_start'];
                     item['type'] = data[index]['user_type_id'];
-                    console.log(data[index]['amount'])
+                    item['id'] = data[index]['id'];
                     item['day_' + j] = data[index]['amount'];
                 }
                 rs.push(item);
@@ -116,8 +119,7 @@
                 }
             }
         });
-        $("[name='roster_start']").trigger("change");
-        localStorage.setItem('dataRoster', "[]");
+
         $('#roster-table>tbody').on('click', 'tr', function(){
             let id = $(this).attr('data-id');
             if(!id) return;
@@ -177,6 +179,7 @@
         function setData(id){
             let dataRoster = JSON.parse(localStorage.getItem('dataRoster'));
             let dataRow = dataRoster.find(data => data.id === +id);
+            console.log(dataRow);
             let formRoster = $('#shift-form');
             for(let name in dataRow){
                 formRoster.find(`[name="${name}"]`).val(dataRow[name]);

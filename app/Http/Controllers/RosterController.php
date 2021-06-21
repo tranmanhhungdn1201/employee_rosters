@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Traits\UserTypeTrait;
 use Illuminate\Http\Request;
 use App\Models\Roster;
 use App\Models\UserType;
@@ -13,12 +14,13 @@ use Datatables;
 
 class RosterController extends Controller
 {
+    use UserTypeTrait;
     public function viewCreateRoster(Request $request){
-        $userTypes = UserType::skip(2)->take(10)->get();
+        $userTypes = $this->getUserTypeStaff();
         $copyID = $request['copy'];
         $data = null;
         if(!empty($copyID)) {
-            $data = Shift::select(['user_type_id', 'time_start', 'time_finish', 'amount'])->where('roster_id', $copyID)->get();
+            $data = Shift::select(['id', 'user_type_id', 'time_start', 'time_finish', 'amount'])->where('roster_id', $copyID)->get();
         }
         return response()->view('create_roster', [
                 'userTypes' => $userTypes,
@@ -126,7 +128,7 @@ class RosterController extends Controller
         if(empty($roster)) return redirect()->back();
         $shifts = $this->getDataShift($id);
         $shifts = $this->formatDataShift($shifts);
-        $userTypes = UserType::skip(2)->take(10)->get();
+        $userTypes = $this->getUserTypeStaff();
 
         return response()->view('single_roster', [
             'roster' => $roster,
