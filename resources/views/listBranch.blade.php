@@ -2,19 +2,25 @@
 @include('header')
 @section('content')
 
-<div class="container container-content">
-  <div class="row">
-    @foreach ($branches as $branch)
-    <div class="col-sm-6 col-md-4 col-lg-3 mt-4">
-      <div class="card text-center">
-        <div class="card-body">
-          <a href="{{route('listRoster', $branch->id)}}" class="text-dark"><h5 class="card-title">{{$branch->name}}</h5></a>
-          <p class="card-text">{{$branch->description}}</p>
-          <p class="card-text"><small class="text-muted">Since 2020</small></p>
+<div class="row container-branch">
+  @foreach ($branches as $branch)
+  <div class="col-sx-12 col-sm-6 col-md-6 col-lg-4">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header__icon">
+          <img alt="alt text" src="{!! asset('image/branch.svg') !!}">
         </div>
+        {{$branch->name}}
+      </div>
+      <div class="card-body">
+        <p class="card-desc">{{$branch->description}}</p>
+        <p class="card-text">Since 2020</p>
+      </div>
+      <div class="card-footer text-center">
+        <a href="{{route('listRoster', $branch->id)}}" class="btn btn-primary btn-radius--50 btn-shadow">Detail</a>
       </div>
     </div>
-    @endforeach
   </div>
+  @endforeach
 </div>
 @endsection

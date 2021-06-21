@@ -1,0 +1,37 @@
+html {
+    font-size: 16px;
+}
+
+body {
+    font-family: $ff-roboto;
+    font-size: $fs-n;
+    color: $gray;
+    background-color: $light-gray;
+}
+
+a {
+    &, &:focus, &:hover {
+        text-decoration: none;
+    }
+}
+
+ul {
+    margin-bottom: 0;
+    padding: 0;
+}
+
+li {
+    list-style: none;
+}
+
+table {
+    font-size: $fs-n;
+}
+
+.site-main {
+    padding-top: $header-height;
+}
+
+.form-control {
+    font-size: $fs-n;
+}

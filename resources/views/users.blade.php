@@ -2,17 +2,30 @@
 @include('header')
 @section('content')
 
-<div class="container container-content">
-  <div class="action">
-    <a href="#" class="btn btn-info create-user">Create user</a>
-  </div>
-	<div class="row">
-      <div class="col-md-12">
-        <h4>Danh sách nhân viên</h4>
-        <div class="mb-2 mt-2">
-          <input type="text" class="form-control" id="search" placeholder="Tìm kiếm">
+<div class="row container-user">
+  <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header__icon">
+          <img alt="alt text" src="{!! asset('image/staff.svg') !!}">
         </div>
-          <table id="users-table" class="table table-bordred table-striped">
+        Danh sách nhân viên
+        <div class="card-header__action">
+          <a href="#" class="btn btn-success create-user">
+            <i class="fas fa-plus"></i>
+            Create user
+          </a>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="datatable-custom">
+          <div class="form-group datatable-custom__search">
+            <label for="search" class="col-form-label">Tìm kiếm:</label>
+            <div class="datatable-custom__search__input">
+              <input type="text" class="form-control" id="search" placeholder="Tìm kiếm">
+            </div>
+          </div>
+          <table id="users-table" class="table display responsive nowrap">
             <thead>
               <th>ID</th>
               <th>Tên</th>
@@ -23,9 +36,11 @@
               <th>Nhà hàng</th>
               <th>Action</th>
             </thead>
-          <tbody>
-          </tbody>
-        </table>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -38,6 +53,7 @@
       serverSide: true,
       language: LANGUAGE,
       ajax: '{!! route('getUserListDatatables') !!}',
+      autoWidth: false,
       columns: [
           { data: 'id', name: 'id' },
           { data: 'first_name', name: 'first_name' },

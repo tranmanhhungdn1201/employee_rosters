@@ -1,8 +1,8 @@
 <!-- Footer -->
-<footer class="text-light">
+<footer>
     <div class="container">
-        <div class="row bg-dark">
-            
+        <div class="row text-center">
+            Copyright by HungTM
         </div>
     </div>
 </footer>

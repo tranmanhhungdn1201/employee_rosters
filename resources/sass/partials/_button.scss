@@ -1,0 +1,38 @@
+.btn {
+    font-size: $fs-n;
+}
+
+.btn-radius--50 {
+    color: $white;
+    border-radius: 50px;
+    transition: color 0.15s, background-color 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.btn-shadow {
+    box-shadow: 0 0.125rem 0.625rem RGB(63 106 216 / 40%), 0 0.0625rem 0.125rem RGB(63 106 216 / 50%);
+}
+
+.btn-primary {
+    // min-width: 8rem;
+    background-color: $dark-blue;
+    border-color: $dark-blue;
+}
+
+.btn-dark {
+    // min-width: 5rem;
+    background-color: $light-black;
+    border-color: $light-black;
+}
+
+.btn-success {
+    // min-width: 5rem;
+    background-color: $green;
+    border-color: $green;
+}
+
+.badge {
+    font-weight: $fw-m;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    min-width: 19px;
+}

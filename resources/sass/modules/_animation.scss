@@ -1,0 +1,14 @@
+@keyframes fade-in2 {
+    from {
+    //   -webkit-transform: translate(1, 1);
+      transform: translateY(0);
+    }
+  
+    50% {
+        transform: translateY(40px);
+    }
+  
+    to {
+        transform: translateY(56px);
+    }
+}
