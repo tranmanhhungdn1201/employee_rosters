@@ -56,7 +56,7 @@ class UserController extends Controller
 
     public function getUserListDatatables(){
         return Datatables::of(User::with(['user_type', 'branch'])
-        ->select('id', 'first_name', 'last_name', 'branch_id', 'hire_date', 'phone', 'user_type_id')->get())
+        ->select('id', 'username', 'gender', 'first_name', 'last_name', 'branch_id', 'hire_date', 'phone', 'user_type_id')->get())
         ->addColumn('action', function($data) {
             $buttonEdit = '<button type="button" data-id="'.$data->id.'" class="btn btn-info btn-sm btn-edit"><i class="fas fa-edit"></i></button>';
             $buttonDelete = '&nbsp;<button type="button" data-id="'.$data->id.'" class="btn btn-danger btn-sm btn-remove"><i class="fas fa-trash"></i></button>';
@@ -93,6 +93,42 @@ class UserController extends Controller
         return response()->json([
             'Status' => 'Success',
             'Message' => 'Create user successfully'
+        ]);
+    }
+
+    public function editUser(Request $request){
+        $data = $request->all();
+        if(!empty($data['password'])) {
+            $dataUser['password'] = bcrypt($data['password']);
+        }
+        $dataUser = [
+            'username' => $data['username'],
+            'phone' => $data['phone'],
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'gender' => $data['sex'],
+            'user_type_id' => $data['type'],
+            'birth_date' => $data['birth_date'],
+            'branch_id' => $data['branch_id'],
+        ];
+        User::find($data['user_id'])->update($dataUser);
+        return response()->json([
+            'Status' => 'Success',
+            'Message' => 'Update user successfully'
+        ]);
+    }
+
+    public function deleteUser($userID) {
+        $rs = User::find($userID)->delete();
+        if($rs) {
+            return response()->json([
+                'Status' => 'Success',
+                'Message' => 'Delete user successfully'
+            ]);
+        }
+        return response()->json([
+            'Status' => 'Fail',
+            'Message' => 'Delete user Fail'
         ]);
     }
 }

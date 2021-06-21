@@ -9,20 +9,18 @@
       </div>
       <div class="modal-body">
         <form id="user-form">
-          <div class="form-group row">
-            <label class="col-4">Chức vụ:</label>
-            <select name="type" class="form-control col-4">
-              @foreach ($userTypes as $userType)
-                <option value="{{$userType->id}}">{{$userType->name}}</option>
-              @endforeach
-            </select>
-          </div>
+          <input type="hidden" name="user_id">
           <div class="form-group row">
             <label class="col-4">Nhà hàng:</label>
             <select name="branch_id" class="form-control col-4">
               @foreach ($branches as $branch)
-              <option value="{{$branch->id}}">{{$branch->name}}</option>
+                <option value="{{$branch->id}}">{{$branch->name}}</option>
               @endforeach
+            </select>
+          </div>
+          <div class="form-group row">
+            <label class="col-4">Chức vụ:</label>
+            <select name="type" class="form-control col-4">
             </select>
           </div>
           <div class="form-group row">
@@ -39,28 +37,47 @@
           </div>
           <div class="form-group row">
             <label class="col-4">Họ</label>
-            <input type="text" class="form-control col-4" name="last_name"></input>
+            <input type="text" class="form-control col-4" name="last_name"/>
           </div>
           <div class="form-group row">
             <label class="col-4">Giới tính</label>
-            <input type="radio" value="1" name="sex">Nam</input>
-            <input type="radio" value="0" name="sex">Nữ</input>
+            <input type="radio" value="1" name="sex" checked />Nam
+            <input type="radio" value="0" name="sex"/>Nữ
           </div>
           <div class="form-group row">
             <label class="col-4">Số điện thoại</label>
-            <input type="text" class="form-control col-4" name="phone"></input>
+            <input type="text" class="form-control col-4" name="phone"/>
           </div>
           <div class="form-group row">
             <label class="col-4">Ngày sinh</label>
-            <input type="date" class="form-control col-4"name="birth_date"></input>
+            <input type="date" class="form-control col-4"name="birth_date"/>
           </div>
         </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-        <button type="button" class="btn btn-primary" id="btn-add-user">Lưu</button>
-        <button type="button" class="btn btn-danger" id="btn-del-user">Xóa</button>
+        <button type="button" class="btn btn-primary" id="btn-save-user">Lưu</button>
       </div>
     </div>
   </div>
 </div>
+<script>
+  const USER_TYPE = {!! json_encode($userTypes) !!};
+  $('#create-user-modal').on('shown.bs.modal', function () {
+    let branchID = $('select[name="branch_id"]').val();
+    setDataType(branchID)
+  })
+
+  $('select[name="branch_id"]').on('change', function(){
+    let branchID = $(this).val();
+    setDataType(branchID)
+  })
+
+  function setDataType(branchID){
+    let data = USER_TYPE.filter(item => item.branch_id === +branchID);
+    let typeDOM = $('select[name="type"]');
+    let content = data.map(type => `<option value="${type.id}">${type.name}</option>`);
+    typeDOM.empty();
+    typeDOM.append(content);
+  }
+</script>

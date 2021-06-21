@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Traits\UserTypeTrait;
 use Illuminate\Http\Request;
 use App\Models\Roster;
 use App\Models\UserType;
@@ -13,9 +14,18 @@ use Datatables;
 
 class RosterController extends Controller
 {
-    public function viewCreateRoster(){
-        $userTypes = UserType::skip(2)->take(10)->get();
-        return response()->view('create_roster', ['userTypes' => $userTypes]);
+    use UserTypeTrait;
+    public function viewCreateRoster(Request $request){
+        $userTypes = $this->getUserTypeStaff();
+        $copyID = $request['copy'];
+        $data = null;
+        if(!empty($copyID)) {
+            $data = Shift::select(['id', 'user_type_id', 'time_start', 'time_finish', 'amount'])->where('roster_id', $copyID)->get();
+        }
+        return response()->view('create_roster', [
+                'userTypes' => $userTypes,
+                'data' => $data
+            ]);
     }
 
     public function listRoster($branchID){
@@ -42,7 +52,13 @@ class RosterController extends Controller
             $content = '<span class="badge ' . $bgColor. '">' . $data->status_name . '</span>';
             return $content;
         })
-        ->rawColumns(['status_roster'])
+        ->addColumn('action', function($data) {
+            $buttonView = '<a href="'.route('singleRoster', $data->id) .'" class="btn btn-info btn-sm btn-view"><i class="fas fa-eye"></i></a>';
+            $buttonCopy = '&nbsp;<a href="' . route('viewCreateRoster') . '?copy='. $data->id .'" class="btn btn-info btn-sm btn-copy"><i class="fas fa-copy"></i></a>';
+            $button = $buttonView . $buttonCopy;
+            return $button; 
+        })
+        ->rawColumns(['status_roster', 'action'])
         ->make(true);
     }
 
@@ -112,7 +128,7 @@ class RosterController extends Controller
         if(empty($roster)) return redirect()->back();
         $shifts = $this->getDataShift($id);
         $shifts = $this->formatDataShift($shifts);
-        $userTypes = UserType::skip(2)->take(10)->get();
+        $userTypes = $this->getUserTypeStaff();
 
         return response()->view('single_roster', [
             'roster' => $roster,

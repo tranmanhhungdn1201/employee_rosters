@@ -193,3 +193,7 @@ a:visited {
 #users-table_filter {
     display: none;
 }
+
+#rosters-table_filter {
+    display: none;
+}

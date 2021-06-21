@@ -35,8 +35,7 @@
                 <th scope="col">Người tạo</th>
                 <th scope="col">Ngày tạo</th>
                 <th scope="col">Ngày chỉnh sửa</th>
-                <!-- <th scope="col">Ghi chú</th> -->
-                <!-- <th scope="col"></th> -->
+                <th scope="col"></th>
               </tr>
             </thead>
             <tbody>
@@ -83,7 +82,7 @@
           { data: 'user_created_name', name: 'user_created_name' },
           { data: 'created_at', name: 'created_at' },
           { data: 'updated_at', name: 'updated_at' },
-          // { data: 'note', name: 'note' },
+          { data: 'action', name: 'action' },
       ]
   });
   $('#search').on('keyup', debounce(function () {

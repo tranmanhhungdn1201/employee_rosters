@@ -45,7 +45,9 @@
   </div>
 </div>
 @include('modal.create-user');
+@include('modal.delete-confirm-modal');
 <script type="text/javascript">
+  let isAdmin = "{{auth()->user()->isAdmin()}}";
   let table = $('#users-table').DataTable({
       processing: false,
       searching: true,
@@ -65,13 +67,51 @@
           { data: 'action', name: 'action' },
       ]
   });
+
   $('.create-user').click(function(){
+    $('#user-form').trigger('reset');
+    if(!isAdmin) {
+      $('#user-form').find('[name="type"] option').filter(':eq(0), :eq(1)').attr('disabled', true);
+    }
+    $('#user-form').find('.modal-title').val('Tạo mới tài khoản');
     $('#create-user-modal').modal('show');
   })
 
-  $('#btn-add-user').click(function(){
+  $('#btn-save-user').click(function(){
+    let userId= $('#user-form [name="user_id"]').val();
+    if(userId)
+    editNewUser();
+    else 
     createNewUser();
   })
+
+  function editNewUser(){
+    const url = "{{route('editUser')}}";
+    let data = $('#user-form').serializeArray();
+    let objData = arrDataToObject(data);
+    const options = {
+        url,
+        method: 'POST',
+        data: {
+            _token: $('meta[name="csrf-token"]').attr('content'),
+            ...objData
+        },
+        success: function(res) {
+            if(res.Status === 'Success') {
+              toastr.success(res.Message);
+              table.ajax.reload();
+            } else {
+              toastr.error(res.Message);
+            }
+            $('#create-user-modal').modal('hide');
+        },
+        error: function(err) {
+            toastr.error('Error!');
+            console.error(err.message);
+        }
+    }
+    $.ajax(options);
+  }
 
   function createNewUser(){
     const url = "{{route('createUser')}}";
@@ -86,7 +126,10 @@
         },
         success: function(res) {
             if(res.Status === 'Success') {
+              toastr.success(res.Message);
               table.ajax.reload();
+            } else {
+              toastr.error(res.Message);
             }
             $('#create-user-modal').modal('hide');
         },
@@ -100,5 +143,62 @@
   $('#search').on('keyup', debounce(function () {
     table.search(this.value).draw();
   }, 300));
+
+  $('table').on('click', '.btn-edit', function() {
+    let dataUser = table.row($(this).closest('tr')).data();
+    showEditUser(dataUser);
+  })
+
+  function showEditUser(data) {
+    let userForm = $('#user-form');
+    userForm.trigger('reset');
+    console.log(data);
+    userForm.find('[name="user_id"]').val(data.id);
+    userForm.find('[name="type"]').val(data.user_type_id);
+    userForm.find('[name="branch_id"]').val(data.branch.id);
+    userForm.find('[name="username"]').val(data.username);
+    userForm.find('[name="first_name"]').val(data.first_name);
+    userForm.find('[name="last_name"]').val(data.last_name);
+    userForm.find('[name="sex"]').filter('[value="'+ data.gender +'"]').click();
+    userForm.find('[name="birth_date"]').val(data.birth_date);
+    userForm.find('[name="phone"]').val(data.phone);
+    userForm.find('.modal-title').val('Chỉnh sửa tài khoản');
+    $('#create-user-modal').modal('show');
+  }
+
+  $('table').on('click', '.btn-remove', function() {
+    let userID = table.row($(this).closest('tr')).data().id;
+    removeUser(userID);
+  })
+
+  function removeUser(userID) {
+    $('#confirm').modal('show');
+    $('#confirm').on('shown.bs.modal', function (e) {
+      $('#delete-btn').click(function(){
+        let url = "{{route('deleteUser', ':id')}}";
+        url = url.replace(':id', userID);
+        const options = {
+          url,
+          method: 'POST',
+          data: {
+            _token: $('meta[name="csrf-token"]').attr('content'),
+          },
+          success: function(res) {
+              if(res.Status === 'Success') {
+                toastr.success(res.Message);
+                table.ajax.reload();
+              } else {
+                toastr.error(res.Message);
+              }
+              $('#confirm').modal('hide');
+          },
+          error: function(err) {
+              console.error(err.message);
+          }
+        }
+        $.ajax(options);
+      })
+    })
+  }
 </script>
 @endsection

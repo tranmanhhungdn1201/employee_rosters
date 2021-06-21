@@ -28,6 +28,8 @@ Route::group(['middleware' => 'checkLogin'], function() {
         Route::get('/rosters/{id}/export','RosterController@exportRoster')->name('exportRoster');
 
         Route::post('/users/create','UserController@createUser')->name('createUser');
+        Route::post('/users/edit','UserController@editUser')->name('editUser');
+        Route::post('/users/delete/{userID}','UserController@deleteUser')->name('deleteUser');
         Route::get('/users','UserController@userList')->name('userList');
         Route::get('/users/datatables/getList','UserController@getUserListDatatables')->name('getUserListDatatables');
     });

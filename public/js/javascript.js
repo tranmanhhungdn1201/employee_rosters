@@ -20,17 +20,17 @@ window.onload = () => {
     });
 
     // TODO: click outside menu
-    // document.addEventListener('click', (event) => {
-    //     let targetElement = event.target; // clicked element
+    document.addEventListener('click', (event) => {
+        let targetElement = event.target; // clicked element
 
-    //     do {
-    //         if (targetElement == dropdownMenuEle) {
-    //             return;
-    //         }
-    //         // Go up the DOM.
-    //         targetElement = targetElement.parentNode;
-    //     } while (targetElement);
+        do {
+            if (targetElement == dropdownMenuEle) {
+                return;
+            }
+            // Go up the DOM.
+            targetElement = targetElement.parentNode;
+        } while (targetElement);
 
-    //     dropdownMenuEle.classList.remove('show');
-    // });
+        dropdownMenuEle.classList.remove('show');
+    });
 }
