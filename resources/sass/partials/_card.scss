@@ -1,0 +1,41 @@
+.card {
+    @include card-shadow();
+    width: 100%;
+
+    &-header {
+        display: flex;
+        align-items: center;
+        background-color: transparent;
+        color: $light-black;
+        font-size: $fs-l;
+
+        &__icon {
+            margin-right: 0.8rem;
+            img {
+                height: 1.5rem;
+                width: auto;
+            }
+        }
+        &__action {
+            @include flex($jc: flex-end);
+            flex: 1;
+        }
+    }
+    &-text {
+        font-size: $fs-s ;
+    }
+    &-desc {
+        font-size: $fs-n;
+    }
+    &-footer {
+        background-color: transparent;
+        border-bottom: 1px solid $light-gray;
+
+        .btn {
+            width: 8rem;
+        }
+    }
+    &-body {
+        padding: 1rem $card-body-padding;
+    }
+}

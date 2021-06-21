@@ -1,0 +1,90 @@
+.dataTables_filter {
+    display: none;
+}
+
+.dataTables_wrapper {
+    margin-left: -$card-body-padding;
+    margin-right: -$card-body-padding;
+    font-size: $fs-n;
+}
+
+.dataTables_info {
+    padding-left: $card-body-padding;
+}
+
+.dataTables_paginate {
+    padding-right: $card-body-padding;
+}
+
+.datatable-custom {
+    &__search {
+        @include flex($jc: flex-start);
+
+        label {
+            margin-right: 1rem;
+        }
+
+        &__input {
+            flex: 1;
+
+            input {
+                max-width: 17rem;
+                font-size: $fs-n;
+            }
+        }
+    }
+    table.dataTable {
+        font-size: $fs-n;
+        border-bottom: 1px solid $light-gray;
+
+        th, td {
+            border-top: 1px solid $light-gray;
+        }
+    }
+
+    .table.dataTable.no-footer {
+        border-bottom: 1px solid $light-gray;
+    }
+
+    table.dataTable thead th, table.dataTable tfoot th {
+        font-weight: $fw-m;
+        border-bottom: 1px solid $light-gray;
+        padding: 15px 18px;
+    }
+
+    table.dataTable tbody tr:nth-of-type(odd) {
+        background-color: $lighter-black;
+    }
+
+    table.dataTable tbody th, table.dataTable tbody td {
+        padding: 15px 10px;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        position: relative;
+        display: inline-block;
+        padding: 0.5rem 0.75rem;
+        margin-left: -1px;
+        line-height: 1.25;
+        color: $dark-blue;
+        background-color: $white;
+        border: 1px solid $light-gray;
+    }
+
+    td.sorting_1 {
+        background-color: transparent !important;
+    }
+
+    table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
+        background-color: $lighter-blue;
+    }
+
+    table.dataTable.dtr-inline.collapsed>tbody>tr>td.dtr-control:before,
+    table.dataTable.dtr-inline.collapsed>tbody>tr>th.dtr-control:before {
+        border: none;
+    }
+
+    table.dataTable>tbody>tr.child span.dtr-title {
+        font-weight: $fw-m;
+    }
+}

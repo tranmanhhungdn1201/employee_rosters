@@ -1,0 +1,29 @@
+/****************** media ******************/
+$mobile_width--sm: 320px;
+$mobile_width: 480px;
+$tablet_width: 768px;
+$tablet_width--lg: 1024px;
+$desktop_width: 1366px;
+
+$breakpoints: (
+  'mobile--sm': '(max-width: #{$mobile_width--sm})',
+  'mobile': '(max-width: #{$mobile_width - 1px})',
+  'tablet': '(max-width: #{$tablet_width - 1px})',
+  'tablet--md': '(min-width: #{$tablet_width}) and (max-width: #{$tablet_width--lg - 1px})',
+  'tablet--lg': '(min-width: #{$tablet_width--lg}) and (max-width: #{$desktop_width - 1px})',
+  'desktop': '(min-width: #{$tablet_width--lg}) and (min-width: #{$desktop_width})'
+);
+
+@mixin define_media($query){
+  @media #{$query} {
+    @content;
+  }
+}
+
+@mixin media($keys...){
+  @each $key in $keys { 
+    @include define_media(map-get($breakpoints, $key)) {
+      @content;
+    }
+  }
+}

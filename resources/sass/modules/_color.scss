@@ -1,0 +1,48 @@
+
+/****************** color ******************/
+$white: #FFFFFF;
+$dark-white: #fafbfc;
+$light-gray: #dee2e6;
+$gray: #6c757d;
+$dark-gray: #606060;
+$accent: #03AFC2;
+$green: #3ac47d;
+$orange: #f15927;
+$light-orange: rgba(#f15927, .8);
+$yellow: #FEC519;
+$lighter-blue: #e0f3ff ;
+$light-blue: #16aaff;
+$blue: #16aaff;
+$dark-blue: #3f6ad8;
+$black: #000000;
+$light-black: #495057;
+$lighter-black: rgba(0, 0, 0, 0.03);
+$header-height: 3.7rem;
+$card-body-padding: 1.25rem;
+
+/****************** url ******************/
+$image-url: "../images/svg/";
+
+/****************** animation ******************/
+@keyframes txt_hide {
+  from {
+    -webkit-transform: scale(1, 1);
+    transform: scale(1, 1);
+  }
+
+  20% {
+    -webkit-transform: scale(0.7, 0.7);
+    transform: scale(0.7, 0.7);
+  }
+
+  50% {
+    -webkit-transform: scale(0.5, 0.5);
+    transform: scale(0.5, 0.5);
+  }
+
+  to {
+    opacity: 0;
+    // -webkit-transform: scale(1, 1);
+    // transform: scale(1, 1);
+  }
+}
