@@ -29,7 +29,7 @@ table {
 }
 
 .site-main {
-    padding-top: $header-height;
+    padding-top: calc(2rem + #{$header-height});
 }
 
 .form-control {

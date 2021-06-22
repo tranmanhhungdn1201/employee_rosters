@@ -2,44 +2,42 @@
 @include('header')
 @section('content')
 
-<div class="row container-user">
-  <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-    <div class="card">
-      <div class="card-header">
-        <div class="card-header__icon">
-          <img alt="alt text" src="{!! asset('image/staff.svg') !!}">
-        </div>
-        Danh sách nhân viên
-        <div class="card-header__action">
-          <a href="#" class="btn btn-success create-user">
-            <i class="fas fa-plus"></i>
-            Create user
-          </a>
-        </div>
+<div class="row mx-0">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header__icon">
+        <img alt="alt text" src="{!! asset('image/staff.svg') !!}">
       </div>
-      <div class="card-body">
-        <div class="datatable-custom">
-          <div class="form-group datatable-custom__search">
-            <label for="search" class="col-form-label">Tìm kiếm:</label>
-            <div class="datatable-custom__search__input">
-              <input type="text" class="form-control" id="search" placeholder="Tìm kiếm">
-            </div>
+      Danh sách nhân viên
+      <div class="card-header__action">
+        <a href="#" class="btn btn-success create-user">
+          <i class="fas fa-plus"></i>
+          Tạo mới nhân viên
+        </a>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="datatable-custom">
+        <div class="form-group datatable-custom__search">
+          <label for="search" class="col-form-label">Tìm kiếm</label>
+          <div class="datatable-custom__search__input">
+            <input type="text" class="form-control" id="search" placeholder="Tìm kiếm">
           </div>
-          <table id="users-table" class="table display responsive nowrap">
-            <thead>
-              <th>ID</th>
-              <th>Tên</th>
-              <th>Họ Tên</th>
-              <th>Chức vụ</th>
-              <th>Số điện thoại</th>
-              <th>Ngày làm</th>
-              <th>Nhà hàng</th>
-              <th>Action</th>
-            </thead>
-            <tbody>
-            </tbody>
-          </table>
         </div>
+        <table id="users-table" class="table display responsive nowrap">
+          <thead>
+            <th>ID</th>
+            <th>Tên</th>
+            <th>Họ Tên</th>
+            <th>Chức vụ</th>
+            <th>Số điện thoại</th>
+            <th>Ngày làm</th>
+            <th>Nhà hàng</th>
+            <th>Action</th>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>

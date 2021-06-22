@@ -8,16 +8,16 @@
       <div class="card-header__icon">
         <img alt="alt text" src="{!! asset('image/roster.svg') !!}">
       </div>
-      Create roster
+      Tạo bảng phân công
     </div>
     <div class="card-body">
-      <div class="row mb-md-3">
+      <div class="row mb-md-2">
         <div class="col-md-6 pr-lg-4 pr-xl-5">
           <div class="form-group row no-gutters">
             <label for="roster_start" class="col-xl-4 col-form-label"><span class="text-danger">*</span>&nbsp;Ngày bắt đầu</label>
             <div class="col-xl-8">
               <div class="input-group date" id="roster_start" data-target-input="nearest">
-                <input type="text" placeholder="yyyy-mm-dd" class="form-control datetimepicker-input" name="roster_start" data-target="#roster_start" data-toggle="datetimepicker" value="<?php echo date('Y-m-d', strtotime(date('Y-m-d'))); ?>">
+                <input type="text" placeholder="dd-mm-yyyy" class="form-control datetimepicker-input" name="roster_start" data-target="#roster_start" data-toggle="datetimepicker" value="<?php echo date('m-d-Y', strtotime(date('Y-m-d'))); ?>">
                 <div class="input-group-append">
                   <button class="btn btn-primary" type="button" data-target="#roster_start" data-toggle="datetimepicker"><i class="fas fa-calendar-alt"></i></button>
                 </div>
@@ -30,20 +30,20 @@
             <label for="roster_end" class="col-xl-4 col-form-label"><span class="text-danger">*</span>&nbsp;Ngày kết thúc</label>
             <div class="col-xl-8">
               <div class="input-group date" id="roster_end">
-                <input type="text" placeholder="yyyy-mm-dd" class="form-control" name="roster_end" value="<?php echo date('Y-m-d', strtotime(date('Y-m-d'). ' + 7 days')); ?>" disabled/>
+                <input type="text" placeholder="dd-mm-yyyy" class="form-control" name="roster_end" value="<?php echo date('m-d-Y', strtotime(date('Y-m-d'). ' + 7 days')); ?>" disabled/>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="row mb-md-3">
+      <div class="row mb-md-2">
         <div class="col-md-6 pr-lg-4 pr-xl-5">
           <div class="form-group row no-gutters">
             <label for="roster_begin" class="col-xl-4 col-form-label"><span class="text-danger">*</span>&nbsp;Ngày giờ mở đăng kí</label>
             <div class="col-xl-8">
               <div class="input-group date" id="roster_begin" data-target-input="nearest">
-                <input type="text" placeholder="yyyy-mm-dd hh:mm" class="form-control datetimepicker-input" name="roster_begin" data-target="#roster_begin" data-toggle="datetimepicker">
+                <input type="text" placeholder="dd-mm-yyyy hh:mm" class="form-control datetimepicker-input" name="roster_begin" data-target="#roster_begin" data-toggle="datetimepicker">
                 <div class="input-group-append">
                   <button class="btn btn-primary" type="button" data-target="#roster_begin" data-toggle="datetimepicker"><i class="fas fa-calendar-alt"></i></button>
                 </div>
@@ -57,7 +57,7 @@
             <label for="roster_close" class="col-xl-4 col-form-label"><span class="text-danger">*</span>&nbsp;Ngày giờ đóng đăng kí</label>
             <div class="col-xl-8">
               <div class="input-group date" id="roster_close" data-target-input="nearest">
-                <input type="text" placeholder="yyyy-mm-dd hh:mm" class="form-control datetimepicker-input" name="roster_close" data-target="#roster_close" data-toggle="datetimepicker">
+                <input type="text" placeholder="dd-mm-yyyy hh:mm" class="form-control datetimepicker-input" name="roster_close" data-target="#roster_close" data-toggle="datetimepicker">
                 <div class="input-group-append">
                   <button class="btn btn-primary" type="button" data-target="#roster_close" data-toggle="datetimepicker"><i class="fas fa-calendar-alt"></i></button>
                 </div>
@@ -86,7 +86,7 @@
         <div class="col-12">
           <button class="btn btn-success" id="add-row">
             <i class="fas fa-plus"></i>
-            Create roster
+            Thêm ca làm việc
           </button>
         </div>
       </div>

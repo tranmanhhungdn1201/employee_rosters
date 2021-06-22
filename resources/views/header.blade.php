@@ -4,7 +4,7 @@
             <div class="navbar__brand">
                 <a href="/">Employee Roster</a>
             </div>
-            <div class="overlay"></div>
+            <div class="navbar__overlay"></div>
             <div class="navbar__container">
                 <ul class="navbar__nav">
                     @if (!auth()->user()->isStaff())
@@ -13,20 +13,24 @@
                                 <div class="nav-item__icon">
                                     <img alt="alt text" src="{!! asset('image/roster.svg') !!}">
                                 </div>
-                                Roster
+                                Bảng phân công
                             </a>
                         </li>
                         <li>
-                            <div class="nav-item__icon">
-                                <img alt="alt text" src="{!! asset('image/staff.svg') !!}">
-                            </div>
-                            <a href="{{route('userList')}}">Staff</a>
+                            <a href="{{route('userList')}}">
+                                <div class="nav-item__icon">
+                                    <img alt="alt text" src="{!! asset('image/staff.svg') !!}">
+                                </div>
+                                Nhân viên
+                            </a>
                         </li>
                         <li>
-                            <div class="nav-item__icon">
-                                <img alt="alt text" src="{!! asset('image/payroll.svg') !!}">
-                            </div>
-                            <ahref="#">Payroll</a>
+                            <a href="#">
+                                <div class="nav-item__icon">
+                                    <img alt="alt text" src="{!! asset('image/payroll.svg') !!}">
+                                </div>
+                                Tính lương
+                            </a>
                         </li>
                     @endif
                 </ul>
@@ -59,13 +63,13 @@
                         <div class="dropdown-menu__content">
                             <ul class="dropdown-menu__content__nav">
                                 <li class="dropdown-menu__content__nav__header">
-                                    activity
+                                    Hoạt động
                                 </li>
                                 <li>
-                                    <a href="#">Change password</a>
+                                    <a href="#">Đổi mật khẩu</a>
                                 </li>
                                 <li>
-                                    <a href="#">View profile</a>
+                                    <a href="#">Xem hồ sơ</a>
                                 </li>
                             </ul>
                         </div>

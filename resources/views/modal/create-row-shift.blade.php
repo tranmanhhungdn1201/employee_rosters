@@ -21,7 +21,6 @@
           </div>
           <div class="form-group row">
             <label class="col-4"><span class="text-danger">*</span>&nbsp;Thời gian bắt đầu</label>
-            <!-- <input type="time" class="form-control" name="shift_start"/> -->
             <div class="col-4">
               <div class="input-group date" id="shift_start" data-target-input="nearest">
                 <input type="text" placeholder="hh:mm" class="form-control datetimepicker-input" name="shift_start" data-target="#shift_start" data-toggle="datetimepicker">
@@ -33,7 +32,6 @@
           </div>
           <div class="form-group row">
             <label class="col-4"><span class="text-danger">*</span>&nbsp;Thời gian kết thúc</label>
-            <!-- <input type="time" class="form-control" name="shift_finish"/> -->
             <div class="col-4">
               <div class="input-group date" id="shift_finish" data-target-input="nearest">
                 <input type="text" placeholder="hh:mm" class="form-control datetimepicker-input" name="shift_finish" data-target="#shift_finish" data-toggle="datetimepicker">
