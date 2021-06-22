@@ -66,6 +66,9 @@
                                     Hoạt động
                                 </li>
                                 <li>
+                                    <a href="{{ route('setting.index') }}">Cài đặt</a>
+                                </li>
+                                <li>
                                     <a href="#">Đổi mật khẩu</a>
                                 </li>
                                 <li>
