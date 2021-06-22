@@ -353,7 +353,7 @@ table {
   font-size: 0.9rem; }
 
 .site-main {
-  padding-top: 3.7rem; }
+  padding-top: calc(2rem + 3.7rem); }
 
 .form-control {
   font-size: 0.9rem; }
@@ -835,7 +835,7 @@ table {
     .navbar__line:last-child {
       margin-bottom: 0; }
 
-.overlay {
+.navbar__overlay {
   content: "";
   position: fixed;
   top: 0;
@@ -849,15 +849,15 @@ table {
   transition: opacity 1s;
   z-index: 2; }
   @media (max-width: 479px) {
-    .overlay.show {
+    .navbar__overlay.show {
       width: 100%;
       opacity: .27; } }
   @media (max-width: 767px) {
-    .overlay.show {
+    .navbar__overlay.show {
       width: 100%;
       opacity: .27; } }
   @media (min-width: 768px) and (max-width: 1023px) {
-    .overlay.show {
+    .navbar__overlay.show {
       width: 100%;
       opacity: .27; } }
 
@@ -992,14 +992,23 @@ table {
 .datatable-custom table.dataTable > tbody > tr.child span.dtr-title {
   font-weight: 500; }
 
-.container-branch {
-  margin-top: 2rem; }
-
-.container-roster {
-  margin-top: 2rem; }
-
-.container-create-roster {
-  margin-top: 2rem; }
+.form-login {
+  padding: 3rem; }
+  .form-login__title {
+    font-size: 1.8rem;
+    font-weight: 300;
+    letter-spacing: 1px;
+    margin-bottom: 2rem;
+    color: #495057; }
+  .form-login input[type="text"], .form-login input[type="password"] {
+    height: 3rem; }
+  .form-login .input-group-text {
+    background-color: #3f6ad8;
+    color: white;
+    font-size: 1rem;
+    padding: .375rem 1rem; }
+  .form-login button {
+    padding: .6rem .75rem; }
 
 .container-user {
   margin-top: 2rem; }

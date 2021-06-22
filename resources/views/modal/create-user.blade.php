@@ -11,73 +11,105 @@
         <form id="user-form">
           <input type="hidden" name="user_id">
           <div class="form-group row">
-            <label class="col-4">Nhà hàng:</label>
-            <select name="branch_id" class="form-control col-4">
-              @foreach ($branches as $branch)
-                <option value="{{$branch->id}}">{{$branch->name}}</option>
-              @endforeach
-            </select>
+            <label class="col-4"><span class="text-danger">*</span>&nbsp;Nhà hàng</label>
+            <div class="col-5">
+                <select name="branch_id" class="form-control">
+                @foreach ($branches as $branch)
+                  <option value="{{$branch->id}}">{{$branch->name}}</option>
+                @endforeach
+              </select>
+            </div>
           </div>
           <div class="form-group row">
-            <label class="col-4">Chức vụ:</label>
-            <select name="type" class="form-control col-4">
-            </select>
+            <label class="col-4"><span class="text-danger">*</span>&nbsp;Chức vụ</label>
+            <div class="col-5">
+              <select name="type" class="form-control"></select>
+            </div>
           </div>
           <div class="form-group row">
-            <label class="col-4">Tên tài khoản:</label>
-            <input type="text" class="form-control col-4" name="username"/>
+            <label class="col-4"><span class="text-danger">*</span>&nbsp;Tên tài khoản</label>
+            <div class="col-5"><input type="text" class="form-control" name="username"/></div>
           </div>
           <div class="form-group row">
-            <label class="col-4">Mật khẩu:</label>
-            <input type="password" class="form-control col-4" name="password"/>
+            <label class="col-4"><span class="text-danger">*</span>&nbsp;Mật khẩu</label>
+            <div class="col-5"><input type="password" class="form-control" name="password"/></div>
           </div>
           <div class="form-group row">
-            <label class="col-4">Tên:</label>
-            <input type="text" class="form-control col-4" name="first_name"/>
+            <label class="col-4"><span class="text-danger">*</span>&nbsp;Tên</label>
+            <div class="col-5"><input type="text" class="form-control" name="first_name"/></div>
           </div>
           <div class="form-group row">
-            <label class="col-4">Họ</label>
-            <input type="text" class="form-control col-4" name="last_name"/>
+            <label class="col-4"><span class="text-danger">*</span>&nbsp;Họ</label>
+            <div class="col-5"><input type="text" class="form-control" name="last_name"/></div>
           </div>
           <div class="form-group row">
-            <label class="col-4">Giới tính</label>
-            <input type="radio" value="1" name="sex" checked />Nam
-            <input type="radio" value="0" name="sex"/>Nữ
+            <label class="col-4"><span class="text-danger">*</span>&nbsp;Giới tính</label>
+            <div class="col-5">
+              <div class="row mx-0">
+                <div class="form-check mr-3">
+                  <input type="radio" value="1" name="sex" id="sex-man" class="form-check-input" checked />
+                  <label class="form-check-label" for="sex-man">
+                    Nam
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input type="radio" value="0" name="sex" id="sex-woman" class="form-check-input"/>
+                  <label class="form-check-label" for="sex-woman">
+                    Nữ
+                  </label>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="form-group row">
-            <label class="col-4">Số điện thoại</label>
-            <input type="text" class="form-control col-4" name="phone"/>
+            <label class="col-4"><span class="text-danger">*</span>&nbsp;Số điện thoại</label>
+            <div class="col-5"><input type="text" class="form-control" name="phone"/></div>
           </div>
           <div class="form-group row">
             <label class="col-4">Ngày sinh</label>
-            <input type="date" class="form-control col-4"name="birth_date"/>
+            <div class="col-5">
+              <div class="input-group date" id="birth_date" data-target-input="nearest">
+                <input type="text" placeholder="dd-mm-yyyy" class="form-control datetimepicker-input" name="birth_date" data-target="#birth_date" data-toggle="datetimepicker" value="">
+                <div class="input-group-append">
+                  <button class="btn btn-primary" type="button" data-target="#birth_date" data-toggle="datetimepicker"><i class="fas fa-calendar-alt"></i></button>
+                </div>
+              </div>
+            </div>
           </div>
         </form>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-        <button type="button" class="btn btn-primary" id="btn-save-user">Lưu</button>
+      <div class="modal-footer justify-content-center">
+      <button type="button" class="btn btn-outline-secondary mr-4" data-dismiss="modal">Đóng</button>
+        <button type="button" class="btn btn-success" id="btn-save-user">Lưu</button>
       </div>
     </div>
   </div>
 </div>
 <script>
-  const USER_TYPE = {!! json_encode($userTypes) !!};
-  $('#create-user-modal').on('shown.bs.modal', function () {
-    let branchID = $('select[name="branch_id"]').val();
-    setDataType(branchID)
-  })
+  $(document).ready(function () {
+    // birthday
+    $('#birth_date').datetimepicker({
+      format: 'YYYY-MM-DD',
+      locale: 'vi',
+    });
 
-  $('select[name="branch_id"]').on('change', function(){
-    let branchID = $(this).val();
-    setDataType(branchID)
-  })
+    const USER_TYPE = {!! json_encode($userTypes) !!};
+    $('#create-user-modal').on('shown.bs.modal', function () {
+      let branchID = $('select[name="branch_id"]').val();
+      setDataType(branchID)
+    })
 
-  function setDataType(branchID){
-    let data = USER_TYPE.filter(item => item.branch_id === +branchID);
-    let typeDOM = $('select[name="type"]');
-    let content = data.map(type => `<option value="${type.id}">${type.name}</option>`);
-    typeDOM.empty();
-    typeDOM.append(content);
-  }
+    $('select[name="branch_id"]').on('change', function(){
+      let branchID = $(this).val();
+      setDataType(branchID)
+    })
+
+    function setDataType(branchID){
+      let data = USER_TYPE.filter(item => item.branch_id === +branchID);
+      let typeDOM = $('select[name="type"]');
+      let content = data.map(type => `<option value="${type.id}">${type.name}</option>`);
+      typeDOM.empty();
+      typeDOM.append(content);
+    }
+  });
 </script>

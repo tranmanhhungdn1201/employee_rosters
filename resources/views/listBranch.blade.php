@@ -2,7 +2,7 @@
 @include('header')
 @section('content')
 
-<div class="row container-branch">
+<div class="row">
   @foreach ($branches as $branch)
   <div class="col-sx-12 col-sm-6 col-md-6 col-lg-4">
     <div class="card">

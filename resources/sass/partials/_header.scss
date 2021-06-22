@@ -13,7 +13,7 @@
 
     &__brand {
         font-family: $ff-charm;
-        font-size: $fs-el;
+        font-size: $fs-xl;
         font-weight: $fw-b;
         a {
             color: $light-black;
@@ -392,7 +392,7 @@
     }
 }
 
-.overlay {
+.navbar__overlay {
     content: "";
     position: fixed;
     top: 0;
