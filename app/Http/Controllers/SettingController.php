@@ -28,4 +28,22 @@ class SettingController extends Controller
             'Message' => 'Create branch fail',
         ]);
     }
+
+    public function updateBranch(Request $request) {
+        $data = $request->all();
+        $branch = Branch::find($data['branch_id']);
+
+        if($branch) {
+            $branch->update($data);
+            return response()->json([
+                'Status' => 'Success',
+                'Message' => 'Update branch successfully',
+            ]);
+        }
+
+        return response()->json([
+            'Status' => 'Success',
+            'Message' => 'Update branch fail',
+        ]);
+    }
 }

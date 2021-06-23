@@ -39,6 +39,7 @@ Route::group(['middleware' => 'checkLogin'], function() {
         //settings
         Route::get('/settings','SettingController@index')->name('setting.index');
         Route::post('/settings/create','SettingController@createBranch')->name('setting.createBranch');
+        Route::post('/settings/update','SettingController@updateBranch')->name('setting.updateBranch');
     });
     Route::get('/logout','UserController@logout')->name('logout');
 });

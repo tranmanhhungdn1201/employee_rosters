@@ -49,6 +49,7 @@
               <hr>
               <div id="create-branch" style="display: none;">
                 <form>
+                  <input type="hidden" name="branch_id" value="">
                   <div class="form-group">
                     <label for="name">Tên</label>
                     <input type="text" class="form-control" name="name" aria-describedby="name" placeholder="" value="">
@@ -73,7 +74,7 @@
                         <small id="usernameHelp" class="form-text text-muted">{{ $branch->description }}</small>
                       </div>
                       <label class="pull-right">
-                          <a class="btn btn-success btn-sm glyphicon glyphicon-ok btn-edit" href="#" title="View" data-id="{{$branch->id}}"><i class="fas fa-edit"></i></a>
+                          <a class="btn btn-success btn-sm glyphicon glyphicon-ok btn-edit" href="#" title="View" data-data="{{$branch}}"><i class="fas fa-edit"></i></a>
                           <a class="btn btn-danger  btn-sm glyphicon glyphicon-trash btn-remove" href="#" title="Delete" data-id="{{$branch->id}}"><i class="fas fa-trash"></i></a>
                       </label>
                     </div>
@@ -153,10 +154,9 @@
 <script>
   $(document).ready(function(){
     //Branch
-	  $('#branch').on('click', '.btn-create-branch', function(event){
-      event.preventDefault();
-			let formCreate = $("#create-branch");
-			if(formCreate.hasClass("open")){
+    function handleFormBranch(editMode) {
+      let formCreate = $("#create-branch");
+			if(formCreate.hasClass("open") && !editMode){
 				formCreate.removeClass("open");
 				formCreate.slideUp(300);
 			}
@@ -164,23 +164,88 @@
 				formCreate.slideDown(300);
 				formCreate.addClass("open");
 			}
+    }
+
+	  $('#branch').on('click', '.btn-create-branch', function(event){
+      event.preventDefault();
+      handleFormBranch();
 		});
 
     $('#branch').on('click', '.btn-save', function() {
+      let branchID = $('#branch').find('[name="branch_id"]').val();
       let data = $('#branch').find('form').serializeArray();
       let dataObj = arrDataToObject(data);
+      if(branchID)
+        updateBranch(dataObj);
+      else
+        createBranch(dataObj);
+
+    })
+
+    //create branch
+    function createBranch(data) {
       const url = "{{ route('setting.createBranch') }}";
-      console.log(dataObj);
       const options = {
         url,
         data: {
           _token: $('meta[name="csrf-token"]').attr('content'),
-          ...dataObj
+          ...data
         },
         method: 'POST',
         success: (res) => {
           if(res.Status === 'Success') {
             toastr.success(res.Message);
+            handleFormBranch();
+            drawNewBranch(data);
+            $('#branch').find('form').trigger('reset');
+          } else {
+            toastr.error(res.Message);
+          }
+
+        },
+        error: (err) => {
+          toastr.error(err.message);
+          console.log(err.message);
+        }
+      }
+      $.ajax(options);
+    }
+
+    function drawNewBranch(data) {
+      let listDOM = $('#branch').find('.list-group');
+      let content = `<li href="#" class="list-group-item text-left">
+                    <div class="branch-item">
+                      <div>
+                        <h6 class="name">
+                          ${data.name}
+                        </h6>
+                        <small id="usernameHelp" class="form-text text-muted">${data.description}</small>
+                      </div>
+                      <label class="pull-right">
+                          <a class="btn btn-success btn-sm glyphicon glyphicon-ok btn-edit" href="#" title="View" data-data=${JSON.stringify(data)}><i class="fas fa-edit"></i></a>
+                          <a class="btn btn-danger  btn-sm glyphicon glyphicon-trash btn-remove" href="#" title="Delete" data-id="${data.id}"><i class="fas fa-trash"></i></a>
+                      </label>
+                    </div>
+                    <div class="break"></div>
+                  </li>`;
+      listDOM.append(content);
+    }
+
+    //update branch
+    function updateBranch(data) {
+      const url = "{{ route('setting.updateBranch') }}";
+      const options = {
+        url,
+        data: {
+          _token: $('meta[name="csrf-token"]').attr('content'),
+          ...data
+        },
+        method: 'POST',
+        success: (res) => {
+          if(res.Status === 'Success') {
+            toastr.success(res.Message);
+            handleFormBranch();
+            $('#branch').find('form').trigger('reset');
           } else {
             toastr.error(res.Message);
           }
@@ -191,6 +256,20 @@
         }
       }
       $.ajax(options);
+    }
+
+    //edit
+    function setDataFormBranch(data) {
+      let form = $('#branch').find('form');
+      form.find('[name="name"]').val(data.name);
+      form.find('[name="branch_id"]').val(data.id??data.branch_id);
+      form.find('[name="description"]').val(data.description);
+    }
+
+    $('.list-group').on('click', '.btn-edit', function() {
+      let data = $(this).attr('data-data');
+      setDataFormBranch(JSON.parse(data));
+      handleFormBranch(true);
     })
 	});
 </script>
