@@ -1,0 +1,97 @@
+.table-roster {
+    thead th {
+        font-weight: $fw-m;
+        vertical-align: middle;
+        text-align: center;
+        background-color: $dark-white;
+    }
+
+    tbody td {
+        vertical-align: middle;
+        text-align: center;
+        // border-right: 1px solid $white;
+        &.shift-date {
+            border-color: $white;
+        }
+    }
+    tbody>tr:last-child td {
+        border-bottom-color: $light-gray;
+    }
+
+    tbody>tr>td:last-child {
+        border-right-color: $light-gray;
+    }
+
+    .table-roster__column {
+        padding: 0;
+    }
+
+    &__type, &__time {
+        min-width: 4rem;
+        vertical-align: middle;
+        text-align: left;
+    }
+
+    &__cell {
+        min-width: 10rem;
+        min-height: 5rem;
+        padding: 0.15rem .75rem .75rem;
+        position: relative;
+
+        &__action {
+            display: block;
+            position: absolute;
+            top: .15rem;
+            right: .15rem;
+        }
+    }
+    &__users {
+        width: 100%;
+    }
+
+    &__user {
+        width: 100%;
+        font-size: $fs-xs;
+        background-color: $white;
+        margin-bottom: 0.5rem;
+        border-radius: 4px;
+        position: relative;
+
+        .btn-del-user {
+            display: block;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            right: .15rem;
+            color: $danger;
+        }
+    }
+
+    .bg-danger {
+        background-color: $light-danger !important;
+        .table-roster__user {
+            border-left: 4px solid $danger !important;
+        }
+    }
+
+    .bg-success {
+        background-color: $light-success !important;
+        .table-roster__user {
+            border-left: 4px solid $success !important;
+        }
+    }
+
+    .bg-warning {
+        background-color: $light-warning !important;
+        .table-roster__user {
+            border-left: 4px solid $warning !important;
+        }
+    }
+
+    .bg-dark {
+        background-color: $light-dark !important;
+        .table-roster__user {
+            border-left: 4px solid $dark !important;
+        }
+    }
+}
