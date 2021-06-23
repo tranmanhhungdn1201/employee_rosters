@@ -14,7 +14,6 @@
       </div>
       <div class="card-body">
         <p class="card-desc">{{$branch->description}}</p>
-        <p class="card-text">Since 2020</p>
       </div>
       <div class="card-footer text-center">
         <a href="{{route('listRoster', $branch->id)}}" class="btn btn-primary btn-radius--50 btn-shadow">Detail</a>

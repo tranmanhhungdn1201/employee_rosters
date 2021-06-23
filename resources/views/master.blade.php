@@ -23,6 +23,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css" />
         <!-- Custom -->
         <link rel="stylesheet" href="{!! asset('css/app.css') !!}">
+        <link rel="stylesheet" href="{!! asset('css/common.css') !!}">
 
         <!-- Jquery  -->
         <script src="{!! asset('js/jquery-3.6.0.min.js') !!}"></script>
