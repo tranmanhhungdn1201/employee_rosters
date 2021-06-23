@@ -3,7 +3,8 @@ $mobile_width--sm: 320px;
 $mobile_width: 480px;
 $tablet_width: 768px;
 $tablet_width--lg: 1024px;
-$desktop_width: 1366px;
+$desktop_width: 1200px;
+$desktop_width--lg: 1500px;
 
 $breakpoints: (
   'mobile--sm': '(max-width: #{$mobile_width--sm})',
@@ -11,7 +12,8 @@ $breakpoints: (
   'tablet': '(max-width: #{$tablet_width - 1px})',
   'tablet--md': '(min-width: #{$tablet_width}) and (max-width: #{$tablet_width--lg - 1px})',
   'tablet--lg': '(min-width: #{$tablet_width--lg}) and (max-width: #{$desktop_width - 1px})',
-  'desktop': '(min-width: #{$tablet_width--lg}) and (min-width: #{$desktop_width})'
+  'desktop': '(min-width: #{$desktop_width}) and (max-width: #{$desktop_width--lg - 1px})',
+  'desktop--lg': '(min-width: #{$desktop_width--lg})',
 );
 
 @mixin define_media($query){

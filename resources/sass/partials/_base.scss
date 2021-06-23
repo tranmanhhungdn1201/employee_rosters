@@ -30,8 +30,27 @@ table {
 
 .site-main {
     padding-top: calc(2rem + #{$header-height});
+    padding-bottom: calc(2rem + #{$footer-height});
 }
 
 .form-control {
     font-size: $fs-n;
+}
+
+@include media(tablet--lg, desktop, desktop--lg) {
+    .container {
+        max-width: 960px;
+    }
+}
+
+@include media(desktop) {
+    .container {
+        max-width: 1100px;
+    }
+}
+
+@include media(desktop--lg) {
+    .container {
+        max-width: 1400px;
+    }
 }

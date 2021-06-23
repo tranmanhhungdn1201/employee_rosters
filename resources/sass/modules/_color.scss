@@ -17,32 +17,14 @@ $dark-blue: #3f6ad8;
 $black: #000000;
 $light-black: #495057;
 $lighter-black: rgba(0, 0, 0, 0.03);
+$danger: #dc3545;
+$light-danger: #fcd1d1;
+$success: #28a745;
+$light-success: #d6f8b8;
+$warning: #ffc107;
+$light-warning: #fffecb;
+$dark: #343a40;
+$light-dark: #F2F1EF;
 $header-height: 3.7rem;
+$footer-height: 3rem;
 $card-body-padding: 1.25rem;
-
-/****************** url ******************/
-$image-url: "../images/svg/";
-
-/****************** animation ******************/
-@keyframes txt_hide {
-  from {
-    -webkit-transform: scale(1, 1);
-    transform: scale(1, 1);
-  }
-
-  20% {
-    -webkit-transform: scale(0.7, 0.7);
-    transform: scale(0.7, 0.7);
-  }
-
-  50% {
-    -webkit-transform: scale(0.5, 0.5);
-    transform: scale(0.5, 0.5);
-  }
-
-  to {
-    opacity: 0;
-    // -webkit-transform: scale(1, 1);
-    // transform: scale(1, 1);
-  }
-}

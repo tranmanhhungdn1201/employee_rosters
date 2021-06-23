@@ -99,72 +99,84 @@
                     </div>
                 </div>
             </div>
-
-            <table class="table table-bordered table-hover" id="roster-table">
-                <thead>
-                    <tr>
-                        <th scope="col">Thời gian</th>
-                        <th scope="col">Bộ phận</th>
-                        <th scope="col">Thứ 2</th>
-                        <th scope="col">Thứ 3</th>
-                        <th scope="col">Thứ 4</th>
-                        <th scope="col">Thứ 5</th>
-                        <th scope="col">Thứ 6</th>
-                        <th scope="col">Thứ 7</th>
-                        <th scope="col">Chủ nhật</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (is_array($shifts))
-                        @foreach($shifts as $key => $shift)
-                        <tr data-shift="{{ $shift[0] }}">
-                            <td class="shift-row shift_start shift_finish">{{ $key }}</td>
-                            <td class="shift-row type">{{ $shift[0]->user_type_name }}</td>
-                            @foreach($shift as $indexDay => $day)
-                                <?php
-                                    $state = '';
-                                    switch($day->status){
-                                        case $day->isRegistered:
-                                            $bgColor = 'bg-warning';
-                                            $state = 'isRegistered';
-                                            break;
-                                        case 1:
-                                            $bgColor = 'bg-success';
-                                            break;
-                                        case 2:
-                                            $bgColor = 'bg-danger';
-                                            break;
-                                        case 3:
-                                            $bgColor = 'bg-dark';
-                                            break;
-                                        default:
-                                            $bgColor = '';
-                                    }
-                                ?>
-                                <td data-state ="{{$state}}" class="{{$bgColor . ' text-white day_' . $indexDay . ' shift_' . $day->id}} shift-date" data-id="{{ $day->id }}">
-                                    <div class="d-flex justify-content-around" data-id="{{ $day->id }}">
-                                        <div>
-                                            <span>{{$day->user_shifts_count}}/{{ $day->amount }}</span>
-                                        </div>
-                                        <div>
-                                            @if(auth()->user()->isAdmin() || (auth()->user()->isManager() && auth()->user()->id === $roster->user_created_id))
-                                            <a href="#" data-action="edit" class="btn-edit-shift" data-id="{{$day->id}}"><i class="fas fa-pencil-alt"></i></a>
-                                            @else
-                                            {{-- <a href="#" data-action="view" class="btn-edit-shift" data-id="{{$day->id}}"><i class="far fa-eye"></i></a> --}}
-                                            @endif
-                                        </div>
-                                    </div>
-                                </td>
-                            @endforeach
-                        </tr>
-                        @endforeach
-                    @else
+            <div class="table-responsive">
+                <table class="table table-bordered table-roster" id="roster-table">
+                    <thead>
                         <tr>
-                            Nothing
+                            <th scope="col">Thời gian</th>
+                            <th scope="col">Bộ phận</th>
+                            <th scope="col">Thứ 2</th>
+                            <th scope="col">Thứ 3</th>
+                            <th scope="col">Thứ 4</th>
+                            <th scope="col">Thứ 5</th>
+                            <th scope="col">Thứ 6</th>
+                            <th scope="col">Thứ 7</th>
+                            <th scope="col">Chủ nhật</th>
                         </tr>
-                    @endif
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @if (is_array($shifts))
+                            @foreach($shifts as $key => $shift)
+                            <tr data-shift="{{ $shift[0] }}">
+                                <td class="shift-row shift_start shift_finish"><div class="table-roster__time">{{ $key }}</div></td>
+                                <td class="shift-row type"><div class="table-roster__type">{{ $shift[0]->user_type_name }}</div></td>
+                                @foreach($shift as $indexDay => $day)
+                                    <?php
+                                        $state = '';
+                                        switch($day->status){
+                                            case $day->isRegistered:
+                                                $bgColor = 'bg-warning';
+                                                $state = 'isRegistered';
+                                                break;
+                                            case 1:
+                                                $bgColor = 'bg-danger';
+                                                break;
+                                            case 2:
+                                                $bgColor = 'bg-success';
+                                                break;
+                                            case 3:
+                                                $bgColor = 'bg-dark';
+                                                break;
+                                            default:
+                                                $bgColor = '';
+                                        }
+                                    ?>
+                                    <td data-state ="{{$state}}" class="{{$bgColor . ' day_' . $indexDay . ' shift_' . $day->id}} shift-date table-roster__column" data-id="{{ $day->id }}">
+                                        <div class="table-roster__cell d-flex flex-column align-items-center" data-id="{{ $day->id }}">
+                                            <div class="mb-2">
+                                                <span>{{$day->user_shifts_count}}/{{ $day->amount }}</span>
+                                            </div>
+                                            <div class="table-roster__cell__action">
+                                                @if(auth()->user()->isAdmin() || (auth()->user()->isManager() && auth()->user()->id === $roster->user_created_id))
+                                                <a href="#" data-action="edit" class="btn-edit-shift" data-id="{{$day->id}}"><i class="fas fa-pencil-alt"></i></a>
+                                                @else
+                                                {{-- <a href="#" data-action="view" class="btn-edit-shift" data-id="{{$day->id}}"><i class="far fa-eye"></i></a> --}}
+                                                @endif
+                                            </div>
+                                            <ul class="table-roster__users d-flex flex-column align-items-center">
+                                                <li class="table-roster__user d-flex align-items-center p-1 pr-3">
+                                                    Trần Manh Hùng
+                                                    <a href="#" data-action="del" class="btn-del-user" data-id="{{$day->id}}"><i class="fas fa-trash-alt"></i></a>
+                                                </li>
+                                                <li class="table-roster__user d-flex align-items-center p-1 pr-3">
+                                                    Đặng Ngọc Thanh
+                                                    <a href="#" data-action="del" class="btn-del-user" data-id="{{$day->id}}"><i class="fas fa-trash-alt"></i></a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                @endforeach
+                            </tr>
+                            @endforeach
+                        @else
+                            <tr>
+                                Nothing
+                            </tr>
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+
             @if(auth()->user()->isAdmin() || (auth()->user()->isManager() && auth()->user()->id === $roster->user_created_id))
             <div class="row">
                 <div class="col-12">

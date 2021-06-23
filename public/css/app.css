@@ -1,21 +1,6 @@
 /****************** color ******************/
-/****************** url ******************/
-/****************** animation ******************/
 @import url("https://fonts.googleapis.com/css?family=Roboto:300,400,500&amp;subset=vietnamese");
 @import url("https://fonts.googleapis.com/css2?family=Charm&display=swap");
-@keyframes txt_hide {
-  from {
-    -webkit-transform: scale(1, 1);
-    transform: scale(1, 1); }
-  20% {
-    -webkit-transform: scale(0.7, 0.7);
-    transform: scale(0.7, 0.7); }
-  50% {
-    -webkit-transform: scale(0.5, 0.5);
-    transform: scale(0.5, 0.5); }
-  to {
-    opacity: 0; } }
-
 /****************** media ******************/
 @keyframes fade-in2 {
   from {
@@ -353,10 +338,31 @@ table {
   font-size: 0.9rem; }
 
 .site-main {
-  padding-top: calc(2rem + 3.7rem); }
+  padding-top: calc(2rem + 3.7rem);
+  padding-bottom: calc(2rem + 3rem); }
 
 .form-control {
   font-size: 0.9rem; }
+
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .container {
+    max-width: 960px; } }
+
+@media (min-width: 1200px) and (max-width: 1499px) {
+  .container {
+    max-width: 960px; } }
+
+@media (min-width: 1500px) {
+  .container {
+    max-width: 960px; } }
+
+@media (min-width: 1200px) and (max-width: 1499px) {
+  .container {
+    max-width: 1100px; } }
+
+@media (min-width: 1500px) {
+  .container {
+    max-width: 1400px; } }
 
 .site-header {
   width: 100%;
@@ -992,6 +998,81 @@ table {
 .datatable-custom table.dataTable > tbody > tr.child span.dtr-title {
   font-weight: 500; }
 
+.table-roster thead th {
+  font-weight: 500;
+  vertical-align: middle;
+  text-align: center;
+  background-color: #fafbfc; }
+
+.table-roster tbody td {
+  vertical-align: middle;
+  text-align: center; }
+  .table-roster tbody td.shift-date {
+    border-color: #FFFFFF; }
+
+.table-roster tbody > tr:last-child td {
+  border-bottom-color: #dee2e6; }
+
+.table-roster tbody > tr > td:last-child {
+  border-right-color: #dee2e6; }
+
+.table-roster .table-roster__column {
+  padding: 0; }
+
+.table-roster__type, .table-roster__time {
+  min-width: 4rem;
+  vertical-align: middle;
+  text-align: left; }
+
+.table-roster__cell {
+  min-width: 10rem;
+  min-height: 5rem;
+  padding: 0.15rem .75rem .75rem;
+  position: relative; }
+  .table-roster__cell__action {
+    display: block;
+    position: absolute;
+    top: .15rem;
+    right: .15rem; }
+
+.table-roster__users {
+  width: 100%; }
+
+.table-roster__user {
+  width: 100%;
+  font-size: 0.75rem;
+  background-color: #FFFFFF;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+  position: relative; }
+  .table-roster__user .btn-del-user {
+    display: block;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: .15rem;
+    color: #dc3545; }
+
+.table-roster .bg-danger {
+  background-color: #fcd1d1 !important; }
+  .table-roster .bg-danger .table-roster__user {
+    border-left: 4px solid #dc3545 !important; }
+
+.table-roster .bg-success {
+  background-color: #d6f8b8 !important; }
+  .table-roster .bg-success .table-roster__user {
+    border-left: 4px solid #28a745 !important; }
+
+.table-roster .bg-warning {
+  background-color: #fffecb !important; }
+  .table-roster .bg-warning .table-roster__user {
+    border-left: 4px solid #ffc107 !important; }
+
+.table-roster .bg-dark {
+  background-color: #F2F1EF !important; }
+  .table-roster .bg-dark .table-roster__user {
+    border-left: 4px solid #343a40 !important; }
+
 .form-login {
   padding: 3rem; }
   .form-login__title {
@@ -1020,7 +1101,8 @@ footer {
   width: 100%;
   background-color: #fafbfc;
   font-size: 0.9rem;
-  color: #6c757d; }
+  color: #6c757d;
+  min-height: 3rem; }
   footer .row {
     justify-content: center;
     align-items: center;
