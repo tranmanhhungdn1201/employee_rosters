@@ -6,10 +6,11 @@ footer {
     background-color: $dark-white;
     font-size: 0.9rem;
     color: $gray;
+    min-height: 3rem;
 
     .row {
         justify-content: center;
         align-items: center;
-        height: 3rem;
+        height: $footer-height;
     }
 }
