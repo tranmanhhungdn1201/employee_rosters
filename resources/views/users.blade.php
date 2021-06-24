@@ -7,8 +7,8 @@
     <div class="card-header">
       <div class="card-header__icon">
         <img alt="alt text" src="{!! asset('image/staff.svg') !!}">
+        Danh sách nhân viên
       </div>
-      Danh sách nhân viên
       <div class="card-header__action">
         <a href="#" class="btn btn-success create-user">
           <i class="fas fa-plus"></i>
