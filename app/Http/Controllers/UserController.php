@@ -22,7 +22,6 @@ class UserController extends Controller
 
     public function postlogin(Request $request){
         $credentials = $request->only('username', 'password');
-
         if (Auth::attempt($credentials)) {
             switch(auth()->user()->user_type_id){
                 case 1:

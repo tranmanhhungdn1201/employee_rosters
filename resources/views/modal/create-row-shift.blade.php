@@ -86,9 +86,9 @@
         </form>
       </div>
       <div class="modal-footer justify-content-center">
-        <button type="button" class="btn btn-outline-secondary mr-4" data-dismiss="modal">Đóng</button>
+        <button type="button" class="btn btn-outline-secondary mr-3" data-dismiss="modal">Đóng</button>
         <button type="button" class="btn btn-success" id="btn-add-row">Lưu</button>
-        <button type="button" class="btn btn-danger" id="btn-del-row">Xóa</button>
+        <button type="button" class="btn btn-danger ml-3" id="btn-del-row">Xóa</button>
       </div>
     </div>
   </div>

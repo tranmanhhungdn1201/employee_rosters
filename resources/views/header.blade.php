@@ -11,9 +11,9 @@
                         <li class="is-active">
                             <a href="{{route('index')}}">
                                 <div class="nav-item__icon">
-                                    <img alt="alt text" src="{!! asset('image/roster.svg') !!}">
+                                    <img alt="alt text" src="{!! asset('image/branch.svg') !!}">
                                 </div>
-                                Bảng phân công
+                                Nhà hàng
                             </a>
                         </li>
                         <li>

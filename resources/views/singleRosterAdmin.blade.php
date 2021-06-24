@@ -6,8 +6,8 @@
         <div class="card-header">
             <div class="card-header__icon">
                 <img alt="alt text" src="{!! asset('image/roster.svg') !!}">
+                Bảng phân công
             </div>
-            Bảng phân công
             <div class="card-header__action">
                 <a href="{{route('viewCreateRoster')}}" class="btn btn-outline-primary btn-export">
                 <i class="fas fa-file-download"></i>
@@ -23,7 +23,7 @@
                         <div class="col-xl-8">
                         <div class="input-group date" id="roster_start" data-target-input="nearest">
                             <input type="text" placeholder="dd-mm-yyyy" class="form-control datetimepicker-input" name="roster_start" data-target="#roster_start" data-toggle="datetimepicker" 
-                                value="<?php echo date('d-m-Y', strtotime($roster->day_start)); ?>" disabled>
+                                value="<?php echo date('d-M-Y', strtotime($roster->day_start)); ?>" disabled>
                             <!-- <div class="input-group-append">
                                 <button class="btn btn-primary" type="button" data-target="#roster_start" data-toggle="datetimepicker"><i class="fas fa-calendar-alt"></i></button>
                             </div> -->
@@ -31,7 +31,6 @@
                         </div>
                     </div>
                 </div>
-                
                 <div class="col-md-6 pl-lg-4 pl-xl-5">
                     <div class="form-group row no-gutters">
                         <label for="roster_end" class="col-xl-4 col-form-label"><span class="text-danger">*</span>&nbsp;Ngày kết thúc</label>
@@ -49,13 +48,13 @@
                     <div class="form-group row no-gutters">
                         <label for="roster_begin" class="col-xl-4 col-form-label"><span class="text-danger">*</span>&nbsp;Ngày giờ mở đăng kí</label>
                         <div class="col-xl-8">
-                            <div class="input-group date" id="roster_begin" data-target-input="nearest">
-                                <input type="text" placeholder="dd-mm-yyyy hh:mm" class="form-control datetimepicker-input" name="roster_begin" data-target="#roster_begin" data-toggle="datetimepicker" 
-                                    value="<?php echo date('d-m-Y H:i', strtotime($roster->time_open)); ?>">
-                                <div class="input-group-append">
-                                    <button class="btn btn-primary" type="button" data-target="#roster_begin" data-toggle="datetimepicker"><i class="fas fa-calendar-alt"></i></button>
-                                </div>
+                        <div class="input-group date" id="roster_begin" data-target-input="nearest">
+                            <input type="text" placeholder="dd-mm-yyyy hh:mm" class="form-control datetimepicker-input" name="roster_begin" data-target="#roster_begin" data-toggle="datetimepicker" 
+                                value="<?php echo date('d-M-Y H:i', strtotime($roster->time_open)); ?>">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="button" data-target="#roster_begin" data-toggle="datetimepicker"><i class="fas fa-calendar-alt"></i></button>
                             </div>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -65,7 +64,7 @@
                         <div class="col-xl-8">
                         <div class="input-group date" id="roster_close" data-target-input="nearest">
                             <input type="text" placeholder="dd-mm-yyyy hh:mm" class="form-control datetimepicker-input" name="roster_close" data-target="#roster_close" data-toggle="datetimepicker" 
-                                value="<?php echo date('d-m-Y H:i', strtotime($roster->time_close)); ?>">
+                                value="<?php echo date('d-M-Y H:i', strtotime($roster->time_close)); ?>">
                             <div class="input-group-append">
                                 <button class="btn btn-primary" type="button" data-target="#roster_close" data-toggle="datetimepicker"><i class="fas fa-calendar-alt"></i></button>
                             </div>
@@ -78,8 +77,8 @@
             <div class="row mb-md-2">
                 <div class="col-md-6 pr-lg-4 pr-xl-5">
                     <div class="form-group row no-gutters align-items-center">
-                        <label for="roster_start" class="col-4 col-form-label">Trạng thái</label>
-                        <div class="col-8">
+                        <label for="roster_start" class="col-sm-4 col-form-label">Trạng thái</label>
+                        <div class="col-sm-8">
                             <?php
                                 switch($roster->status){
                                     case '1':
@@ -100,18 +99,6 @@
                     </div>
                 </div>
             </div>
-
-            @if(auth()->user()->isAdmin() || (auth()->user()->isManager() && auth()->user()->id === $roster->user_created_id))
-            <div class="row mb-3">
-                <div class="col-12">
-                <button class="btn btn-success" id="add-row">
-                    <i class="fas fa-plus"></i>
-                    Thêm ca làm việc
-                </button>
-                </div>
-            </div>
-            @endif
-
             <div class="table-responsive">
                 <table class="table table-bordered table-roster" id="roster-table">
                     <thead>
@@ -142,10 +129,10 @@
                                                 $state = 'isRegistered';
                                                 break;
                                             case 1:
-                                                $bgColor = 'bg-success';
+                                                $bgColor = 'bg-danger';
                                                 break;
                                             case 2:
-                                                $bgColor = 'bg-danger';
+                                                $bgColor = 'bg-success';
                                                 break;
                                             case 3:
                                                 $bgColor = 'bg-dark';
@@ -155,8 +142,8 @@
                                         }
                                     ?>
                                     <td data-state ="{{$state}}" class="{{$bgColor . ' day_' . $indexDay . ' shift_' . $day->id}} shift-date table-roster__column" data-id="{{ $day->id }}">
-                                        <div class="table-roster__cell d-flex flex-column align-items-center justify-content-center" data-id="{{ $day->id }}">
-                                            <div>
+                                        <div class="table-roster__cell d-flex flex-column align-items-center" data-id="{{ $day->id }}">
+                                            <div class="mb-2">
                                                 <span>{{$day->user_shifts_count}}/{{ $day->amount }}</span>
                                             </div>
                                             <div class="table-roster__cell__action">
@@ -166,6 +153,16 @@
                                                 {{-- <a href="#" data-action="view" class="btn-edit-shift" data-id="{{$day->id}}"><i class="far fa-eye"></i></a> --}}
                                                 @endif
                                             </div>
+                                            <ul class="table-roster__users d-flex flex-column align-items-center">
+                                                <li class="table-roster__user d-flex align-items-center p-1 pr-3">
+                                                    Trần Manh Hùng
+                                                    <a href="#" data-action="del" class="btn-del-user" data-id="{{$day->id}}"><i class="fas fa-trash-alt"></i></a>
+                                                </li>
+                                                <li class="table-roster__user d-flex align-items-center p-1 pr-3">
+                                                    Đặng Ngọc Thanh
+                                                    <a href="#" data-action="del" class="btn-del-user" data-id="{{$day->id}}"><i class="fas fa-trash-alt"></i></a>
+                                                </li>
+                                            </ul>
                                         </div>
                                     </td>
                                 @endforeach
@@ -179,6 +176,17 @@
                     </tbody>
                 </table>
             </div>
+
+            @if(auth()->user()->isAdmin() || (auth()->user()->isManager() && auth()->user()->id === $roster->user_created_id))
+            <div class="row">
+                <div class="col-12">
+                <button class="btn btn-success" id="add-row">
+                    <i class="fas fa-plus"></i>
+                    Thêm ca làm việc
+                </button>
+                </div>
+            </div>
+            @endif
         </div>
         <div class="card-footer text-center">
             <button class="btn btn-success btn-submit" id="btn-submit">Lưu</button>
@@ -196,6 +204,7 @@
         $('#roster_begin').datetimepicker({
           locale: "vi",
           format: 'DD-MM-YYYY HH:mm',
+          // inline: true,
           sideBySide: true,
         });
 
@@ -203,6 +212,7 @@
         $('#roster_close').datetimepicker({
           locale: "vi",
           format: 'DD-MM-YYYY HH:mm',
+          // inline: true,
           sideBySide: true,
         });
 

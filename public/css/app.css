@@ -910,12 +910,26 @@ table {
       .card-header__icon img {
         height: 1.5rem;
         width: auto; }
+      @media (max-width: 320px) {
+        .card-header__icon {
+          margin-bottom: 0.5rem;
+          align-self: flex-start; } }
+      @media (max-width: 479px) {
+        .card-header__icon {
+          margin-bottom: 0.5rem;
+          align-self: flex-start; } }
     .card-header__action {
       display: flex;
       flex-direction: row;
       justify-content: flex-end;
       align-items: center;
       flex: 1; }
+    @media (max-width: 320px) {
+      .card-header {
+        flex-direction: column; } }
+    @media (max-width: 479px) {
+      .card-header {
+        flex-direction: column; } }
   .card-text {
     font-size: 0.8rem; }
   .card-desc {
@@ -924,7 +938,7 @@ table {
     background-color: transparent;
     border-bottom: 1px solid #dee2e6; }
     .card-footer .btn {
-      width: 8rem; }
+      min-width: 8rem; }
   .card-body {
     padding: 1rem 1.25rem; }
 

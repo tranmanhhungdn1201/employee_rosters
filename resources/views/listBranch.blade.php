@@ -9,14 +9,14 @@
       <div class="card-header">
         <div class="card-header__icon">
           <img alt="alt text" src="{!! asset('image/branch.svg') !!}">
+          {{$branch->name}}
         </div>
-        {{$branch->name}}
       </div>
       <div class="card-body">
         <p class="card-desc">{{$branch->description}}</p>
       </div>
       <div class="card-footer text-center">
-        <a href="{{route('listRoster', $branch->id)}}" class="btn btn-primary btn-radius--50 btn-shadow">Detail</a>
+        <a href="{{route('listRoster', $branch->id)}}" class="btn btn-primary btn-radius--50 btn-shadow">Xem bảng phân công</a>
       </div>
     </div>
   </div>

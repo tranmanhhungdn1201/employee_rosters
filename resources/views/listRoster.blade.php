@@ -7,8 +7,8 @@
     <div class="card-header">
       <div class="card-header__icon">
         <img alt="alt text" src="{!! asset('image/roster.svg') !!}">
+        Danh sách phân công
       </div>
-      Danh sách phân công
       <div class="card-header__action">
         <a href="{{route('viewCreateRoster')}}" class="btn btn-success">
           <i class="fas fa-plus"></i>
