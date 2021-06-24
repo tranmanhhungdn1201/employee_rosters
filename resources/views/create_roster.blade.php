@@ -111,14 +111,18 @@
         }, {});
 
         $(document).ready(function () {
-
             /**** format datepicker ****/
-
-            // start date of roster
+            
+            //start date of roster
             $('#roster_start').datetimepicker({
                 format: 'DD-MM-YYYY',
                 locale: 'vi',
-            });
+            })
+
+            //TODO: error
+            // $('#roster_start').datetimepicker().on('change',function(e){
+            //     console.log(e)
+            // })
 
             // opened date of roster registration
             $('#roster_begin').datetimepicker({
@@ -137,7 +141,7 @@
             /**** set dat to session storage ****/
 
             // TODO: update name data
-            $("[name='roster_start']").trigger("change");
+            // $("[name='roster_start']").trigger("change");
             const dataCopy = {!! json_encode($data) !!};
             if(dataCopy) {
                 let data = formatDataRoster(dataCopy);
@@ -152,9 +156,9 @@
             /**** Define function ****/
 
             /**
-             * ???
-             * @param {array} data - ????
-             * @return {array} rs - ???
+             * Function format DB data to object
+             * @param {array} data - data rosters DB
+             * @return {array} rs - data format
              */
             function formatDataRoster(data){
                 let rs = [];
@@ -173,25 +177,36 @@
                 return rs;
             }
 
-            function setData(id){
+            /**
+             * Function set data shift row to modal edit shift
+             * @param {number} id - id raw shift
+             */
+            function setDataPopupShift(id){
                 let dataRoster = JSON.parse(localStorage.getItem('dataRoster'));
                 let dataRow = dataRoster.find(data => data.id === +id);
-                console.log(dataRow);
                 let formRoster = $('#shift-form');
                 for(let name in dataRow){
-                        formRoster.find(`[name="${name}"]`).val(dataRow[name]);
+                    formRoster.find(`[name="${name}"]`).val(dataRow[name]);
                 }
             }
 
+            /**
+             * Function append row shift html
+             * @param {number} id - id raw shift
+             */
             function addRowHtml(data){
-                let contentRow = setDataRow(data);
+                let contentRow = createHTMLRowSbhift(data);
                 let rowHtml = '<tr data-id="'+ data.id +'">' +
                                 contentRow +
                             '</tr>';
                 $('#roster-table tbody').append(rowHtml);
             }
 
-            function setDataRow(data){
+            /**
+             * Function create html row shift
+             * @param {number} id - id raw shift
+             */
+            function createHTMLRowSbhift(data){
                 const type = USER_TYPE;
                 return '<td class="shift_start shift_finish">' + data.shift_start + '-' + data.shift_finish + '</td>' +
                     '<td class="type">' + type[data.type] + '</td>' +
@@ -208,7 +223,10 @@
 
             // change roster_start date => update roster_end date
             // update order of date of week in roster table
-            $("body").on('change', "[name='roster_start']", () => {
+            $('body').on('changeDate', '.datetimepicker-input', function(){
+                alert('oke');
+            })
+            $('body').on('change', '[name="roster_start"]', function(){
                 let dayStart = new Date($(this).val());
                 // end date = start date + 7
                 $('[name="roster_end"]').val(moment(dayStart).add(7, 'days').format('DD-MM-YYYY'));
@@ -250,7 +268,7 @@
 
                 btnDelRowEle.css('display', 'block');
                 btnDelRowEle.attr('data-id', id);
-                setData(id);
+                setDataPopupShift(id);
             });
 
             // click add new shift => show create new shift popup
@@ -282,7 +300,7 @@
                     localStorage.setItem('dataRoster', JSON.stringify([...dataRoster]));
                     let assignRow = $('#roster-table tbody tr[data-id="'+ id +'"]');
                     assignRow.attr('data-id', objData.id);
-                    let contentRow = setDataRow(objData);
+                    let contentRow = createHTMLRowSbhift(objData);
                     assignRow.html(contentRow);
                 }
                 $('#create-row-shift').modal('hide');

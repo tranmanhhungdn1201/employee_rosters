@@ -1,3 +1,6 @@
+<?php
+  $disabled = $roster->status === Config::get('constants.status_roster.CLOSE') ? true : false;
+?>
 <div class="modal fade" id="shift-modal" tabindex="-1" role="dialog" aria-labelledby="shift-modal." aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -8,11 +11,11 @@
           </div>
           <div class="form-group row">
             <label class="col-4">Số lượng:</label>
-            <input type="number" class="form-control col-4 amount" value="2" name=""/>
+            <input type="number" class="form-control col-4 amount" value="2" name="" disable="{{$disabled}}"/>
           </div>
           <div class="form-group row">
             <label class="col-4">Trạng thái:</label>
-            <select name="status" class="form-control status col-4">
+            <select name="status" class="form-control status col-4" disable="{{$disabled}}">
               <option value="1">Trống</option>
               <option value="2">Đầy</option>
               <option value="3">Khóa</option>
@@ -37,7 +40,9 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" id="btn-save-shift">Lưu</button>
+        @if(empty($disabled))
+          <button type="button" class="btn btn-primary" id="btn-save-shift">Lưu</button>
+        @endif
         <button type="button" class="btn btn-dark" data-dismiss="modal">Đóng</button>
       </div>
     </div>

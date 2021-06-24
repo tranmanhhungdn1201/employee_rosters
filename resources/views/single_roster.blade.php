@@ -1,6 +1,9 @@
 @extends('master')
 @include('header')
 @section('content')
+<?php
+  $disabled = $roster->status === Config::get('constants.status_roster.CLOSE') ? true : false;
+?>
 <div class="row mx-0">
     <div class="card">
         <div class="card-header">
@@ -95,21 +98,21 @@
                                         $bgColor = '';
                                 }
                             ?>
-                            <a href="#"><span class="xxx {{'badge ' . $bgColor}}">{{$roster->status_name}}</span></a>
+                            <a href="#"><span class="{{'badge ' . $bgColor}}">{{$roster->status_name}}</span></a>
                         </div>
                     </div>
                 </div>
             </div>
 
-            @if(auth()->user()->isAdmin() || (auth()->user()->isManager() && auth()->user()->id === $roster->user_created_id))
-            <div class="row mb-3">
-                <div class="col-12">
-                <button class="btn btn-success" id="add-row">
-                    <i class="fas fa-plus"></i>
-                    Thêm ca làm việc
-                </button>
+            @if(empty($disabled) && (auth()->user()->isAdmin() || $roster->isAuthor()))
+                <div class="row mb-3">
+                    <div class="col-12">
+                    <button class="btn btn-success" id="add-row">
+                        <i class="fas fa-plus"></i>
+                        Thêm ca làm việc
+                    </button>
+                    </div>
                 </div>
-            </div>
             @endif
 
             <div class="table-responsive">
@@ -131,7 +134,7 @@
                         @if (is_array($shifts))
                             @foreach($shifts as $key => $shift)
                             <tr data-shift="{{ $shift[0] }}">
-                                <td class="shift-row shift_start shift_finish"><div class="table-roster__time">{{ $key }}</div></td>
+                                <td class="shift-row shift_start shift_finish"><div class="table-roster__time">{{ date('H:i', strtotime($shift[0]->time_start)) .' - '. date('H:i', strtotime($shift[0]->time_finish))}}</div></td>
                                 <td class="shift-row type"><div class="table-roster__type">{{ $shift[0]->user_type_name }}</div></td>
                                 @foreach($shift as $indexDay => $day)
                                     <?php
@@ -180,9 +183,6 @@
                 </table>
             </div>
         </div>
-        <div class="card-footer text-center">
-            <button class="btn btn-success btn-submit" id="btn-submit">Lưu</button>
-        </div>
     </div>
 </div>
 @include('modal.shift-time')
@@ -208,6 +208,7 @@
 
         const isStaff = "{{ auth()->user()->isStaff() }}";
         const isAuthor = "{{ $roster->isAuthor() }}";
+        const isClosed = "{{ $disabled }}";
         let dayStart = new Date("{{$roster->day_start}}");
         let dayWeekStart = dayStart.getDay();
         if(dayStart && dayWeekStart){
@@ -353,7 +354,7 @@
         }
 
         $('.shift-row').on('click', function(){
-            if(isStaff || !isAuthor) return;
+            if(!isAuthor || isClosed) return;
             $('#shift-time-modal').modal('show');
             let data = JSON.parse($(this).closest('tr').attr('data-shift'));
             $('#shift-time-modal #shift-time-form').find('[name="shift_time"]').val(data.time_start + ' - ' + data.time_finish);
@@ -388,6 +389,7 @@
             }
             return $.ajax(options);
         }
+
         //add-shift
         $('#add-row').click(function(){
             $('#create-row-shift').modal('show');
@@ -395,7 +397,7 @@
             $('#btn-del-row').css('display', 'none');
         });
 
-        //add new row
+        //add new shift row
         $('#btn-add-row').click(function(){
             let data = $('#create-row-shift #shift-form').serializeArray();
             let objData = arrDataToObject(data);
@@ -420,7 +422,6 @@
                 }
             }
             $.ajax(options);
-
         });
 
         //add new row
@@ -450,7 +451,7 @@
         });
 
         $('.shift-date').not( ".btn-edit-shift").on('click', function(){
-            if(!isStaff) return;
+            if(!isStaff || isClosed) return;
             let idShift = $(this).attr('data-id');
             if(!idShift) return;
             let isRegistered = $(this).attr('data-state');
