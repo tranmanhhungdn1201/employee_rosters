@@ -134,21 +134,6 @@
                 sideBySide: true,
             });
 
-            /**** set dat to session storage ****/
-
-            // TODO: update name data
-            $("[name='roster_start']").trigger("change");
-            const dataCopy = {!! json_encode($data) !!};
-            if(dataCopy) {
-                let data = formatDataRoster(dataCopy);
-                localStorage.setItem('dataRoster', JSON.stringify(data));
-                data.forEach(function(item) {
-                    addRowHtml(item);
-                })
-            } else {
-                localStorage.setItem('dataRoster', "[]");
-            }
-
             /**** Define function ****/
 
             /**
@@ -208,13 +193,13 @@
 
             // change roster_start date => update roster_end date
             // update order of date of week in roster table
-            $("body").on('change', "[name='roster_start']", () => {
-                let dayStart = new Date($(this).val());
+            $('#roster_start').on("change.datetimepicker", ({date, oldDate}) => { // date: moment object          
+                let dayStart = moment($('[name="roster_start"]').val(), 'DD-MM-YYYY');
                 // end date = start date + 7
-                $('[name="roster_end"]').val(moment(dayStart).add(7, 'days').format('DD-MM-YYYY'));
+                $('[name="roster_end"]').val(dayStart.add(7, 'days').format('DD-MM-YYYY'));
 
-                let colDateEles = $('#roster-table.thead>th').splice(2); 
-                let dayWeekBegin = dayStart.getDay();
+                let colDateEles = $('#roster-table>thead>tr>th').splice(2); 
+                let dayWeekBegin = dayStart.day();
                 const DATE_OF_WEEK = {
                         0: 'Chủ nhật',
                         1: 'Thứ 2',
@@ -234,7 +219,6 @@
                         dayWeekBegin = 0;
                     }
                 }
-                
             });
 
             // click row => show edit shift popup
@@ -350,6 +334,23 @@
                 }
                 $.ajax(options);
             });
+
+            /**** initial process ****/
+
+            // defautl start date is current date
+            // => trigger to change end date and roster column's names
+            $('[name="roster_start"]').trigger('change');
+            // TODO: update name data
+            const dataCopy = {!! json_encode($data) !!};
+            if(dataCopy) {
+                let data = formatDataRoster(dataCopy);
+                localStorage.setItem('dataRoster', JSON.stringify(data));
+                data.forEach(function(item) {
+                    addRowHtml(item);
+                })
+            } else {
+                localStorage.setItem('dataRoster', "[]");
+            }
         });
 </script>
 @endsection
