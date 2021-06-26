@@ -29,15 +29,8 @@ class UserController extends Controller
                     return redirect()->intended('/');
                 default:
                     $branchId = auth()->user()->branch_id;
-                    $this->checkAllRoster();
-                    $roster = Roster::where('branch_id', $branchId)
-                                    ->where('status', Config::get('constants.status_roster.OPEN'))
-                                    ->orderBy('created_at', 'desc')->first();
-                    if(empty($roster)){
-                        return view('noti')->with('content', 'Chưa có lịch đăng ký');
-                    }
 
-                    return redirect()->route('singleRoster', $roster->id);
+                    return redirect()->route('listRoster', $branchId);
             }
         }
         return back()->withErrors(['login' => ['Fail']]);

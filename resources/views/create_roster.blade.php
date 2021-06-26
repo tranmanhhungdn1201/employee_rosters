@@ -9,94 +9,96 @@
                 Tạo bảng phân công
             </div>
         </div>
-        <div class="card-body">
-            <div class="row mb-md-2">
-                <div class="col-md-6 pr-lg-4 pr-xl-5">
-                    <div class="form-group row no-gutters">
-                        <label for="roster_start" class="col-xl-4 col-form-label"><span class="text-danger">*</span>&nbsp;Ngày bắt đầu</label>
-                        <div class="col-xl-8">
-                            <div class="input-group date" id="roster_start" data-target-input="nearest">
-                                <input type="text" placeholder="dd-mm-yyyy" class="form-control datetimepicker-input" name="roster_start" data-target="#roster_start" data-toggle="datetimepicker" value="<?php echo date('d-m-Y', strtotime(date('Y-m-d'))); ?>">
-                                <div class="input-group-append">
-                                    <button class="btn btn-primary" type="button" data-target="#roster_start" data-toggle="datetimepicker"><i class="fas fa-calendar-alt"></i></button>
+        <form id="form-create-roster">
+            <div class="card-body">
+                <div class="row mb-md-2">
+                    <div class="col-md-6 pr-lg-4 pr-xl-5">
+                        <div class="form-group row no-gutters">
+                            <label for="roster_start" class="col-xl-4 col-form-label"><span class="text-danger">*</span>&nbsp;Ngày bắt đầu</label>
+                            <div class="col-xl-8">
+                                <div class="input-group date" id="roster_start" data-target-input="nearest">
+                                    <input type="text" placeholder="dd-mm-yyyy" class="form-control datetimepicker-input" name="roster_start" data-target="#roster_start" data-toggle="datetimepicker" value="<?php echo date('d-m-Y', strtotime(date('Y-m-d'))); ?>" required pattern="^\d{2}-\d{2}-\d{4}$$">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary" type="button" data-target="#roster_start" data-toggle="datetimepicker"><i class="fas fa-calendar-alt"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 pl-lg-4 pl-xl-5">
+                        <div class="form-group row no-gutters">
+                            <label for="roster_end" class="col-xl-4 col-form-label"><span class="text-danger">*</span>&nbsp;Ngày kết thúc</label>
+                            <div class="col-xl-8">
+                                <div class="input-group date" id="roster_end">
+                                    <input type="text" placeholder="dd-mm-yyyy" class="form-control" name="roster_end" value="<?php echo date('d-m-Y', strtotime(date('Y-m-d'). ' + 7 days')); ?>" disabled/>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 pl-lg-4 pl-xl-5">
-                    <div class="form-group row no-gutters">
-                        <label for="roster_end" class="col-xl-4 col-form-label"><span class="text-danger">*</span>&nbsp;Ngày kết thúc</label>
-                        <div class="col-xl-8">
-                            <div class="input-group date" id="roster_end">
-                                <input type="text" placeholder="dd-mm-yyyy" class="form-control" name="roster_end" value="<?php echo date('d-m-Y', strtotime(date('Y-m-d'). ' + 7 days')); ?>" disabled/>
+
+                <div class="row mb-md-2">
+                    <div class="col-md-6 pr-lg-4 pr-xl-5">
+                        <div class="form-group row no-gutters">
+                            <label for="roster_begin" class="col-xl-4 col-form-label"><span class="text-danger">*</span>&nbsp;Ngày giờ mở đăng kí</label>
+                            <div class="col-xl-8">
+                                <div class="input-group date" id="roster_begin" data-target-input="nearest">
+                                    <input type="text" placeholder="dd-mm-yyyy hh:mm" class="form-control datetimepicker-input" name="roster_begin" data-target="#roster_begin" data-toggle="datetimepicker" required pattern="^\d{2}-\d{2}-\d{4} \d\d:\d\d$">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary" type="button" data-target="#roster_begin" data-toggle="datetimepicker"><i class="fas fa-calendar-alt"></i></button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="row mb-md-2">
-                <div class="col-md-6 pr-lg-4 pr-xl-5">
-                    <div class="form-group row no-gutters">
-                        <label for="roster_begin" class="col-xl-4 col-form-label"><span class="text-danger">*</span>&nbsp;Ngày giờ mở đăng kí</label>
-                        <div class="col-xl-8">
-                            <div class="input-group date" id="roster_begin" data-target-input="nearest">
-                                <input type="text" placeholder="dd-mm-yyyy hh:mm" class="form-control datetimepicker-input" name="roster_begin" data-target="#roster_begin" data-toggle="datetimepicker">
-                                <div class="input-group-append">
-                                    <button class="btn btn-primary" type="button" data-target="#roster_begin" data-toggle="datetimepicker"><i class="fas fa-calendar-alt"></i></button>
+                    
+                    <div class="col-md-6 pl-lg-4 pl-xl-5">
+                        <div class="form-group row no-gutters">
+                            <label for="roster_close" class="col-xl-4 col-form-label"><span class="text-danger">*</span>&nbsp;Ngày giờ đóng đăng kí</label>
+                            <div class="col-xl-8">
+                                <div class="input-group date" id="roster_close" data-target-input="nearest">
+                                    <input type="text" placeholder="dd-mm-yyyy hh:mm" class="form-control datetimepicker-input" name="roster_close" data-target="#roster_close" data-toggle="datetimepicker" required pattern="^\d{2}-\d{2}-\d{4} \d\d:\d\d$">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary" type="button" data-target="#roster_close" data-toggle="datetimepicker"><i class="fas fa-calendar-alt"></i></button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                
-                <div class="col-md-6 pl-lg-4 pl-xl-5">
-                    <div class="form-group row no-gutters">
-                        <label for="roster_close" class="col-xl-4 col-form-label"><span class="text-danger">*</span>&nbsp;Ngày giờ đóng đăng kí</label>
-                        <div class="col-xl-8">
-                            <div class="input-group date" id="roster_close" data-target-input="nearest">
-                                <input type="text" placeholder="dd-mm-yyyy hh:mm" class="form-control datetimepicker-input" name="roster_close" data-target="#roster_close" data-toggle="datetimepicker">
-                                <div class="input-group-append">
-                                    <button class="btn btn-primary" type="button" data-target="#roster_close" data-toggle="datetimepicker"><i class="fas fa-calendar-alt"></i></button>
-                                </div>
-                            </div>
-                        </div>
+
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <button type="button" class="btn btn-success" id="add-row">
+                            <i class="fas fa-plus"></i>
+                            Thêm ca làm việc
+                        </button>
                     </div>
                 </div>
-            </div>
 
-            <div class="row mb-3">
-                <div class="col-12">
-                    <button class="btn btn-success" id="add-row">
-                        <i class="fas fa-plus"></i>
-                        Thêm ca làm việc
-                    </button>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover table-roster" id="roster-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Thời gian</th>
+                                <th scope="col">Bộ phận</th>
+                                <th scope="col">Thứ 2</th>
+                                <th scope="col">Thứ 3</th>
+                                <th scope="col">Thứ 4</th>
+                                <th scope="col">Thứ 5</th>
+                                <th scope="col">Thứ 6</th>
+                                <th scope="col">Thứ 7</th>
+                                <th scope="col">Chủ nhật</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
                 </div>
             </div>
-
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover table-roster" id="roster-table">
-                    <thead>
-                        <tr>
-                            <th scope="col">Thời gian</th>
-                            <th scope="col">Bộ phận</th>
-                            <th scope="col">Thứ 2</th>
-                            <th scope="col">Thứ 3</th>
-                            <th scope="col">Thứ 4</th>
-                            <th scope="col">Thứ 5</th>
-                            <th scope="col">Thứ 6</th>
-                            <th scope="col">Thứ 7</th>
-                            <th scope="col">Chủ nhật</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+            <div class="card-footer text-center">
+                <button type="submit" class="btn btn-success" id="btn-submit">Lưu</button>
             </div>
-        </div>
-        <div class="card-footer text-center">
-            <button class="btn btn-success btn-submit" id="btn-submit">Lưu</button>
-        </div>
+        </form>
     </div>
 </div>
 @include('modal.create-row-shift');
@@ -118,11 +120,6 @@
                 format: 'DD-MM-YYYY',
                 locale: 'vi',
             })
-
-            //TODO: error
-            // $('#roster_start').datetimepicker().on('change',function(e){
-            //     console.log(e)
-            // })
 
             // opened date of roster registration
             $('#roster_begin').datetimepicker({
@@ -264,7 +261,10 @@
 
             // click save new shift => add new row to roster table
             // save shift info to local storage
-            $('#btn-add-row').click(function(){
+            $('#btn-add-row').click(function(e){
+                //check validate form
+                if (!checkValidateHTML('shift-form'))  return;
+                e.preventDefault();
                 let typeAction = $(this).attr('data-type');
                 let data = $('#shift-form').serializeArray();
                 let objData = arrDataToObject(data);
@@ -302,10 +302,20 @@
             });
 
             // Save roster into DB
-            $('#btn-submit').click(function(){
+            $('#btn-submit').click(function(e){
+                if(!checkValidateHTML('form-create-roster')) {
+                    // e.preventDefault();
+                    return;
+                }
+                e.preventDefault();
+                loading('show');
                 const url = "{{ route('createRoster') }}";
                 const dataRoster = JSON.parse(localStorage.getItem('dataRoster'));
-                if(!dataRoster)    return;
+                if(dataRoster.length === 0){
+                    loading('hide');
+                    toastr.info('Chưa có ca làm việc!');
+                    return;
+                };
 
                 // format date to YYYY-MM-DD
                 let timeStart = $('[name="roster_start"]').val();
@@ -335,19 +345,28 @@
                     url: url,
                     method: 'POST',
                     data: data,
-                    success: (res) => {
-                        if(res.Status === 'Success' && res.rosterID) {
-                            let urlRoster = "{{ route('singleRoster', ':id') }}";
-                            urlRoster = urlRoster.replace(':id', res.rosterID);
-                            location.href = urlRoster;
-                        }
-                        console.log(res);
-                    },
                     error: (res) => {
+                        loading('hide');
+                        toastr.error('Error!');
                         console.error(res.message);
                     }
                 }
-                $.ajax(options);
+                $.ajax(options).then((res) => {
+                    if(res.Status === 'Success') {
+                        loading('hide');
+                        toastr.success(res.Message);
+                        setTimeout(() => {
+                            if(res.Status === 'Success') {
+                                let urlRoster = "{{ route('singleRoster', ':id') }}";
+                                urlRoster = urlRoster.replace(':id', res.rosterID);
+                                location.href = urlRoster;
+                            }
+                        }, 500)
+                    } else {
+                        loading('hide');
+                        toastr.error(res.Message);
+                    }
+                });
             });
 
             /**** initial process ****/

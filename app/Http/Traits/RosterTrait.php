@@ -17,8 +17,9 @@ trait RosterTrait {
     }
 
     public function checkRosterById($id) {
-        $date = Carbon::now()->format('Y-m-d H:i:00');
-        // $date = Carbon::createFromFormat('Y-m-d H:i:s',  '2021-05-05 15:30:00');
+        if(empty($id) || $id === 'undefined') return;
+        $date = Carbon::createFromFormat('Y-m-d H:i:00', date('Y-m-d H:i:00'));
+        
         $roster = Roster::find($id);
         $timeOpen = Carbon::createFromFormat('Y-m-d H:i:s',  $roster->time_open);
         $timeClose = Carbon::createFromFormat('Y-m-d H:i:s',  $roster->time_close);
@@ -27,6 +28,7 @@ trait RosterTrait {
             return false;
         }
         if($timeOpen->greaterThanOrEqualTo($date) || $roster->status !== Config::get('constants.status_roster.OPEN')) {
+            $roster->update(['status' => Config::get('constants.status_roster.OPEN')]);
             return true;
         }
 

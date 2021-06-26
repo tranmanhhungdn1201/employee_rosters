@@ -56,6 +56,9 @@ class RosterController extends Controller
             $buttonView = '<a href="'.route('singleRoster', $data->id) .'" class="btn btn-info btn-sm btn-view"><i class="fas fa-eye"></i></a>';
             $buttonCopy = '&nbsp;<a href="' . route('viewCreateRoster') . '?copy='. $data->id .'" class="btn btn-info btn-sm btn-copy"><i class="fas fa-copy"></i></a>';
             $button = $buttonView . $buttonCopy;
+            if(auth()->user()->isStaff()) {
+                $button = $buttonView;
+            }
             return $button; 
         })
         ->rawColumns(['status_roster', 'action'])
@@ -99,7 +102,7 @@ class RosterController extends Controller
                         'user_type_id' => $shift['type'],
                         'date' => $date,
                         'amount' => $shift['day_' . $i],
-                        'status' => Config::get('constants.status_shift.OPEN'),
+                        'status' => $shift['day_' . $i] === 0 ? Config::get('constants.status_shift.OPEN') : Config::get('constants.status_shift.FULL'), 
                         'user_created_id' => auth()->user()->id, 
                     ];
                     Shift::create($data);

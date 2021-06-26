@@ -11,12 +11,14 @@
                 <img alt="alt text" src="{!! asset('image/roster.svg') !!}">
             </div>
             Bảng phân công
-            <div class="card-header__action">
-                <a href="{{route('viewCreateRoster')}}" class="btn btn-outline-primary btn-export">
-                <i class="fas fa-file-download"></i>
-                Xuất file
-                </a>
-            </div>
+            @if(!auth()->user()->isStaff())
+                <div class="card-header__action">
+                    <a href="{{route('viewCreateRoster')}}" class="btn btn-outline-primary btn-export">
+                    <i class="fas fa-file-download"></i>
+                    Xuất file
+                    </a>
+                </div>
+            @endif
         </div>
         <div class="card-body">
             <div class="row mb-md-2">
