@@ -2,7 +2,7 @@
     <div class="container">
         <nav class="navbar">
             <div class="navbar__brand">
-                <a href="/">Employee Roster</a>
+                <a href="#">Employee Roster</a>
             </div>
             <div class="navbar__overlay"></div>
             <div class="navbar__container">
@@ -56,7 +56,7 @@
                                     <div class="dropdown-menu__header__role">Nhân viên</div>
                                 </div>
                                 <div class="dropdown-menu__header__logout">
-                                    <a class="btn btn-dark btn-radius--50 btn-shadow" href="#">Logout</a>
+                                    <a class="btn btn-dark btn-radius--50 btn-shadow" href="{{route('logout')}}">Logout</a>
                                 </div>
                             </div>
                         </div>
@@ -65,9 +65,11 @@
                                 <li class="dropdown-menu__content__nav__header">
                                     Hoạt động
                                 </li>
+                                @if (!auth()->user()->isStaff())
                                 <li>
                                     <a href="{{ route('setting.index') }}">Cài đặt</a>
                                 </li>
+                                @endif
                                 <li>
                                     <a href="#">Đổi mật khẩu</a>
                                 </li>

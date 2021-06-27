@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Traits\RosterTrait;
 use App\Http\Traits\UserTypeTrait;
 use Illuminate\Http\Request;
 use App\Models\Roster;
@@ -14,7 +15,8 @@ use Datatables;
 
 class RosterController extends Controller
 {
-    use UserTypeTrait;
+    use UserTypeTrait, RosterTrait;
+
     public function viewCreateRoster(Request $request){
         $userTypes = $this->getUserTypeStaff();
         $copyID = $request['copy'];
@@ -33,7 +35,9 @@ class RosterController extends Controller
     }
 
     public function getListRosterDatatables($branchID){
-        $rosters = Roster::where('branch_id', $branchID)->orderBy('created_at', 'desc')->get();
+        //update all roster
+        $this->checkAllRoster();
+        $rosters = Roster::where('branch_id', $branchID)->get();
         return Datatables::of($rosters)
         ->addColumn('status_roster', function($data){
             switch($data->status){
@@ -56,6 +60,9 @@ class RosterController extends Controller
             $buttonView = '<a href="'.route('singleRoster', $data->id) .'" class="btn btn-info btn-sm btn-view"><i class="fas fa-eye"></i></a>';
             $buttonCopy = '&nbsp;<a href="' . route('viewCreateRoster') . '?copy='. $data->id .'" class="btn btn-info btn-sm btn-copy"><i class="fas fa-copy"></i></a>';
             $button = $buttonView . $buttonCopy;
+            if(auth()->user()->isStaff()) {
+                $button = $buttonView;
+            }
             return $button; 
         })
         ->rawColumns(['status_roster', 'action'])
@@ -99,7 +106,7 @@ class RosterController extends Controller
                         'user_type_id' => $shift['type'],
                         'date' => $date,
                         'amount' => $shift['day_' . $i],
-                        'status' => Config::get('constants.status_shift.OPEN'),
+                        'status' => $shift['day_' . $i] === 0 ? Config::get('constants.status_shift.OPEN') : Config::get('constants.status_shift.FULL'), 
                         'user_created_id' => auth()->user()->id, 
                     ];
                     Shift::create($data);
@@ -129,7 +136,6 @@ class RosterController extends Controller
         $shifts = $this->getDataShift($id);
         $shifts = $this->formatDataShift($shifts);
         $userTypes = $this->getUserTypeStaff();
-
         return response()->view('single_roster', [
             'roster' => $roster,
             'shifts' => $shifts,

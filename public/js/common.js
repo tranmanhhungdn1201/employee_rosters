@@ -47,3 +47,7 @@ function debounce(callback, ms) {
     }, ms || 0);
   };
 }
+
+function checkValidateHTML(formID) {
+  return document.getElementById(formID).checkValidity();
+}

@@ -1,6 +1,9 @@
 @extends('master')
 @include('header')
 @section('content')
+<?php
+  $disabled = $roster->status === Config::get('constants.status_roster.CLOSE') ? true : false;
+?>
 <div class="row mx-0">
     <div class="card">
         <div class="card-header">
@@ -8,12 +11,14 @@
                 <img alt="alt text" src="{!! asset('image/roster.svg') !!}">
             </div>
             Bảng phân công
-            <div class="card-header__action">
-                <a href="{{route('viewCreateRoster')}}" class="btn btn-outline-primary btn-export">
-                <i class="fas fa-file-download"></i>
-                Xuất file
-                </a>
-            </div>
+            @if(!auth()->user()->isStaff())
+                <div class="card-header__action">
+                    <a href="{{route('viewCreateRoster')}}" class="btn btn-outline-primary btn-export">
+                    <i class="fas fa-file-download"></i>
+                    Xuất file
+                    </a>
+                </div>
+            @endif
         </div>
         <div class="card-body">
             <div class="row mb-md-2">
@@ -95,21 +100,21 @@
                                         $bgColor = '';
                                 }
                             ?>
-                            <a href="#"><span class="xxx {{'badge ' . $bgColor}}">{{$roster->status_name}}</span></a>
+                            <a href="#"><span class="{{'badge ' . $bgColor}}">{{$roster->status_name}}</span></a>
                         </div>
                     </div>
                 </div>
             </div>
 
-            @if(auth()->user()->isAdmin() || (auth()->user()->isManager() && auth()->user()->id === $roster->user_created_id))
-            <div class="row mb-3">
-                <div class="col-12">
-                <button class="btn btn-success" id="add-row">
-                    <i class="fas fa-plus"></i>
-                    Thêm ca làm việc
-                </button>
+            @if(empty($disabled) && (auth()->user()->isAdmin() || $roster->isAuthor()))
+                <div class="row mb-3">
+                    <div class="col-12">
+                    <button class="btn btn-success" id="add-row">
+                        <i class="fas fa-plus"></i>
+                        Thêm ca làm việc
+                    </button>
+                    </div>
                 </div>
-            </div>
             @endif
 
             <div class="table-responsive">
@@ -131,7 +136,7 @@
                         @if (is_array($shifts))
                             @foreach($shifts as $key => $shift)
                             <tr data-shift="{{ $shift[0] }}">
-                                <td class="shift-row shift_start shift_finish"><div class="table-roster__time">{{ $key }}</div></td>
+                                <td class="shift-row shift_start shift_finish"><div class="table-roster__time">{{ date('H:i', strtotime($shift[0]->time_start)) .' - '. date('H:i', strtotime($shift[0]->time_finish))}}</div></td>
                                 <td class="shift-row type"><div class="table-roster__type">{{ $shift[0]->user_type_name }}</div></td>
                                 @foreach($shift as $indexDay => $day)
                                     <?php
@@ -180,9 +185,6 @@
                 </table>
             </div>
         </div>
-        <div class="card-footer text-center">
-            <button class="btn btn-success btn-submit" id="btn-submit">Lưu</button>
-        </div>
     </div>
 </div>
 @include('modal.shift-time')
@@ -208,6 +210,7 @@
 
         const isStaff = "{{ auth()->user()->isStaff() }}";
         const isAuthor = "{{ $roster->isAuthor() }}";
+        const isClosed = "{{ $disabled }}";
         let dayStart = new Date("{{$roster->day_start}}");
         let dayWeekStart = dayStart.getDay();
         if(dayStart && dayWeekStart){
@@ -232,10 +235,12 @@
         }
 
         $('.btn-edit-shift').on('click', function(){
+            loading('show');
             const id = $(this).attr('data-id');
             const modeEdit = $(this).attr('data-action') === 'edit' ? true : false;
             if(!id) return;
             getDataShift(id).then(res => {
+                loading('hide');
                 if(res.Status === 'Success'){
                     if(modeEdit) 
                         editModeShiftModal();
@@ -274,7 +279,7 @@
             let date =  weekday === 0 ? `Chủ nhật` : `Thứ ${weekday + 1}`;
             let time =  ` ${data.time_start.slice(0, -3)} - ${data.time_finish.slice(0, -3)}`;
 
-            form.find('.title').text(date + time);
+            $('#shift-modal').find('.title').text(date + time);
             form.find('.amount').val(data.amount);
             form.find('.status').val(data.status);
             $('#btn-save-shift').attr('data-id', data.id);
@@ -302,15 +307,21 @@
         }
 
         $('#btn-save-shift').click(function(){
+            loading('show');
             let amount = $('#shift-form .amount').val();
             let status = $('#shift-form [name="status"]').val();
             let btnSave = $(this);
             let idShift = btnSave.attr('data-id');
             updateAmountShift(idShift, amount, status).then(res => {
-                if(res.Status === 'Success') {
+                loading('hide');
+                if (res.Status === 'Success') {
+                    toastr.success(res.Message);
                     $('#shift-modal').modal('hide');
-                    updateStatusUI(idShift, status);
+                    // updateStatusUI(idShift, status);
+                    updateInfoShift(idShift, status, 0, amount);
                     btnSave.attr('');
+                } else {
+                    toastr.error(res.Message);
                 }
             });
         })
@@ -333,7 +344,7 @@
 
         function updateStatusUI(idShift, status) {
             let shiftClass = 'shift_' + idShift;
-            let newClass = shiftClass + ' text-white';
+            let newClass = shiftClass + ' text-dark';
             switch(status) {
                 case '1':
                     newClass += ' bg-success';
@@ -345,7 +356,7 @@
                     newClass += ' bg-dark';
                     break;
                 default:
-                    newClass += ' text-white';
+                    newClass += ' text-dark';
             }
             let shiftDom = $('.' + shiftClass);
             shiftDom.removeClass();
@@ -353,26 +364,39 @@
         }
 
         $('.shift-row').on('click', function(){
-            if(isStaff || !isAuthor) return;
+            if(!isAuthor || isClosed) return;
             $('#shift-time-modal').modal('show');
             let data = JSON.parse($(this).closest('tr').attr('data-shift'));
             $('#shift-time-modal #shift-time-form').find('[name="shift_time"]').val(data.time_start + ' - ' + data.time_finish);
-            $('#shift-time-modal #shift-time-form').find('[name="shift_start"]').val(data.time_start);
-            $('#shift-time-modal #shift-time-form').find('[name="shift_finish"]').val(data.time_finish);
+            $('#shift-time-modal #shift-time-form').find('[name="shift_start"]').val(data.time_start.slice(0, -3));
+            $('#shift-time-modal #shift-time-form').find('[name="shift_finish"]').val(data.time_finish.slice(0, -3));
             $('#shift-time-modal #shift-time-form').find('[name="type"]').val(data.user_type_id);
             $('#shift-time-modal').find('#btn-del-shift').attr('data-id', data.id);
         });
 
-        $('#btn-save-shift-time').click(function(){
-            let data = $('#shift-time-form').serializeArray();
-            let objData = arrDataToObject(data);
-
-            updateTimeShift(objData).then(res => {
-                if(res.Status === 'Success') {
-                    $('#shift-time-modal').modal('hide');
-                    location.reload();
-                }
-            });
+        $('#btn-save-shift-time').click(function(e){
+            if (checkValidateHTML('shift-time-form')) {
+                e.preventDefault();
+                loading('show');
+                let data = $('#shift-time-form').serializeArray();
+                let objData = arrDataToObject(data);
+                
+                updateTimeShift(objData).then(res => {
+                    if(res.Status === 'Success') {
+                        $('#shift-time-modal').modal('hide');
+                        loading('hide');
+                        toastr.success(res.Message);
+                        setTimeout(() => {
+                            if(res.Status === 'Success') {
+                                location.reload();
+                            }
+                        }, 500)
+                    } else {
+                        loading('hide');
+                        toastr.error(res.Message);
+                    }
+                });
+            }
         });
 
         function updateTimeShift(objData){
@@ -384,43 +408,52 @@
                 data: {
                     _token: $('meta[name="csrf-token"]').attr('content'),
                    ...objData
+                },
+                error: (res) => {
+                    loading('hide');
+                    toastr.error('Error!');
+                    console.error(res.message);
                 }
             }
             return $.ajax(options);
         }
+
         //add-shift
         $('#add-row').click(function(){
+            $('#shift-form').trigger('reset');
             $('#create-row-shift').modal('show');
-            $('#create-row-shift #shift-form input').val(0);
             $('#btn-del-row').css('display', 'none');
         });
 
-        //add new row
-        $('#btn-add-row').click(function(){
-            let data = $('#create-row-shift #shift-form').serializeArray();
-            let objData = arrDataToObject(data);
-            const url = "{{route('addShift')}}";
-            const options = {
-                url,
-                method: 'POST',
-                data: {
-                    _token: $('meta[name="csrf-token"]').attr('content'),
-                    timeStart: '{{$roster->day_start}}',
-                    idRoster: '{{$roster->id}}',
-                   ...objData
-                },
-                success: function(res) {
-                    if(res.Status === 'Success') {
-                        location.reload();
+        //add new shift row
+        $('#btn-add-row').click(function(e){
+            //TODO: error check validate
+            if (checkValidateHTML('shift-form')) {
+                e.preventDefault();
+                let data = $('#create-row-shift #shift-form').serializeArray();
+                let objData = arrDataToObject(data);
+                const url = "{{route('addShift')}}";
+                const options = {
+                    url,
+                    method: 'POST',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        timeStart: '{{$roster->day_start}}',
+                        idRoster: '{{$roster->id}}',
+                    ...objData
+                    },
+                    success: function(res) {
+                        if(res.Status === 'Success') {
+                            // location.reload();
+                        }
+                        $('#create-row-shift').modal('hide');
+                    },
+                    error: function(err) {
+                        console.error(err.message);
                     }
-                    $('#create-row-shift').modal('hide');
-                },
-                error: function(err) {
-                    console.error(err.message);
                 }
+                $.ajax(options);
             }
-            $.ajax(options);
-
         });
 
         //add new row
@@ -449,55 +482,7 @@
 
         });
 
-        $('.shift-date').not( ".btn-edit-shift").on('click', function(){
-            if(!isStaff) return;
-            let idShift = $(this).attr('data-id');
-            if(!idShift) return;
-            let isRegistered = $(this).attr('data-state');
-            if(isRegistered === 'isRegistered') {
-                $('#remove-shift-modal').modal('show');
-                $('#remove-shift').attr('data-id', idShift);
-            } else {
-                $('#register-shift-modal').modal('show');
-                $('#register-shift').attr('data-id', idShift);
-            }
-        })
-
-        $('#register-shift').click(function(){
-            let idShift = $(this).attr('data-id');
-            if(!idShift) return;
-            loading('show');
-            registerShift(idShift).then(function(res){
-                loading('hide');
-            });
-        })
-
-        function registerShift(shiftID) {
-            if(!shiftID) return;
-            let url = "{{route('registerShift', ':id')}}";
-            url = url.replace(':id', shiftID);
-            const options = {
-                url,
-                method: 'GET',
-                success: function(res) {
-                    if(res.Status === 'Success') {
-                        toastr.success(res.Message);
-                        updateInfoShift(res.Data.id, 0, 1);
-                    } else {
-                        updateInfoShift(res.Data.id, res.Data.status, 0);
-                        toastr.error(res.Message);
-                    }
-                    $('#register-shift-modal').modal('hide');
-                },
-                error: function(err) {
-                    toastr.error('Error!');
-                    console.error(err.message);
-                }
-            }
-            return $.ajax(options);
-        }
-
-        function updateInfoShift(id, status, amount) {
+        function updateInfoShift(id, status, amountRegister, amount) {
             let bgColor = {
                 0: 'bg-warning',
                 1: 'bg-success',
@@ -511,41 +496,11 @@
             className = className.replace(/bg-\w+\s/, `${bgColor[status]} `);
             shiftDOM.attr('class', className);
             let text = $('span', shiftDOM).text();
-            text = text.replace(/^\d/, +text[0] + amount);
-            $('span', shiftDOM).text(text);
-        }
-
-        $('#remove-shift').click(function(){
-            let idShift = $(this).attr('data-id');
-            if(!idShift) return;
-            loading('show');
-            removeShift(idShift).then(function(res){
-                loading('hide');
-            });
-        })
-
-        function removeShift(shiftID) {
-            if(!shiftID) return;
-            let url = "{{route('removeShift', ':id')}}";
-            url = url.replace(':id', shiftID);
-            const options = {
-                url,
-                method: 'GET',
-                success: function(res) {
-                    if(res.Status === 'Success') {
-                        toastr.success(res.Message);
-                        updateInfoShift(shiftID, 1, -1);
-                    } else {
-                        toastr.error(res.Message);
-                    }
-                    $('#remove-shift-modal').modal('hide');
-                },
-                error: function(err) {
-                    toastr.error(res.Message);
-                    console.error(err.message);
-                }
+            text = text.replace(/^\d/, +text[0] + amountRegister);
+            if(amount) {
+                text = text.replace(/\d$/, amount);
             }
-            return $.ajax(options);
+            $('span', shiftDOM).text(text);
         }
 
         $('.btn-export').on('click', function () {
@@ -585,6 +540,89 @@
           toastr.error("Lỗi");
         }
       });
+        //Staff's event
+
+        //open modal register
+        $('.shift-date').not( ".btn-edit-shift").on('click', function(){
+            if(!isStaff || isClosed) return;
+            let idShift = $(this).attr('data-id');
+            if(!idShift) return;
+            let isRegistered = $(this).attr('data-state');
+            if(isRegistered === 'isRegistered') {
+                $('#remove-shift-modal').modal('show');
+                $('#remove-shift').attr('data-id', idShift);
+            } else {
+                $('#register-shift-modal').modal('show');
+                $('#register-shift').attr('data-id', idShift);
+            }
+        })
+        
+        $('#register-shift').click(function(){
+            let idShift = $(this).attr('data-id');
+            if(!idShift) return;
+            loading('show');
+            registerShift(idShift).then(function(res){
+                loading('hide');
+            });
+        })
+        
+        function registerShift(shiftID) {
+            if(!shiftID) return;
+            let url = "{{route('registerShift', ':id')}}";
+            url = url.replace(':id', shiftID);
+            const options = {
+                url,
+                method: 'GET',
+                success: function(res) {
+                    if(res.Status === 'Success') {
+                        toastr.success(res.Message);
+                        updateInfoShift(res.Data.id, 0, 1);
+                    } else {
+                        updateInfoShift(res.Data.id, res.Data.status, 0);
+                        toastr.error(res.Message);
+                    }
+                    $('#register-shift-modal').modal('hide');
+                },
+                error: function(err) {
+                    toastr.error('Error!');
+                    console.error(err.message);
+                }
+            }
+            return $.ajax(options);
+        }
+
+        $('#remove-shift').click(function(){
+            let idShift = $(this).attr('data-id');
+            if(!idShift) return;
+            loading('show');
+            removeShift(idShift).then(function(res){
+                loading('hide');
+            });
+        })
+
+        function removeShift(shiftID) {
+            if(!shiftID) return;
+            let url = "{{route('removeShift', ':id')}}";
+            url = url.replace(':id', shiftID);
+            const options = {
+                url,
+                method: 'GET',
+                success: function(res) {
+                    if(res.Status === 'Success') {
+                        toastr.success(res.Message);
+                        updateInfoShift(shiftID, 1, -1);
+                    } else {
+                        toastr.error(res.Message);
+                    }
+                    $('#remove-shift-modal').modal('hide');
+                },
+                error: function(err) {
+                    toastr.error(res.Message);
+                    console.error(err.message);
+                }
+            }
+            return $.ajax(options);
+        }
     });
 </script>
 @endsection

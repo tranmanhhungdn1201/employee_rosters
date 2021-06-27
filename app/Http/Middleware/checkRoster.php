@@ -3,9 +3,11 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use App\Http\Traits\RosterTrait;
 
-class checkLogin
+class checkRoster
 {
+    use RosterTrait;
     /**
      * Handle an incoming request.
      *
@@ -15,10 +17,7 @@ class checkLogin
      */
     public function handle($request, Closure $next)
     {
-        if (\Auth::check())
-        {
-            return $next($request);
-        }
-        return redirect()->route('login');
+        $this->checkRosterById($request->id);
+        return $next($request);
     }
 }

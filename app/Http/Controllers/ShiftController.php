@@ -73,22 +73,39 @@ class ShiftController extends Controller
 
     public function addShift(Request $request) {
         $dataShift = $request->all();
-        for($i = 0; $i < 7; $i++) {
-            $date = Carbon::createFromFormat('Y-m-d',  $dataShift['timeStart'])->addDays($i);
-            $data = [
-                'roster_id' => $dataShift['idRoster'],
-                'time_start' => $dataShift['shift_start'],
-                'time_finish' => $dataShift['shift_finish'],
-                'user_type_id' => $dataShift['type'],
-                'date' => $date,
-                'amount' => $dataShift['day_' . $i],
-                'status' => Config::get('constants.status_shift.OPEN'), 
-            ];
-            Shift::create($data);
+        DB::beginTransaction();
+
+        try {
+            for($i = 0; $i < 7; $i++) {
+                $date = Carbon::createFromFormat('Y-m-d',  $dataShift['timeStart'])->addDays($i);
+                $data = [
+                    'roster_id' => $dataShift['idRoster'],
+                    'time_start' => $dataShift['shift_start'],
+                    'time_finish' => $dataShift['shift_finish'],
+                    'user_type_id' => $dataShift['type'],
+                    'date' => $date,
+                    'amount' => $dataShift['day_' . $i],
+                    'status' => $dataShift['day_' . $i] === 0 ? Config::get('constants.status_shift.OPEN') : Config::get('constants.status_shift.FULL'), 
+                ];
+
+                Shift::create($data);
+            }
+            DB::commit();
+            return response()->json([
+                'Status' => 'Success',
+                'Message' => 'Add shift successfully'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'Status' => 'Fail',
+                'Message' => 'Add shift fail'
+            ]);
         }
+
         return response()->json([
-            'Status' => 'Success',
-            'Message' => 'Add shift successfully'
+            'Status' => 'Fail',
+            'Message' => 'Add shift fail'
         ]);
     }
     
