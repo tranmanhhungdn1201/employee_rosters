@@ -51,11 +51,14 @@
   let url = '{!! route("getListRosterDatatables", ":id") !!}';
   url = url.replace(':id', branchID);
   let table = $('#rosters-table').DataTable({
-      columnDefs: [ {
-        targets: [7],
-        bSort: false,
-        orderable: false,
-      }],
+      columnDefs: [
+        {
+          targets: [6, 7],
+          bSort: false,
+          orderable: false,
+        },
+      ],
+      order: [[ 4, "desc" ]],
       processing: true,
       searching: true,
       lengthChange: false,
@@ -74,6 +77,7 @@
           { data: 'action', name: 'action'}
       ]
   });
+
   $('#search').on('keyup', debounce(function () {
     table.search(this.value).draw();
   }, 300));

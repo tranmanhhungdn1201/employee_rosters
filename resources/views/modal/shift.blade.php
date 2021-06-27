@@ -4,11 +4,14 @@
 <div class="modal fade" id="shift-modal" tabindex="-1" role="dialog" aria-labelledby="shift-modal." aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title title" id="exampleModalLabel">Thông tin ca</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
       <div class="modal-body">
         <form id="shift-form">
-          <div class="form-group">
-            <label class="title"></label>
-          </div>
           <div class="form-group row">
             <label class="col-4">Số lượng:</label>
             <input type="number" class="form-control col-4 amount" value="2" name="" disable="{{$disabled}}"/>
@@ -33,7 +36,6 @@
                 </tr>
               </thead>
               <tbody>
-                
               </tbody>
             </table>
           </div>

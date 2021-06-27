@@ -17,6 +17,17 @@ class UserController extends Controller
     use RosterTrait;
 
     public function login(){
+        if (\Auth::check()) {
+            switch(auth()->user()->user_type_id){
+                case 1:
+                case 2:
+                    return redirect()->intended('/');
+                default:
+                    $branchId = auth()->user()->branch_id;
+
+                    return redirect()->route('listRoster', $branchId);
+            }
+        }
         return view('login');
     }
 

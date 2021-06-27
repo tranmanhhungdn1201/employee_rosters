@@ -91,6 +91,10 @@ class ShiftController extends Controller
                 Shift::create($data);
             }
             DB::commit();
+            return response()->json([
+                'Status' => 'Success',
+                'Message' => 'Add shift successfully'
+            ]);
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json([
@@ -100,8 +104,8 @@ class ShiftController extends Controller
         }
 
         return response()->json([
-            'Status' => 'Success',
-            'Message' => 'Add shift successfully'
+            'Status' => 'Fail',
+            'Message' => 'Add shift fail'
         ]);
     }
     

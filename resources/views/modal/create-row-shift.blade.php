@@ -7,9 +7,8 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form id="shift-form">
+      <form id="shift-form" class="mb-0">
       <div class="modal-body">
-      
           <div class="form-group row">
             <label class="col-4"><span class="text-danger">*</span>&nbsp;Bộ phận</label>
             <div class="col-4">
@@ -81,7 +80,7 @@
           <div class="form-group row">
             <label class="col-4">Chủ nhật</label>
             <div class="col-4">
-              <input type="number" class="form-control" value="0" name="day_6" min="0" max="10">
+              <input type="number" class="form-control" value="0" name="day_6" min="0" max="10" required>
             </div>
           </div>
       </div>
@@ -97,9 +96,6 @@
 
 <script type="text/javascript">
   $(document).ready(function () {
-    $('#create-row-shift').on('shown.bs.modal', function() { 
-       $('#shift-form').trigger('reset');
-    });
     /**** format datepicker ****/
 
     // start time of shift

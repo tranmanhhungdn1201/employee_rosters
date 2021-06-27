@@ -9,7 +9,6 @@ trait RosterTrait {
 
     public function checkAllRoster() {
         $date = Carbon::now()->format('Y-m-d H:i:00');
-        // $date = Carbon::createFromFormat('Y-m-d H:i:s',  '2021-05-05 15:30:00');
         Roster::where('time_open', '>=', $date)->where('status', '=', Config::get('constants.status_roster.PENDING'))->update(['status' => Config::get('constants.status_roster.OPEN')]);
         Roster::where('time_close', '<=', $date)->where('status', '=', Config::get('constants.status_roster.OPEN'))->update(['status' => Config::get('constants.status_roster.CLOSE')]);
 

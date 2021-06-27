@@ -9,7 +9,7 @@
                 Tạo bảng phân công
             </div>
         </div>
-        <form id="form-create-roster">
+        <form id="form-create-roster" class="mb-0">
             <div class="card-body">
                 <div class="row mb-md-2">
                     <div class="col-md-6 pr-lg-4 pr-xl-5">
@@ -252,8 +252,8 @@
             // click add new shift => show create new shift popup
             $('#add-row').click(function() {
                 let btnSaveShiftEle = $('#btn-add-row');
+                $('#shift-form').trigger('reset');
                 $('#create-row-shift').modal('show');
-                $('#shift-form').find('input').val(0);
                 btnSaveShiftEle.attr('data-id','');
                 btnSaveShiftEle.attr('data-type', '');
                 $('#btn-del-row').css('display', 'none');
@@ -263,7 +263,7 @@
             // save shift info to local storage
             $('#btn-add-row').click(function(e){
                 //check validate form
-                if (!checkValidateHTML('shift-form'))  return;
+                if (!checkValidateHTML('shift-form')) return;
                 e.preventDefault();
                 let typeAction = $(this).attr('data-type');
                 let data = $('#shift-form').serializeArray();
