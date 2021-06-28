@@ -263,4 +263,26 @@ class RosterController extends Controller
         }
         return $this;
     }
+
+    public function updateTimeRegister(Request $request) {
+        $data = [
+            'time_open' => Carbon::createFromFormat('d-m-Y H:i', $request['timeBegin']),
+            'time_close' => Carbon::createFromFormat('d-m-Y H:i', $request['timeClose']),
+        ];
+        $idRoster = $request['idRoster'];
+        $roster = Roster::find($idRoster)->update($data);
+        if(empty($roster)) {
+            return response()->json([
+                'Status' => 'Fail',
+                'Message' => 'Update time fail',
+            ]);
+        }
+        $status = $this->checkRosterById($idRoster);
+
+        return response()->json([
+            'Status' => 'Success',
+            'Message' => 'Update time successfully',
+            'statusRoster' => $status
+        ]);
+    }
 }

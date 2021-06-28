@@ -27,6 +27,7 @@ Route::group(['middleware' => 'checkLogin'], function() {
         //rosters
         Route::get('/create','RosterController@viewCreateRoster')->name('viewCreateRoster');
         Route::post('/rosters','RosterController@createRoster')->name('createRoster');
+        Route::post('/rosters/update-time-register','RosterController@updateTimeRegister')->name('updateTimeRegister');
         Route::get('/rosters/{id}/export','RosterController@exportRoster')->name('exportRoster');
 
         //users

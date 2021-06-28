@@ -134,8 +134,8 @@ class ShiftController extends Controller
     public function registerShift(Request $request, $id) {
         $shift = Shift::find($id);
         $idUser = auth()->user()->id;
-        $isExpireRoster = $this->checkRosterById($shift->roster_id);
-        if(!$isExpireRoster)
+        $status = $this->checkRosterById($shift->roster_id);
+        if($status !== Config::get('constants.status_roster.OPEN'))
             return response()->json([
                 'Status' => 'Fail',
                 'Message' => 'Roster is expire!'
