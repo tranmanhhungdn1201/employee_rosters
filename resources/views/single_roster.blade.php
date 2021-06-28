@@ -167,8 +167,6 @@
                                             <div class="table-roster__cell__action">
                                                 @if(auth()->user()->isAdmin() || (auth()->user()->isManager() && auth()->user()->id === $roster->user_created_id))
                                                 <a href="#" data-action="edit" class="btn-edit-shift" data-id="{{$day->id}}"><i class="fas fa-pencil-alt"></i></a>
-                                                @else
-                                                {{-- <a href="#" data-action="view" class="btn-edit-shift" data-id="{{$day->id}}"><i class="far fa-eye"></i></a> --}}
                                                 @endif
                                             </div>
                                         </div>
@@ -194,6 +192,15 @@
 @include('modal.remove-shift')
 <script type="text/javascript">
     $(document).ready(function () {
+        const DATE = {
+            0: 'Chủ nhật',
+            1: 'Thứ 2',
+            2: 'Thứ 3',
+            3: 'Thứ 4',
+            4: 'Thứ 5',
+            5: 'Thứ 6',
+            6: 'Thứ 7',
+        };
         // opened date of roster registration
         $('#roster_begin').datetimepicker({
           locale: "vi",
@@ -215,15 +222,6 @@
         let dayWeekStart = dayStart.getDay();
         if(dayStart && dayWeekStart){
             let colDateEles =  $('#roster-table th').splice(2);
-            const DATE = {
-               0: 'Chủ nhật',
-               1: 'Thứ 2',
-               2: 'Thứ 3',
-               3: 'Thứ 4',
-               4: 'Thứ 5',
-               5: 'Thứ 6',
-               6: 'Thứ 7',
-            };
             let dayWeekBegin = dayWeekStart;
             for(let col of colDateEles){
                 $(col).text(DATE[dayWeekBegin]);
@@ -296,7 +294,7 @@
                         `<th scope="row">${i + 1}</th>`+
                         `<td>${userShift[i].user.first_name}</td>`+
                         `<td>${userShift[i].created_at ? userShift[i].created_at : ''}</td>`+
-                        `<td></td>`+
+                        `<td>${userShift[i].note??''}</td>`+
                         '</tr>';
                     console.log(content);
                 }
@@ -546,8 +544,13 @@
         $('.shift-date').not( ".btn-edit-shift").on('click', function(){
             if(!isStaff || isClosed) return;
             let idShift = $(this).attr('data-id');
+            let timeShift = getTimeShift(this);
             if(!idShift) return;
             let isRegistered = $(this).attr('data-state');
+            let inputDOM = $('#form-register').find('input');
+            inputDOM.val('');
+            //add text
+            $('.form-register').find('span').text(timeShift);
             if(isRegistered === 'isRegistered') {
                 $('#remove-shift-modal').modal('show');
                 $('#remove-shift').attr('data-id', idShift);
@@ -556,6 +559,15 @@
                 $('#register-shift').attr('data-id', idShift);
             }
         })
+
+        function getTimeShift(cursor){
+            let dayWeek = $(cursor).attr('class').match(/day_\d/)[0].slice(-1);
+            let dataStr = $(cursor).closest('tr').attr('data-shift');
+            if(!dataStr ||!dayWeek) return;
+            let data = JSON.parse(dataStr);
+            dayWeek = dayWeek === '6' ? 0 : +dayWeek + 1;
+            return `${DATE[dayWeek]} (${data.time_start.slice(0, -3)} - ${data.time_finish.slice(0, -3)})`;
+        }
         
         $('#register-shift').click(function(){
             let idShift = $(this).attr('data-id');
@@ -570,9 +582,11 @@
             if(!shiftID) return;
             let url = "{{route('registerShift', ':id')}}";
             url = url.replace(':id', shiftID);
+            let note = $('#form-register').find('[name=note]');
             const options = {
                 url,
                 method: 'GET',
+                data: note,
                 success: function(res) {
                     if(res.Status === 'Success') {
                         toastr.success(res.Message);
@@ -584,6 +598,7 @@
                     $('#register-shift-modal').modal('hide');
                 },
                 error: function(err) {
+                    loading('hide');
                     toastr.error('Error!');
                     console.error(err.message);
                 }

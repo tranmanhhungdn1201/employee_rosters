@@ -8,7 +8,12 @@
         </button>
       </div>
       <div class="modal-body">
-        <p>Bạn muốn đăng ký ca?</p>
+        <form class="form-register">
+          <div class="col-md-12 text-center">
+            <p>Bạn muốn đăng ký ca <span class="font-weight-bold"></span>?</p>
+            <input type="text" class="form-control" name="note" placeholder="Ghi chú">
+          </div>
+        </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" id="register-shift">Đăng ký</button>

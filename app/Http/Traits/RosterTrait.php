@@ -26,7 +26,7 @@ trait RosterTrait {
             $roster->update(['status' => Config::get('constants.status_roster.CLOSE')]);
             return false;
         }
-        if($timeOpen->greaterThanOrEqualTo($date) || $roster->status !== Config::get('constants.status_roster.OPEN')) {
+        if($timeOpen->greaterThanOrEqualTo($date) && $roster->status === Config::get('constants.status_roster.PENDING')) {
             $roster->update(['status' => Config::get('constants.status_roster.OPEN')]);
             return true;
         }

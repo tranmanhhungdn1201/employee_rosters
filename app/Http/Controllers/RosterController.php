@@ -106,7 +106,7 @@ class RosterController extends Controller
                         'user_type_id' => $shift['type'],
                         'date' => $date,
                         'amount' => $shift['day_' . $i],
-                        'status' => $shift['day_' . $i] === 0 ? Config::get('constants.status_shift.OPEN') : Config::get('constants.status_shift.FULL'), 
+                        'status' => $shift['day_' . $i] === 0 ? Config::get('constants.status_shift.FULL') : Config::get('constants.status_shift.OPEN'), 
                         'user_created_id' => auth()->user()->id, 
                     ];
                     Shift::create($data);
@@ -129,14 +129,20 @@ class RosterController extends Controller
         ]);
     }
 
-    public function singleRoster($id){
+    public function singleRoster(Request $request, $id){
+        
         if(empty($id)) return;
         $roster = Roster::find($id);
         if(empty($roster)) return redirect()->back();
         $shifts = $this->getDataShift($id);
         $shifts = $this->formatDataShift($shifts);
         $userTypes = $this->getUserTypeStaff();
-        return response()->view('single_roster', [
+        $view = 'single_roster';
+        $requestQuery = $request->query();
+        if(isset($requestQuery['edit_view']) && $requestQuery['edit_view'] === 'true') {
+            $view = 'singleRosterAdmin';
+        }
+        return response()->view($view, [
             'roster' => $roster,
             'shifts' => $shifts,
             'userTypes' => $userTypes,
