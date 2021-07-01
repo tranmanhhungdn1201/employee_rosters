@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Roster;
 use App\Models\UserType;
 use App\Models\Shift;
+use App\Models\User;
 use Config;
 use Carbon\Carbon;
 use DB;
@@ -130,32 +131,37 @@ class RosterController extends Controller
     }
 
     public function singleRoster(Request $request, $id){
-        
         if(empty($id)) return;
         $roster = Roster::find($id);
         if(empty($roster)) return redirect()->back();
         $shifts = $this->getDataShift($id);
         $shifts = $this->formatDataShift($shifts);
         $userTypes = $this->getUserTypeStaff();
+        $staffs = null;
         $view = 'single_roster';
         $requestQuery = $request->query();
         if(isset($requestQuery['edit_view']) && $requestQuery['edit_view'] === 'true') {
+            $branchID = auth()->user()->branch_id;
+            $staffs = User::whereNotIn('user_type_id', [1, 2])->with(['user_type' => function($query) use ($branchID) {
+                $query->where('branch_id', $branchID);
+            }])->get();
             $view = 'singleRosterAdmin';
         }
         return response()->view($view, [
             'roster' => $roster,
             'shifts' => $shifts,
             'userTypes' => $userTypes,
+            'staffs' => $staffs,
         ]);
     }
 
     public function getDataShift($rosterId){
         if(empty($rosterId)) return;
-        $shifts = Shift::withCount('userShifts')
-        ->where('roster_id', $rosterId)
-        ->orderBy('time_start', 'asc')
-        ->orderBy('date', 'asc')
-        ->get();
+        $shifts = Shift::withCount('userShifts')->with('userShifts.user')
+            ->where('roster_id', $rosterId)
+            ->orderBy('time_start', 'asc')
+            ->orderBy('date', 'asc')
+            ->get();
         return $shifts;
     }
 

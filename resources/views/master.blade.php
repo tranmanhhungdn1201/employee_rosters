@@ -24,9 +24,11 @@
         <!-- Custom -->
         <link rel="stylesheet" href="{!! asset('css/app.css') !!}">
         <link rel="stylesheet" href="{!! asset('css/common.css') !!}">
-
         <!-- Jquery  -->
         <script src="{!! asset('js/jquery-3.6.0.min.js') !!}"></script>
+        <!-- Select2  -->
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
         <!-- Poper  -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
         <!-- Bootstrap  -->
@@ -51,6 +53,7 @@
 
     </head>
 <body>
+@include('header')
 <main class="site-main container">
   @yield('content')
 </main>

@@ -11,10 +11,21 @@ trait RosterTrait {
         $date = Carbon::now()->format('Y-m-d H:i:00');
         //open
         Roster::where(function($query) use ($date) {
-            $query->whereBetween($date, [$query->time_open, $query->time_close])->where('status', Config::get('constants.status_roster.OPEN'))->update(['status' => Config::get('constants.status_roster.OPEN')]);
+            //open
+            $query->where('time_close', '>=', $date)
+            ->where('time_open', '<=', $date)
+            ->where('status', Config::get('constants.status_roster.OPEN'))
+            ->update(['status' => Config::get('constants.status_roster.OPEN')]);
+            //close
+            $query->where('time_close', '<=', $date)
+            ->where('status', Config::get('constants.status_roster.CLOSE'))
+            ->update(['status' => Config::get('constants.status_roster.CLOSE')]);
+            //pending
+            $query->where('time_open', '>=', $date)
+            ->where('time_close', '<=', $date)
+            ->where('status', Config::get('constants.status_roster.PENDING'))
+            ->update(['status' => Config::get('constants.status_roster.PENDING')]);
         });
-        // Roster::where('time_open', '>=', $date)->where('status', '=', Config::get('constants.status_roster.PENDING'))->update(['status' => Config::get('constants.status_roster.OPEN')]);
-        // Roster::where('time_close', '<=', $date)->where('status', '=', Config::get('constants.status_roster.OPEN'))->update(['status' => Config::get('constants.status_roster.CLOSE')]);
 
         return true;
     }

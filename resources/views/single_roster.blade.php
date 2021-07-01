@@ -20,7 +20,7 @@
                 </div>
             @endif
         </div>
-        <form id="form-update">
+        <form id="form-update" class="mb-0">
             <div class="card-body">
                 <div class="row mb-md-2">
                     <div class="col-md-6 pr-lg-4 pr-xl-5">
@@ -110,7 +110,7 @@
                 @if(empty($disabled) && (auth()->user()->isAdmin() || $roster->isAuthor()))
                     <div class="row mb-3">
                         <div class="col-12">
-                        <button class="btn btn-success" id="add-row">
+                        <button type="button" class="btn btn-success" id="add-row">
                             <i class="fas fa-plus"></i>
                             Thêm ca làm việc
                         </button>
@@ -184,9 +184,11 @@
                     </table>
                 </div>
             </div>
-            <div class="card-footer text-center">
-                <button type="submit" class="btn btn-success" id="btn-submit">Lưu</button>
-            </div>
+            @if(empty($disabled) && (auth()->user()->isAdmin() || $roster->isAuthor()))
+                <div class="card-footer text-center">
+                    <button type="submit" class="btn btn-success" id="btn-submit">Lưu</button>
+                </div>
+            @endif
         </form>
     </div>
 </div>
