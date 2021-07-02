@@ -53,7 +53,7 @@
 
     </head>
 <body>
-@include('header')
+@includeWhen(!isset($isNonShowHeader), 'header');
 <main class="site-main container">
   @yield('content')
 </main>

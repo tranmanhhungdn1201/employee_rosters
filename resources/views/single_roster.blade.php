@@ -1,5 +1,4 @@
 @extends('master')
-@include('header')
 @section('content')
 <?php
   $disabled = $roster->status === Config::get('constants.status_roster.CLOSE') ? true : false;

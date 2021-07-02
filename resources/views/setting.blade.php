@@ -1,5 +1,4 @@
 @extends('master')
-@include('header')
 @section('content')
 <div class="row container-create-roster">
   <div class="container">
