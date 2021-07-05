@@ -65,7 +65,7 @@
               <ul class="list-group">
                 @foreach($branches as $branch)
                   <li href="#" class="list-group-item text-left">
-                    <div class="branch-item">
+                    <div class="branch-item branch_{{$branch->id}}">
                       <div>
                         <h6 class="name">
                           {{ $branch->name }}
@@ -106,6 +106,7 @@
                 <div id="create-user-type" style="display: none;">
                   <form id="form-user-type">
                     <input type="hidden" name="branch_id" value="">
+                    <input type="hidden" name="usertype_id" value="">
                     <div class="form-group">
                       <label for="name">Tên</label>
                       <input type="text" class="form-control" name="name" aria-describedby="name" placeholder="" value="" required>
@@ -145,6 +146,7 @@
 
 	  $('#branch').on('click', '.btn-create-branch', function(event){
       event.preventDefault();
+      $('#branch').find('form').trigger('reset');
       handleFormBranch();
 		});
 
@@ -232,6 +234,7 @@
           if(res.Status === 'Success') {
             toastr.success(res.Message);
             handleFormBranch();
+            setDataBranchAfterUpdate(data);
             $('#branch').find('form').trigger('reset');
           } else {
             toastr.error(res.Message);
@@ -255,7 +258,7 @@
       form.find('[name="description"]').val(data.description);
     }
 
-    $('.list-group').on('click', '.btn-edit', function() {
+    $('#branch .list-group').on('click', '.btn-edit', function() {
       let data = $(this).attr('data-data');
       setDataFormBranch(JSON.parse(data));
       handleFormBranch(true);
@@ -276,7 +279,7 @@
     function drawNewUserType(data) {
       let listDOM = $('#account').find('.list-group');
       let content = `<li href="#" class="list-group-item text-left">
-                    <div class="branch-item">
+                    <div class="branch-item usertype_${data.id}">
                       <div>
                         <h6 class="name">
                           ${data.name}
@@ -284,7 +287,7 @@
                         <small id="usernameHelp" class="form-text text-muted">${data.description}</small>
                       </div>
                       <label class="pull-right">
-                          <a class="btn btn-success btn-sm glyphicon glyphicon-ok btn-edit" href="#" title="View" data-data='${JSON.stringify(data)}''><i class="fas fa-edit"></i></a>
+                          <a class="btn btn-success btn-sm glyphicon glyphicon-ok btn-edit" href="#" title="View" data-data='${JSON.stringify(data)}'><i class="fas fa-edit"></i></a>
                           <a class="btn btn-danger  btn-sm glyphicon glyphicon-trash btn-remove" href="#" title="Delete" data-id="${data.id}"><i class="fas fa-trash"></i></a>
                       </label>
                     </div>
@@ -295,6 +298,9 @@
 
     $('#account').on('click', '.btn-create-user-type', function(event){
       event.preventDefault();
+      $('#account').find('[name=name]').val('');
+      $('#account').find('[name=description]').text('');
+      $('#account').find('[name=usertype_id]').val('');
       handleFormUserType();
 		});
 
@@ -304,10 +310,10 @@
       }
       e.preventDefault();
       loading('show');
-      let branchID = $('#account').find('[name="branch_id"]').val();
+      let usertypeID = $('#account').find('[name="usertype_id"]').val();
       let data = $('#account').find('form').serializeArray();
       let dataObj = arrDataToObject(data);
-      if(branchID)
+      if(usertypeID)
         updateUserType(dataObj);
       else
         createUserType(dataObj);
@@ -327,6 +333,10 @@
             toastr.success(res.Message);
             handleFormUserType();
             drawNewUserType(data);
+            //setDataToOption
+            let dataOption = JSON.parse($('.branch-select option:selected').attr('data-user-type'));
+            dataOption.push(res.Data);
+            $('.branch-select option:selected').attr('data-user-type', JSON.stringify(dataOption));
             $('#account').find('form').trigger('reset');
           } else {
             toastr.error(res.Message);
@@ -337,6 +347,37 @@
           loading('hide');
           toastr.error(err.message);
           console.log(err.message);
+        }
+      }
+      $.ajax(options);
+    }
+
+    function updateUserType(data) {
+      const url = "{{ route('setting.updateUserType') }}";
+      const options = {
+        url,
+        data: {
+          _token: $('meta[name="csrf-token"]').attr('content'),
+          ...data
+        },
+        method: 'POST',
+        success: (res) => {
+          if(res.Status === 'Success') {
+            toastr.success(res.Message);
+            handleFormUserType();
+            setDataUserAfterUpdate(data);
+            $('#account').find('[name=name]').val('');
+            $('#account').find('[name=description]').text('');
+            $('#account').find('[name=usertype_id]').val('');
+          } else {
+            toastr.error(res.Message);
+          }
+          loading('hide');
+        },
+        error: (err) => {
+          toastr.error(err.message);
+          console.log(err.message);
+          loading('hide');
         }
       }
       $.ajax(options);
@@ -372,6 +413,7 @@
     }
     
     $('.branch-select').on('change', function() {
+      $('#account').find('[name=branch_id]').val(this.value);
       setDataUserType();
     })
 
@@ -382,6 +424,77 @@
         drawNewUserType(item)
       })
     }
+
+    $('#account .list-group').on('click', '.btn-edit', function() {
+      let data = $(this).attr('data-data');
+      setDataFormUserType(JSON.parse(data));
+      handleFormUserType(true);
+    })
+
+    function setDataFormUserType(data) {
+      let form = $('#account').find('form');
+      form.find('[name="name"]').val(data.name);
+      form.find('[name="branch_id"]').val(data.branch_id);
+      form.find('[name="usertype_id"]').val(data.id??data.usertype_id);
+      form.find('[name="description"]').val(data.description);
+    }
+
+    function setDataUserAfterUpdate(data){
+      let userTypeItem = $(`.usertype_${data.usertype_id}`);
+      userTypeItem.find('h6').text(data.name);
+      userTypeItem.find('small').text(data.description);
+      userTypeItem.find('.btn-edit').attr('data-data', JSON.stringify(data));
+      //setDataToOption
+      let dataOption = JSON.parse($('.branch-select option:selected').attr('data-user-type'));
+      dataOption.forEach((item) => {
+        if(item.id == data.usertype_id) {
+          item.name = data.name;
+          item.description = data.description;
+        }
+      })
+      $('.branch-select option:selected').attr('data-user-type', JSON.stringify(dataOption));
+    }
+
+    function setDataBranchAfterUpdate(data){
+      let branchItem = $(`.branch_${data.branch_id}`);
+      branchItem.find('h6').text(data.name);
+      branchItem.find('small').text(data.description);
+      branchItem.find('.btn-edit').attr('data-data', JSON.stringify(data));
+    }
+
+    $('#account').on('click', '.btn-remove',function(){
+      alert('oke');
+      let that = this;
+      const url = "{{ route('setting.deleteUserType') }}";
+      let id = $(this).attr('data-id');
+      const options = {
+        url,
+        data: {
+          _token: $('meta[name="csrf-token"]').attr('content'),
+          id
+        },
+        method: 'DELETE',
+        success: (res) => {
+          if(res.Status === 'Success') {
+            $(that).closest('li').remove();
+            toastr.success(res.Message);
+            let dataOption = JSON.parse($('.branch-select option:selected').attr('data-user-type'));
+            let index = dataOption.findIndex(item => item.id == id)
+            dataOption.splice(index, 1);
+            $('.branch-select option:selected').attr('data-user-type', JSON.stringify(dataOption));
+          } else {
+            toastr.error(res.Message);
+          }
+          loading('hide');
+        },
+        error: (err) => {
+          toastr.error(err.message);
+          console.log(err.message);
+          loading('hide');
+        }
+      }
+      $.ajax(options);
+    })
 	});
 </script>
 @endsection

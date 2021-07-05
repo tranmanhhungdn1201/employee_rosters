@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Branch;
 use Illuminate\Http\Request;
+use App\Models\UserType;
 
 class SettingController extends Controller
 {
@@ -49,13 +50,13 @@ class SettingController extends Controller
 
     public function createUserType(Request $request) {
         $data = $request->all();
-        dd($data);
         $rs = UserType::create($data);
 
         if($rs) {
             return response()->json([
                 'Status' => 'Success',
                 'Message' => 'Create User Type successfully',
+                'Data' => $rs,
             ]);
         }
 
@@ -67,8 +68,7 @@ class SettingController extends Controller
 
     public function updateUserType(Request $request) {
         $data = $request->all();
-        dd($data);
-        $userType = UserType::find($data['branch_id']);
+        $userType = UserType::find($data['usertype_id']);
 
         if($userType) {
             $userType->update($data);
@@ -90,6 +90,15 @@ class SettingController extends Controller
         return response()->json([
             'Status' => 'Success',
             'Data' => $rs,
+        ]);
+    }
+
+    public function deleteUserType(Request $request) {
+        UserType::find($request->id)->delete();
+
+        return response()->json([
+            'Status' => 'Success',
+            'Message' => 'Delete User Type successfully',
         ]);
     }
 }

@@ -45,6 +45,7 @@ Route::group(['middleware' => 'checkLogin'], function() {
         Route::post('/settings/update-branch','SettingController@updateBranch')->name('setting.updateBranch');
         Route::post('/settings/create-user-type','SettingController@createUserType')->name('setting.createUserType');
         Route::post('/settings/update-user-type','SettingController@updateUserType')->name('setting.updateUserType');
+        Route::delete('/settings/delete-user-type','SettingController@deleteUserType')->name('setting.deleteUserType');
     });
     Route::get('/logout','UserController@logout')->name('logout');
 });
