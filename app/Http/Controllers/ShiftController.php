@@ -25,7 +25,6 @@ class ShiftController extends Controller
                 $query->with('user');
             }])
         ->where('id', $id)->first();
-
         return response()->json([
             'Status' => 'Success',
             'Data' => $shift,
@@ -132,11 +131,11 @@ class ShiftController extends Controller
         ]);
     }
 
-    public function registerShift($id) {
+    public function registerShift(Request $request, $id) {
         $shift = Shift::find($id);
         $idUser = auth()->user()->id;
-        $isExpireRoster = $this->checkRosterById($shift->roster_id);
-        if(!$isExpireRoster)
+        $status = $this->checkRosterById($shift->roster_id);
+        if($status !== Config::get('constants.status_roster.OPEN'))
             return response()->json([
                 'Status' => 'Fail',
                 'Message' => 'Roster is expire!'
@@ -153,6 +152,7 @@ class ShiftController extends Controller
                 'shift_id' => $id,
                 'user_id' => $idUser,
                 'status' => Config::get('constants.status_shift_user.OPEN'),
+                'note' => $request->note,
                 'work_time' => $shift->workTime(),
             ];
             UserShift::create($data);

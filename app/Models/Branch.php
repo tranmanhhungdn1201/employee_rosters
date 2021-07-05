@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\models\UserType;
 use Illuminate\Database\Eloquent\Model;
 
 class Branch extends Model
@@ -12,4 +13,8 @@ class Branch extends Model
         'name',
         'description',
     ];
+
+    public function userTypes() {
+        return $this->hasMany(UserType::class, 'branch_id', 'id');
+    }
 }

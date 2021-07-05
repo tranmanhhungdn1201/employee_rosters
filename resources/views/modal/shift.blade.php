@@ -26,7 +26,7 @@
           </div>
           <div class="form-group">
             <label>Người đăng ký:</label>
-            <table class="table table-sm">
+            <table class="table table-bordered table-sm">
               <thead>
                 <tr>
                   <th scope="col">#</th>

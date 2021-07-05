@@ -77,9 +77,9 @@ class User extends Authenticatable
         return false;
     }
 
-    // public function getUserTypeNameAttribute()
-    // {
-    //     $userType = $this->user_type;
-    //     return $this->attributes['user_type_name'] = empty($userType) ? '' : $userType->name;
-    // }
+    public function getUserTypeNameAttribute()
+    {
+        $userType = $this->user_type;
+        return $this->attributes['user_type_name'] = empty($userType) ? '' : $userType->name;
+    }
 }

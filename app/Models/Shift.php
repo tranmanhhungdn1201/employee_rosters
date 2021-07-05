@@ -29,6 +29,10 @@ class Shift extends Model
         return $this->hasMany(UserShift::class);
     }
 
+    public function userType(){
+        return $this->belongsTo(UserType::class, 'user_type_id', 'id');
+    }
+
     public function workTime(){
         $start = Carbon::parse($this->time_start);
         $end = Carbon::parse($this->time_finish);
@@ -45,7 +49,7 @@ class Shift extends Model
 
     public function getUserTypeNameAttribute()
     {
-        $userType = UserType::find($this->user_type_id);
+        $userType = $this->userType;
         return $this->attributes['user_type_name'] = empty($userType) ? '' : $userType->name;
     }
 }

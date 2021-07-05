@@ -28,7 +28,8 @@ class UserController extends Controller
                     return redirect()->route('listRoster', $branchId);
             }
         }
-        return view('login');
+        
+        return view('login', ['isNonShowHeader' => true]);
     }
 
     public function postlogin(Request $request){
@@ -44,7 +45,8 @@ class UserController extends Controller
                     return redirect()->route('listRoster', $branchId);
             }
         }
-        return back()->withErrors(['login' => ['Fail']]);
+        $error = "Sai tên tài khoản hoặc mật khẩu. Vui longf thử lại!";
+        return back()->withErrors(['error' => $error]);
     }
     
     public function userList(){
