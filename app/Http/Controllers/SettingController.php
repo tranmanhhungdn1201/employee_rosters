@@ -46,4 +46,50 @@ class SettingController extends Controller
             'Message' => 'Update branch fail',
         ]);
     }
+
+    public function createUserType(Request $request) {
+        $data = $request->all();
+        dd($data);
+        $rs = UserType::create($data);
+
+        if($rs) {
+            return response()->json([
+                'Status' => 'Success',
+                'Message' => 'Create User Type successfully',
+            ]);
+        }
+
+        return response()->json([
+            'Status' => 'Success',
+            'Message' => 'Create User Type fail',
+        ]);
+    }
+
+    public function updateUserType(Request $request) {
+        $data = $request->all();
+        dd($data);
+        $userType = UserType::find($data['branch_id']);
+
+        if($userType) {
+            $userType->update($data);
+            return response()->json([
+                'Status' => 'Success',
+                'Message' => 'Update User Type successfully',
+            ]);
+        }
+
+        return response()->json([
+            'Status' => 'Success',
+            'Message' => 'Update User Type fail',
+        ]);
+    }
+
+    public function getAllBranch() {
+        $rs = Branch::with('userTypes')->get();
+
+        return response()->json([
+            'Status' => 'Success',
+            'Data' => $rs,
+        ]);
+    }
 }

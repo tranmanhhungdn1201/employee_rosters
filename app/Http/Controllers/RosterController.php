@@ -9,6 +9,7 @@ use App\Models\Roster;
 use App\Models\UserType;
 use App\Models\Shift;
 use App\Models\User;
+use App\Models\UserShift;
 use Config;
 use Carbon\Carbon;
 use DB;
@@ -58,7 +59,11 @@ class RosterController extends Controller
             return $content;
         })
         ->addColumn('action', function($data) {
-            $buttonView = '<a href="'.route('singleRoster', $data->id) .'" class="btn btn-info btn-sm btn-view"><i class="fas fa-eye"></i></a>';
+            $href = "'.route('singleRoster', $data->id) .'";
+            if(auth()->user()->isAdmin() && $data->status === Config::get('constants.status_roster.CLOSE')) {
+                $href = route('singleRoster', $data->id) . '?edit_view=true';
+            }
+            $buttonView = '<a href="'.$href.'" class="btn btn-info btn-sm btn-view"><i class="fas fa-eye"></i></a>';
             $buttonCopy = '&nbsp;<a href="' . route('viewCreateRoster') . '?copy='. $data->id .'" class="btn btn-info btn-sm btn-copy"><i class="fas fa-copy"></i></a>';
             $button = $buttonView . $buttonCopy;
             if(auth()->user()->isStaff()) {
@@ -140,7 +145,7 @@ class RosterController extends Controller
         $staffs = null;
         $view = 'single_roster';
         $requestQuery = $request->query();
-        if(isset($requestQuery['edit_view']) && $requestQuery['edit_view'] === 'true') {
+        if((auth()->user()->isAdmin() || $roster->isAuthor()) && isset($requestQuery['edit_view']) && $requestQuery['edit_view'] === 'true') {
             $branchID = auth()->user()->branch_id;
             $staffs = User::whereNotIn('user_type_id', [1, 2])->with(['user_type' => function($query) use ($branchID) {
                 $query->where('branch_id', $branchID);
@@ -289,6 +294,45 @@ class RosterController extends Controller
             'Status' => 'Success',
             'Message' => 'Update time successfully',
             'statusRoster' => $status
+        ]);
+    }
+
+    public function updateRoster(Request $request) {
+        $data = $request->all();
+        dd($data);
+        //remove
+        DB::beginTransaction();
+        try {
+            if(isset($data['data']['dataRemove']) && count($data['data']['dataRemove']) > 0) {
+                $idsRemove = $data['data']['dataRemove'];
+                UserShift::whereIn('id', $idsRemove)->delete();
+            }
+            //add
+            
+            if(isset($data['data']['dataAdd']) && count($data['data']['dataAdd']) > 0) {
+                $dataAdd = array_map(function($staff){
+                    return [
+                        'shift_id' => $staff['shiftID'],
+                        'user_id' => $staff['userID'],
+                        'status' => Config::get('constants.status_shift_user.OPEN'),
+                        'work_time' => 0
+                    ];
+                }, $data['data']['dataAdd']);
+                UserShift::insert($dataAdd);
+            }
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'Status' => 'Fail',
+                'Message' => $e->getMessage()
+            ]);
+        }
+
+        return response()->json([
+            'Status' => 'Success',
+            'Message' => 'Update roster successfully!'
         ]);
     }
 }

@@ -7,13 +7,13 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
+      <form id="user-form">
       <div class="modal-body">
-        <form id="user-form">
           <input type="hidden" name="user_id">
           <div class="form-group row">
             <label class="col-4"><span class="text-danger">*</span>&nbsp;Nhà hàng</label>
             <div class="col-5">
-                <select name="branch_id" class="form-control">
+                <select name="branch_id" class="form-control" required>
                 @foreach ($branches as $branch)
                   <option value="{{$branch->id}}">{{$branch->name}}</option>
                 @endforeach
@@ -23,24 +23,24 @@
           <div class="form-group row">
             <label class="col-4"><span class="text-danger">*</span>&nbsp;Chức vụ</label>
             <div class="col-5">
-              <select name="type" class="form-control"></select>
+              <select name="type" class="form-control" required></select>
             </div>
           </div>
           <div class="form-group row">
             <label class="col-4"><span class="text-danger">*</span>&nbsp;Tên tài khoản</label>
-            <div class="col-5"><input type="text" class="form-control" name="username"/></div>
+            <div class="col-5"><input type="text" class="form-control" name="username" required/></div>
           </div>
           <div class="form-group row">
             <label class="col-4"><span class="text-danger">*</span>&nbsp;Mật khẩu</label>
-            <div class="col-5"><input type="password" class="form-control" name="password"/></div>
+            <div class="col-5"><input type="password" class="form-control" name="password" required/></div>
           </div>
           <div class="form-group row">
             <label class="col-4"><span class="text-danger">*</span>&nbsp;Tên</label>
-            <div class="col-5"><input type="text" class="form-control" name="first_name"/></div>
+            <div class="col-5"><input type="text" class="form-control" name="first_name" required/></div>
           </div>
           <div class="form-group row">
             <label class="col-4"><span class="text-danger">*</span>&nbsp;Họ</label>
-            <div class="col-5"><input type="text" class="form-control" name="last_name"/></div>
+            <div class="col-5"><input type="text" class="form-control" name="last_name" required/></div>
           </div>
           <div class="form-group row">
             <label class="col-4"><span class="text-danger">*</span>&nbsp;Giới tính</label>
@@ -63,7 +63,7 @@
           </div>
           <div class="form-group row">
             <label class="col-4"><span class="text-danger">*</span>&nbsp;Số điện thoại</label>
-            <div class="col-5"><input type="text" class="form-control" name="phone"/></div>
+            <div class="col-5"><input type="text" class="form-control" name="phone" required pattern="((09|03|07|08|05)+([0-9]{8})\b)"/></div>
           </div>
           <div class="form-group row">
             <label class="col-4">Ngày sinh</label>
@@ -76,12 +76,12 @@
               </div>
             </div>
           </div>
-        </form>
+          <div class="modal-footer justify-content-center">
+            <button type="button" class="btn btn-outline-secondary mr-4" data-dismiss="modal">Đóng</button>
+            <button type="submit" class="btn btn-success" id="btn-save-user">Lưu</button>
+          </div>
       </div>
-      <div class="modal-footer justify-content-center">
-      <button type="button" class="btn btn-outline-secondary mr-4" data-dismiss="modal">Đóng</button>
-        <button type="button" class="btn btn-success" id="btn-save-user">Lưu</button>
-      </div>
+    </form>
     </div>
   </div>
 </div>

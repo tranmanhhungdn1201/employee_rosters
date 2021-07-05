@@ -10,6 +10,7 @@
       <div class="modal-body">
         <form class="form-staff">
           <div class="col-md-12">
+            <input type="hidden" name="shiftID">
             <select class="form-control" name="staff[]" id="select-staff" multiple="multiple" style="width:100%">
             </select>
           </div>

@@ -73,7 +73,7 @@
                                         $bgColor = '';
                                 }
                             ?>
-                            <a href="#"><span class="xxx {{'badge ' . $bgColor}}">{{$roster->status_name}}</span></a>
+                            <a href="#"><span class="{{'badge ' . $bgColor}}">{{$roster->status_name}}</span></a>
                         </div>
                     </div>
                 </div>
@@ -134,12 +134,13 @@
                                             </div>
                                             <ul class="table-roster__users d-flex flex-column align-items-center">
                                                 @foreach($day->userShifts as $user_shift)
-                                                    <li class="table-roster__user d-flex align-items-center p-1 pr-3" data-user-id={{$user_shift->user->id}} data-shift-id="{{$user_shift->shift_id}}" data-user-shift-id="{{$user_shift->id}}">
+                                                    <li class="table-roster__user d-flex align-items-center p-1 pr-3" style="white-space: nowrap;" data-user-id={{$user_shift->user->id}} data-user-shift-id="{{$user_shift->id}}">
                                                         {{$user_shift->user->full_name}}
-                                                        <a href="#" data-action="del" class="btn-del-user" data-shift-id="{{$user_shift->shift_id}}"><i class="fas fa-trash-alt"></i></a>
+                                                        <a href="#/" data-action="del" class="btn-del-user" data-shift-id="{{$day->id}}"><i class="fas fa-trash-alt"></i></a>
                                                     </li>
                                                 @endforeach
                                             </ul>
+                                            <input type="hidden" name="user_shift" data-shift-id="{{$day->id}}" value="{{$day->userShifts}}">
                                         </div>
                                     </td>
                                 @endforeach
@@ -165,9 +166,9 @@
             </div>
             @endif --}}
         </div>
-        {{-- <div class="card-footer text-center">
+        <div class="card-footer text-center">
             <button class="btn btn-success btn-submit" id="btn-submit">Lưu</button>
-        </div> --}}
+        </div>
     </div>
 </div>
 {{-- @include('modal.shift-time') --}}
@@ -177,110 +178,217 @@
 @include('modal.add-staff')
 <script type="text/javascript">
     $(document).ready(function () {
-        let dataStaff = {
-            delete: [],
-            add: []
-        };
+        // to save data
+        let dataStaff = {};
         //get staff form server
         let STAFFS = {!! json_encode($staffs) !!};
         STAFFS = STAFFS.map(staff => {
             return {
                 'id': staff['id'],
+                'name': staff['full_name'],
                 'text': staff['full_name'],
                 'user_type_id': staff['user_type_id']
             }
         });
-        //init select2
+
+        // init select2
         let selectStaff = $('#select-staff').select2();
-        //fill data & open modal
+        // to save data oldRegister oin shift
         let dataRegister;
+        
+        //fill data & open modal
         $('.btn-edit-shift').on('click', function() {
             //get list userID registered
             let parent = $(this).parent().parent();
-            let userList = [];
-            $(parent).find('li').each((idx, ele) => {
-                userList.push(
-                    {
-                        userID: $(ele).attr('data-user-id'),
-                        shiftID: $(ele).attr('data-shift-id'),
-                        userShiftID: $(ele).attr('data-user-shift-id'),
-                        isRegistered = true;
-                    });
-            });
-            //set selected in select
+            let shiftID = $(this).attr('data-id');
+            //set data user registed in the shift
+            let dataRegister = getDataUserRegister(shiftID);
+            //init data for select2
             let dataJson = JSON.stringify(STAFFS);
             let data = JSON.parse(dataJson);
-            dataRegister = JSON.parse(dataJson);
             data.forEach(staff => {
-                let idx = userList.findIndex(user => user.userID === staff.id.toString())
+                let idx = dataRegister.findIndex(user => user.userID === staff.id.toString())
                 if(idx !== -1) {
-                    staff.shiftID = userList[idx].shiftID;
-                    staff.userShiftID = userList[idx].userShiftID;
+                    staff.name = dataRegister[idx].name;
+                    staff.shiftID = dataRegister[idx].shiftID;
+                    staff.userShiftID = dataRegister[idx].userShiftID;
                     staff.selected = true;
                     staff.isRegistered = true;
                 }
             });
+            //set data for select2
             $('#select-staff').empty();
             $('#select-staff').select2({
                 data: data
             });
-            setUserToModal();
+            $('[name=shiftID]').val(shiftID);
             $('#add-staff-modal').modal('show');
         });
 
-        function setUserToModal() {
-            
+        function getDataUserRegister(shiftID){
+            let shiftDOM = $(`.shift_${shiftID}`);
+            let userList = [];
+            $(shiftDOM).find('li').each((idx, ele) => {
+                userList.push(
+                    {
+                        name: $(ele).text().trim(),
+                        userID: $(ele).attr('data-user-id'),
+                        shiftID,
+                    });
+            });
+
+            return userList;
         }
 
         //event save shift
         $('#save-shift').click(function() {
             let data = $('#select-staff').select2('data');
-            filterData(data);
+            let shiftID = $('[name=shiftID]').val();
+            $('#add-staff-modal').modal('hide');
+            updateUIUserRegister(data, shiftID);
         });
 
-        //filter data delete or add
-        function filterData(data) {
-            if(dataRegister.length === 0 && data.length === 0) return;
-            if(dataRegister.length === 0) {
-                //save user add
-                dataStaff.add = [...data];
-            } else if(data.length === 0) {
-                //save user remove
-                dataStaff = [...dataRegister].map(user => {
-                    ...user,
-                    isRemoved : true
-                });
-            } else {//save both
-                //user old register
-                userRegister = data.filter(user => user.isRegistered);
-                //remove user
-                if(dataRegister.length !== userRegister.length) {
-                    dataRegister.forEach(user => {
-                        let index = userRegister.findIndex(userNew => userNew.userID === user.userID);
-                        if(index === -1) {
-                            dataStaff.delete.push(user);
-                        }
-                    })
-                }
-                //user new register
-                userNewRegister = data.filter(user => !user.isRegistered);
-                //add new user
-                dataStaff.add.push([...userNewRegister]);
-                
-            }
-            data.forEach(user => {
-                //user registered
-                if(user.userShiftID) {
-                    dataStaff.delete.push(user);
-                } else {
-                    dataStaff.add.push(user);
-                }
-            });
+        // draw UI when delete or add new staff
+        function updateUIUserRegister(data, shiftID) {
+            let shiftDOM = $(`.shift_${shiftID}`);
+            $(shiftDOM).find('li').remove();
+            let content = data.map(user => 
+                `<li class="table-roster__user d-flex align-items-center p-1 pr-3" style="white-space: nowrap;" data-user-id="${user.id}">
+                    ${user.name}
+                    <a href="#/" data-action="del" class="btn-del-user"><i class="fas fa-trash-alt"></i></a>
+                </li>`
+            )
+            shiftDOM.find('ul').append(content.join(''));
         }
 
-        $('#select-staff').change(function(){
-            console.log($(this).val());
+        $('.btn-del-user').on('click', function() {
+            $(this).closest('li').remove();
         })
+
+        //filter data delete or add to dataStaff
+        function mapData(dataOrigin, dataNew) {
+            //empty data => return
+            let rs = [];
+            let isChange = false;
+            if(dataOrigin.length === 0 && dataNew.length === 0) return rs;
+
+            if(dataOrigin.length === 0) {
+                isChange = true;
+                rs = dataNew;
+            } else if(dataNew.length === 0) {
+                isChange = true;
+                rs = dataOrigin.map(user => {
+                   return {
+                       ...user,
+                       isRemoved: true
+                   }
+                })
+            } else {//merge both
+                dataOrigin.forEach((user, idx) => {
+                    let index = dataNew.findIndex(userNew => userNew.userID === user.userID);
+                    if(index === -1) {
+                        rs.push({
+                            ...user,
+                            isRemoved: true
+                        })
+                    } else {
+                        dataNew.splice(index, 1);
+                    }
+                })
+                if(dataNew.length > 0) {
+                    isChange = true;
+                    rs.push(...dataNew);
+                }
+            }
+            return {
+                rs,
+                isChange
+            };
+        }
+
+        function initNewObjectShiftStaff(shiftID, data) {
+            if(!dataStaff[shiftID])
+               dataStaff[shiftID] = data;
+        }
+
+        $('#btn-submit').click(function() {
+            getDataRegister();
+            if(JSON.stringify(dataStaff) === '{}') {
+                toastr.info('Dữ liệu không thay đổi');
+                return;
+            }
+            let data = filterData();
+            const url = "{{route('updateRoster')}}";
+            const options = {
+                url,
+                method: 'POST',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    data
+                },
+                success: function(res) {
+                    if(res.Status === 'Success') {
+                        location.reload();
+                    }
+                    $('#shift-time-modal').modal('hide');
+                },
+                error: function(err) {
+                    console.error(err.message);
+                }
+            }
+            $.ajax(options);
+        })
+
+        function getDataRegister() {
+            let domeShift = $('.shift-date').find('input[type=hidden]');
+            dataStaff = {};
+            domeShift.each(function(idx, ele) {
+                let dataOrigin = JSON.parse($(ele).val());
+                dataOrigin = formatDataOrigin(dataOrigin);
+                let shiftID = $(ele).attr('data-shift-id');
+                let dataNew = getDataUserRegister(shiftID);
+                let {rs, isChange} = mapData(dataOrigin, dataNew);
+                if(isChange) {
+                    initNewObjectShiftStaff(shiftID, rs);
+                }
+            })
+            console.log(dataStaff);
+        }
+
+        function filterData() {
+            let data = JSON.parse(JSON.stringify(dataStaff));
+            let dataRemove = [];
+            let dataAdd = [];
+            for(let id in data) {
+                data[id].forEach(staff => {
+                    if(staff.isRemoved)
+                        dataRemove.push(staff.userShiftID);
+                    else
+                        dataAdd.push({
+                        ...staff
+                        });
+                })
+            }
+            console.log({
+                dataRemove,
+                dataAdd
+            })
+            return {
+                dataRemove,
+                dataAdd
+            }
+        }
+
+        function formatDataOrigin(data) {
+            return data.map(userShift => {
+                return {
+                    name: userShift.user.full_name,
+                    shiftID: userShift.shift_id.toString(),
+                    userID: userShift.user_id.toString(),
+                    userShiftID: userShift.id
+                }
+            })
+        }
 
         // const isStaff = "{{ auth()->user()->isStaff() }}";
         // const isAuthor = "{{ $roster->isAuthor() }}";
