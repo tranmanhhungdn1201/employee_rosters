@@ -1,3 +1,10 @@
+
+@import '../../node_modules/bootstrap/scss/bootstrap';
+@import '../../node_modules/tempusdominus-bootstrap/src/sass/tempusdominus-bootstrap-build';
+@import '../../node_modules/datatables.net-dt/css/jquery.dataTables';
+@import '../../node_modules/datatables.net-responsive-dt/css/responsive.dataTables';
+@import '../../node_modules/toastr/build/toastr';
+@import '../../node_modules/@fortawesome/fontawesome-free/css/all';
 @import 'modules/all';
 @import 'vendor/normalize';
 @import 'partials/all';
