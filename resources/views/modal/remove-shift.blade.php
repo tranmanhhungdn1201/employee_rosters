@@ -8,7 +8,11 @@
         </button>
       </div>
       <div class="modal-body">
-        <p>Bạn muốn hủy ca?</p>
+        <form class="form-register">
+          <div class="col-md-12 text-center">
+            <p>Bạn muốn hủy ca <span class="font-weight-bold"></span>?</p>
+          </div>
+        </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" id="remove-shift">Hủy</button>

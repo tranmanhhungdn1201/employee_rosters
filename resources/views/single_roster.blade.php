@@ -1,5 +1,4 @@
 @extends('master')
-@include('header')
 @section('content')
 <?php
   $disabled = $roster->status === Config::get('constants.status_roster.CLOSE') ? true : false;
@@ -20,171 +19,176 @@
                 </div>
             @endif
         </div>
-        <div class="card-body">
-            <div class="row mb-md-2">
-                <div class="col-md-6 pr-lg-4 pr-xl-5">
-                    <div class="form-group row no-gutters">
-                        <label for="roster_start" class="col-xl-4 col-form-label"><span class="text-danger">*</span>&nbsp;Ngày bắt đầu</label>
-                        <div class="col-xl-8">
-                        <div class="input-group date" id="roster_start" data-target-input="nearest">
-                            <input type="text" placeholder="dd-mm-yyyy" class="form-control datetimepicker-input" name="roster_start" data-target="#roster_start" data-toggle="datetimepicker" 
-                                value="<?php echo date('d-m-Y', strtotime($roster->day_start)); ?>" disabled>
-                            <!-- <div class="input-group-append">
-                                <button class="btn btn-primary" type="button" data-target="#roster_start" data-toggle="datetimepicker"><i class="fas fa-calendar-alt"></i></button>
-                            </div> -->
-                        </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-md-6 pl-lg-4 pl-xl-5">
-                    <div class="form-group row no-gutters">
-                        <label for="roster_end" class="col-xl-4 col-form-label"><span class="text-danger">*</span>&nbsp;Ngày kết thúc</label>
-                        <div class="col-xl-8">
-                            <div class="input-group date" id="roster_end">
-                                <input type="text" placeholder="dd-mm-yyyy" class="form-control" name="roster_end" value="<?php echo date('d-m-Y', strtotime($roster->day_finish)); ?>" disabled/>
+        <form id="form-update" class="mb-0">
+            <div class="card-body">
+                <div class="row mb-md-2">
+                    <div class="col-md-6 pr-lg-4 pr-xl-5">
+                        <div class="form-group row no-gutters">
+                            <label for="roster_start" class="col-xl-4 col-form-label"><span class="text-danger">*</span>&nbsp;Ngày bắt đầu</label>
+                            <div class="col-xl-8">
+                            <div class="input-group date" id="roster_start" data-target-input="nearest">
+                                <input type="text" placeholder="dd-mm-yyyy" class="form-control datetimepicker-input" name="roster_start" data-target="#roster_start" data-toggle="datetimepicker" 
+                                    value="<?php echo date('d-m-Y', strtotime($roster->day_start)); ?>" disabled>
+                                <!-- <div class="input-group-append">
+                                    <button class="btn btn-primary" type="button" data-target="#roster_start" data-toggle="datetimepicker"><i class="fas fa-calendar-alt"></i></button>
+                                </div> -->
+                            </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="row mb-md-2">
-                <div class="col-md-6 pr-lg-4 pr-xl-5">
-                    <div class="form-group row no-gutters">
-                        <label for="roster_begin" class="col-xl-4 col-form-label"><span class="text-danger">*</span>&nbsp;Ngày giờ mở đăng kí</label>
-                        <div class="col-xl-8">
-                            <div class="input-group date" id="roster_begin" data-target-input="nearest">
-                                <input type="text" placeholder="dd-mm-yyyy hh:mm" class="form-control datetimepicker-input" name="roster_begin" data-target="#roster_begin" data-toggle="datetimepicker" 
-                                    value="<?php echo date('d-m-Y H:i', strtotime($roster->time_open)); ?>">
-                                <div class="input-group-append">
-                                    <button class="btn btn-primary" type="button" data-target="#roster_begin" data-toggle="datetimepicker"><i class="fas fa-calendar-alt"></i></button>
+                    
+                    <div class="col-md-6 pl-lg-4 pl-xl-5">
+                        <div class="form-group row no-gutters">
+                            <label for="roster_end" class="col-xl-4 col-form-label"><span class="text-danger">*</span>&nbsp;Ngày kết thúc</label>
+                            <div class="col-xl-8">
+                                <div class="input-group date" id="roster_end">
+                                    <input type="text" placeholder="dd-mm-yyyy" class="form-control" name="roster_end" value="<?php echo date('d-m-Y', strtotime($roster->day_finish)); ?>" disabled/>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 pl-lg-4 pl-xl-5">
-                    <div class="form-group row no-gutters">
-                        <label for="roster_close" class="col-xl-4 col-form-label"><span class="text-danger">*</span>&nbsp;Ngày giờ đóng đăng kí</label>
-                        <div class="col-xl-8">
-                        <div class="input-group date" id="roster_close" data-target-input="nearest">
-                            <input type="text" placeholder="dd-mm-yyyy hh:mm" class="form-control datetimepicker-input" name="roster_close" data-target="#roster_close" data-toggle="datetimepicker" 
-                                value="<?php echo date('d-m-Y H:i', strtotime($roster->time_close)); ?>">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="button" data-target="#roster_close" data-toggle="datetimepicker"><i class="fas fa-calendar-alt"></i></button>
+
+                <div class="row mb-md-2">
+                    <div class="col-md-6 pr-lg-4 pr-xl-5">
+                        <div class="form-group row no-gutters">
+                            <label for="roster_begin" class="col-xl-4 col-form-label"><span class="text-danger">*</span>&nbsp;Ngày giờ mở đăng kí</label>
+                            <div class="col-xl-8">
+                                <div class="input-group date" id="roster_begin" data-target-input="nearest">
+                                    <input type="text" placeholder="dd-mm-yyyy hh:mm" class="form-control datetimepicker-input" name="roster_begin" data-target="#roster_begin" data-toggle="datetimepicker" 
+                                        value="<?php echo date('d-m-Y H:i', strtotime($roster->time_open)); ?>" required pattern="^\d{2}-\d{2}-\d{4} \d\d:\d\d$">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary" type="button" data-target="#roster_begin" data-toggle="datetimepicker"><i class="fas fa-calendar-alt"></i></button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="col-md-6 pl-lg-4 pl-xl-5">
+                        <div class="form-group row no-gutters">
+                            <label for="roster_close" class="col-xl-4 col-form-label"><span class="text-danger">*</span>&nbsp;Ngày giờ đóng đăng kí</label>
+                            <div class="col-xl-8">
+                            <div class="input-group date" id="roster_close" data-target-input="nearest">
+                                <input type="text" placeholder="dd-mm-yyyy hh:mm" class="form-control datetimepicker-input" name="roster_close" data-target="#roster_close" data-toggle="datetimepicker" 
+                                    value="<?php echo date('d-m-Y H:i', strtotime($roster->time_close)); ?>" required pattern="^\d{2}-\d{2}-\d{4} \d\d:\d\d$">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" type="button" data-target="#roster_close" data-toggle="datetimepicker"><i class="fas fa-calendar-alt"></i></button>
+                                </div>
+                            </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="row mb-md-2">
-                <div class="col-md-6 pr-lg-4 pr-xl-5">
-                    <div class="form-group row no-gutters align-items-center">
-                        <label for="roster_start" class="col-4 col-form-label">Trạng thái</label>
-                        <div class="col-8">
-                            <?php
-                                switch($roster->status){
-                                    case '1':
-                                        $bgColor = 'badge-warning';
-                                        break;
-                                    case '2':
-                                        $bgColor = 'badge-success';
-                                        break;
-                                    case '3':
-                                        $bgColor = 'badge-dark';
-                                        break;
-                                    default:
-                                        $bgColor = '';
-                                }
-                            ?>
-                            <a href="#"><span class="{{'badge ' . $bgColor}}">{{$roster->status_name}}</span></a>
+                <div class="row mb-md-2">
+                    <div class="col-md-6 pr-lg-4 pr-xl-5">
+                        <div class="form-group row no-gutters align-items-center">
+                            <label for="roster_start" class="col-4 col-form-label">Trạng thái</label>
+                            <div class="col-8">
+                                <?php
+                                    switch($roster->status){
+                                        case '1':
+                                            $bgColor = 'badge-warning';
+                                            break;
+                                        case '2':
+                                            $bgColor = 'badge-success';
+                                            break;
+                                        case '3':
+                                            $bgColor = 'badge-dark';
+                                            break;
+                                        default:
+                                            $bgColor = '';
+                                    }
+                                ?>
+                                <a href="#"><span class="status-roster {{'badge ' . $bgColor}}">{{$roster->status_name}}</span></a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
+                @if(empty($disabled) && (auth()->user()->isAdmin() || $roster->isAuthor()))
+                    <div class="row mb-3">
+                        <div class="col-12">
+                        <button type="button" class="btn btn-success" id="add-row">
+                            <i class="fas fa-plus"></i>
+                            Thêm ca làm việc
+                        </button>
+                        </div>
+                    </div>
+                @endif
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-roster" id="roster-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Thời gian</th>
+                                <th scope="col">Bộ phận</th>
+                                <th scope="col">Thứ 2</th>
+                                <th scope="col">Thứ 3</th>
+                                <th scope="col">Thứ 4</th>
+                                <th scope="col">Thứ 5</th>
+                                <th scope="col">Thứ 6</th>
+                                <th scope="col">Thứ 7</th>
+                                <th scope="col">Chủ nhật</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (is_array($shifts))
+                                @foreach($shifts as $key => $shift)
+                                <tr data-shift="{{ $shift[0] }}">
+                                    <td class="shift-row shift_start shift_finish"><div class="table-roster__time">{{ date('H:i', strtotime($shift[0]->time_start)) .' - '. date('H:i', strtotime($shift[0]->time_finish))}}</div></td>
+                                    <td class="shift-row type"><div class="table-roster__type">{{ $shift[0]->user_type_name }}</div></td>
+                                    @foreach($shift as $indexDay => $day)
+                                        <?php
+                                            $state = '';
+                                            switch($day->status){
+                                                case $day->isRegistered:
+                                                    $bgColor = 'bg-warning';
+                                                    $state = 'isRegistered';
+                                                    break;
+                                                case 1:
+                                                    $bgColor = 'bg-success';
+                                                    break;
+                                                case 2:
+                                                    $bgColor = 'bg-danger';
+                                                    break;
+                                                case 3:
+                                                    $bgColor = 'bg-dark';
+                                                    break;
+                                                default:
+                                                    $bgColor = '';
+                                            }
+                                        ?>
+                                        <td data-state ="{{$state}}" class="{{$bgColor . ' day_' . $indexDay . ' shift_' . $day->id}} shift-date table-roster__column" data-id="{{ $day->id }}">
+                                            <div class="table-roster__cell d-flex flex-column align-items-center justify-content-center" data-id="{{ $day->id }}">
+                                                <div>
+                                                    <span>{{$day->user_shifts_count}}/{{ $day->amount }}</span>
+                                                </div>
+                                                <div class="table-roster__cell__action">
+                                                    @if(auth()->user()->isAdmin() || (auth()->user()->isManager() && auth()->user()->id === $roster->user_created_id))
+                                                    <a href="#" data-action="edit" class="btn-edit-shift" data-id="{{$day->id}}"><i class="fas fa-pencil-alt"></i></a>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </td>
+                                    @endforeach
+                                </tr>
+                                @endforeach
+                            @else
+                                <tr>
+                                    Nothing
+                                </tr>
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             @if(empty($disabled) && (auth()->user()->isAdmin() || $roster->isAuthor()))
-                <div class="row mb-3">
-                    <div class="col-12">
-                    <button class="btn btn-success" id="add-row">
-                        <i class="fas fa-plus"></i>
-                        Thêm ca làm việc
-                    </button>
-                    </div>
+                <div class="card-footer text-center">
+                    <button type="submit" class="btn btn-success" id="btn-submit">Lưu</button>
                 </div>
             @endif
-
-            <div class="table-responsive">
-                <table class="table table-bordered table-roster" id="roster-table">
-                    <thead>
-                        <tr>
-                            <th scope="col">Thời gian</th>
-                            <th scope="col">Bộ phận</th>
-                            <th scope="col">Thứ 2</th>
-                            <th scope="col">Thứ 3</th>
-                            <th scope="col">Thứ 4</th>
-                            <th scope="col">Thứ 5</th>
-                            <th scope="col">Thứ 6</th>
-                            <th scope="col">Thứ 7</th>
-                            <th scope="col">Chủ nhật</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (is_array($shifts))
-                            @foreach($shifts as $key => $shift)
-                            <tr data-shift="{{ $shift[0] }}">
-                                <td class="shift-row shift_start shift_finish"><div class="table-roster__time">{{ date('H:i', strtotime($shift[0]->time_start)) .' - '. date('H:i', strtotime($shift[0]->time_finish))}}</div></td>
-                                <td class="shift-row type"><div class="table-roster__type">{{ $shift[0]->user_type_name }}</div></td>
-                                @foreach($shift as $indexDay => $day)
-                                    <?php
-                                        $state = '';
-                                        switch($day->status){
-                                            case $day->isRegistered:
-                                                $bgColor = 'bg-warning';
-                                                $state = 'isRegistered';
-                                                break;
-                                            case 1:
-                                                $bgColor = 'bg-success';
-                                                break;
-                                            case 2:
-                                                $bgColor = 'bg-danger';
-                                                break;
-                                            case 3:
-                                                $bgColor = 'bg-dark';
-                                                break;
-                                            default:
-                                                $bgColor = '';
-                                        }
-                                    ?>
-                                    <td data-state ="{{$state}}" class="{{$bgColor . ' day_' . $indexDay . ' shift_' . $day->id}} shift-date table-roster__column" data-id="{{ $day->id }}">
-                                        <div class="table-roster__cell d-flex flex-column align-items-center justify-content-center" data-id="{{ $day->id }}">
-                                            <div>
-                                                <span>{{$day->user_shifts_count}}/{{ $day->amount }}</span>
-                                            </div>
-                                            <div class="table-roster__cell__action">
-                                                @if(auth()->user()->isAdmin() || (auth()->user()->isManager() && auth()->user()->id === $roster->user_created_id))
-                                                <a href="#" data-action="edit" class="btn-edit-shift" data-id="{{$day->id}}"><i class="fas fa-pencil-alt"></i></a>
-                                                @else
-                                                {{-- <a href="#" data-action="view" class="btn-edit-shift" data-id="{{$day->id}}"><i class="far fa-eye"></i></a> --}}
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </td>
-                                @endforeach
-                            </tr>
-                            @endforeach
-                        @else
-                            <tr>
-                                Nothing
-                            </tr>
-                        @endif
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        </form>
     </div>
 </div>
 @include('modal.shift-time')
@@ -194,6 +198,15 @@
 @include('modal.remove-shift')
 <script type="text/javascript">
     $(document).ready(function () {
+        const DATE = {
+            0: 'Chủ nhật',
+            1: 'Thứ 2',
+            2: 'Thứ 3',
+            3: 'Thứ 4',
+            4: 'Thứ 5',
+            5: 'Thứ 6',
+            6: 'Thứ 7',
+        };
         // opened date of roster registration
         $('#roster_begin').datetimepicker({
           locale: "vi",
@@ -215,15 +228,6 @@
         let dayWeekStart = dayStart.getDay();
         if(dayStart && dayWeekStart){
             let colDateEles =  $('#roster-table th').splice(2);
-            const DATE = {
-               0: 'Chủ nhật',
-               1: 'Thứ 2',
-               2: 'Thứ 3',
-               3: 'Thứ 4',
-               4: 'Thứ 5',
-               5: 'Thứ 6',
-               6: 'Thứ 7',
-            };
             let dayWeekBegin = dayWeekStart;
             for(let col of colDateEles){
                 $(col).text(DATE[dayWeekBegin]);
@@ -296,7 +300,7 @@
                         `<th scope="row">${i + 1}</th>`+
                         `<td>${userShift[i].user.first_name}</td>`+
                         `<td>${userShift[i].created_at ? userShift[i].created_at : ''}</td>`+
-                        `<td></td>`+
+                        `<td>${userShift[i].note??''}</td>`+
                         '</tr>';
                     console.log(content);
                 }
@@ -546,8 +550,13 @@
         $('.shift-date').not( ".btn-edit-shift").on('click', function(){
             if(!isStaff || isClosed) return;
             let idShift = $(this).attr('data-id');
+            let timeShift = getTimeShift(this);
             if(!idShift) return;
             let isRegistered = $(this).attr('data-state');
+            let inputDOM = $('#form-register').find('input');
+            inputDOM.val('');
+            //add text
+            $('.form-register').find('span').text(timeShift);
             if(isRegistered === 'isRegistered') {
                 $('#remove-shift-modal').modal('show');
                 $('#remove-shift').attr('data-id', idShift);
@@ -556,6 +565,15 @@
                 $('#register-shift').attr('data-id', idShift);
             }
         })
+
+        function getTimeShift(cursor){
+            let dayWeek = $(cursor).attr('class').match(/day_\d/)[0].slice(-1);
+            let dataStr = $(cursor).closest('tr').attr('data-shift');
+            if(!dataStr ||!dayWeek) return;
+            let data = JSON.parse(dataStr);
+            dayWeek = dayWeek === '6' ? 0 : +dayWeek + 1;
+            return `${DATE[dayWeek]} (${data.time_start.slice(0, -3)} - ${data.time_finish.slice(0, -3)})`;
+        }
         
         $('#register-shift').click(function(){
             let idShift = $(this).attr('data-id');
@@ -570,9 +588,11 @@
             if(!shiftID) return;
             let url = "{{route('registerShift', ':id')}}";
             url = url.replace(':id', shiftID);
+            let note = $('#form-register').find('[name=note]');
             const options = {
                 url,
                 method: 'GET',
+                data: note,
                 success: function(res) {
                     if(res.Status === 'Success') {
                         toastr.success(res.Message);
@@ -584,6 +604,7 @@
                     $('#register-shift-modal').modal('hide');
                 },
                 error: function(err) {
+                    loading('hide');
                     toastr.error('Error!');
                     console.error(err.message);
                 }
@@ -622,6 +643,63 @@
                 }
             }
             return $.ajax(options);
+        }
+
+        $('#btn-submit').on('click', function(e) {
+            if(!checkValidateHTML('form-update')) {
+                return;
+            }
+            loading('show');
+            e.preventDefault();
+            const url = "{{route('updateTimeRegister')}}";
+            const options = {
+                url,
+                method: 'POST',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    //TODO: check validate time
+                    timeBegin: $('[name=roster_begin]').val(),
+                    timeClose: $('[name=roster_close]').val(),
+                    idRoster: '{{$roster->id}}',
+                },
+                success: function(res) {
+                    loading('hide');
+                    if(res.Status === 'Success') {
+                        changeStatusRoster(res.statusRoster);
+                        toastr.success(res.Message);
+                    } else {
+                        toastr.error(res.Message);
+                    }
+                },
+                error: function(err) {
+                    loading('hide');
+                    toastr.error('Error');
+                    console.error(err.message);
+                }
+            }
+            $.ajax(options);
+        })
+
+        function changeStatusRoster(status) {
+            let eleStatus = $('.status-roster');
+            let text = '', bgColor = '';
+            switch(status){
+                case 1:
+                    bgColor = 'badge-warning';
+                    text = 'pending';
+                    break;
+                case 2:
+                    bgColor = 'badge-success';
+                    text = 'open';
+                    break;
+                case 3:
+                    bgColor = 'badge-dark';
+                    text = 'closed';
+                    break;
+            }
+            let newClass= `status-roster badge ${bgColor}`;
+            eleStatus.text(text);
+            eleStatus.attr('class', newClass);
         }
     });
 </script>

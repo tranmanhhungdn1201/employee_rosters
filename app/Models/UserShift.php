@@ -13,6 +13,7 @@ class UserShift extends Model
         'user_id',
         'status',
         'work_time',
+        'note'
     ];
 
     public function user(){

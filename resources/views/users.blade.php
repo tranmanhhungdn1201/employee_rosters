@@ -1,5 +1,4 @@
 @extends('master')
-@include('header')
 @section('content')
 
 <div class="row mx-0">
@@ -47,7 +46,7 @@
 <script type="text/javascript">
   let isAdmin = "{{auth()->user()->isAdmin()}}";
   let table = $('#users-table').DataTable({
-      processing: false,
+      processing: true,
       searching: true,
       lengthChange: false,
       serverSide: true,
@@ -71,16 +70,21 @@
     if(!isAdmin) {
       $('#user-form').find('[name="type"] option').filter(':eq(0), :eq(1)').attr('disabled', true);
     }
-    $('#user-form').find('.modal-title').val('Tạo mới tài khoản');
+    $('#create-user-modal').find('.modal-title').text('Tạo mới tài khoản');
     $('#create-user-modal').modal('show');
   })
 
-  $('#btn-save-user').click(function(){
+  $('#btn-save-user').click(function(e){
+    if(!checkValidateHTML('user-form')) {
+      return;
+    }
+    e.preventDefault();
+    loading('show');
     let userId= $('#user-form [name="user_id"]').val();
     if(userId)
-    editNewUser();
+      editNewUser();
     else 
-    createNewUser();
+      createNewUser();
   })
 
   function editNewUser(){
@@ -102,10 +106,12 @@
               toastr.error(res.Message);
             }
             $('#create-user-modal').modal('hide');
+            loading('hide');
         },
         error: function(err) {
             toastr.error('Error!');
             console.error(err.message);
+            loading('hide');
         }
     }
     $.ajax(options);
@@ -130,9 +136,12 @@
               toastr.error(res.Message);
             }
             $('#create-user-modal').modal('hide');
+            loading('hide');
         },
         error: function(err) {
+            toastr.error('Error!');
             console.error(err.message);
+            loading('hide');
         }
     }
     $.ajax(options);
@@ -150,7 +159,6 @@
   function showEditUser(data) {
     let userForm = $('#user-form');
     userForm.trigger('reset');
-    console.log(data);
     userForm.find('[name="user_id"]').val(data.id);
     userForm.find('[name="type"]').val(data.user_type_id);
     userForm.find('[name="branch_id"]').val(data.branch.id);
@@ -160,7 +168,7 @@
     userForm.find('[name="sex"]').filter('[value="'+ data.gender +'"]').click();
     userForm.find('[name="birth_date"]').val(data.birth_date);
     userForm.find('[name="phone"]').val(data.phone);
-    userForm.find('.modal-title').val('Chỉnh sửa tài khoản');
+    $('#create-user-modal').find('.modal-title').text('Chỉnh sửa tài khoản');
     $('#create-user-modal').modal('show');
   }
 

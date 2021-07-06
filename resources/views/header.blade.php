@@ -42,7 +42,7 @@
                     </button>
                     <div class="navbar__user__info">
                         <div class="navbar__user__name">{{auth()->user()->username}}</div>
-                        <div class="navbar__user__role">Nhân viên</div>
+                        <div class="navbar__user__role">{{auth()->user()->getUserTypeNameAttribute()}}</div>
                     </div>
                     <div class="dropdown-menu">
                         <div class="dropdown-menu__header">
@@ -53,7 +53,7 @@
                                 </div>
                                 <div class="dropdown-menu__header__info">
                                     <div class="dropdown-menu__header__name">{{auth()->user()->username}}</div>
-                                    <div class="dropdown-menu__header__role">Nhân viên</div>
+                                    <div class="dropdown-menu__header__role">{{auth()->user()->getUserTypeNameAttribute()}}</div>
                                 </div>
                                 <div class="dropdown-menu__header__logout">
                                     <a class="btn btn-dark btn-radius--50 btn-shadow" href="{{route('logout')}}">Logout</a>

@@ -27,7 +27,9 @@ Route::group(['middleware' => 'checkLogin'], function() {
         //rosters
         Route::get('/create','RosterController@viewCreateRoster')->name('viewCreateRoster');
         Route::post('/rosters','RosterController@createRoster')->name('createRoster');
+        Route::post('/rosters/update-time-register','RosterController@updateTimeRegister')->name('updateTimeRegister');
         Route::get('/rosters/{id}/export','RosterController@exportRoster')->name('exportRoster');
+        Route::post('/rosters/update','RosterController@updateRoster')->name('updateRoster');
 
         //users
         Route::post('/users/create','UserController@createUser')->name('createUser');
@@ -38,8 +40,12 @@ Route::group(['middleware' => 'checkLogin'], function() {
 
         //settings
         Route::get('/settings','SettingController@index')->name('setting.index');
-        Route::post('/settings/create','SettingController@createBranch')->name('setting.createBranch');
-        Route::post('/settings/update','SettingController@updateBranch')->name('setting.updateBranch');
+        Route::get('/settings/branch/get-all','SettingController@getAllBranch')->name('setting.getAllBranch');
+        Route::post('/settings/create-branch','SettingController@createBranch')->name('setting.createBranch');
+        Route::post('/settings/update-branch','SettingController@updateBranch')->name('setting.updateBranch');
+        Route::post('/settings/create-user-type','SettingController@createUserType')->name('setting.createUserType');
+        Route::post('/settings/update-user-type','SettingController@updateUserType')->name('setting.updateUserType');
+        Route::delete('/settings/delete-user-type','SettingController@deleteUserType')->name('setting.deleteUserType');
     });
     Route::get('/logout','UserController@logout')->name('logout');
 });

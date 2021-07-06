@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Models\Roster;
 use App\Models\UserType;
 use App\Models\Shift;
+use App\Models\User;
+use App\Models\UserShift;
 use Config;
 use Carbon\Carbon;
 use DB;
@@ -57,7 +59,11 @@ class RosterController extends Controller
             return $content;
         })
         ->addColumn('action', function($data) {
-            $buttonView = '<a href="'.route('singleRoster', $data->id) .'" class="btn btn-info btn-sm btn-view"><i class="fas fa-eye"></i></a>';
+            $href = "'.route('singleRoster', $data->id) .'";
+            if(auth()->user()->isAdmin() && $data->status === Config::get('constants.status_roster.CLOSE')) {
+                $href = route('singleRoster', $data->id) . '?edit_view=true';
+            }
+            $buttonView = '<a href="'.$href.'" class="btn btn-info btn-sm btn-view"><i class="fas fa-eye"></i></a>';
             $buttonCopy = '&nbsp;<a href="' . route('viewCreateRoster') . '?copy='. $data->id .'" class="btn btn-info btn-sm btn-copy"><i class="fas fa-copy"></i></a>';
             $button = $buttonView . $buttonCopy;
             if(auth()->user()->isStaff()) {
@@ -106,7 +112,7 @@ class RosterController extends Controller
                         'user_type_id' => $shift['type'],
                         'date' => $date,
                         'amount' => $shift['day_' . $i],
-                        'status' => $shift['day_' . $i] === 0 ? Config::get('constants.status_shift.OPEN') : Config::get('constants.status_shift.FULL'), 
+                        'status' => $shift['day_' . $i] === 0 ? Config::get('constants.status_shift.FULL') : Config::get('constants.status_shift.OPEN'), 
                         'user_created_id' => auth()->user()->id, 
                     ];
                     Shift::create($data);
@@ -129,27 +135,38 @@ class RosterController extends Controller
         ]);
     }
 
-    public function singleRoster($id){
+    public function singleRoster(Request $request, $id){
         if(empty($id)) return;
         $roster = Roster::find($id);
         if(empty($roster)) return redirect()->back();
         $shifts = $this->getDataShift($id);
         $shifts = $this->formatDataShift($shifts);
         $userTypes = $this->getUserTypeStaff();
-        return response()->view('single_roster', [
+        $staffs = null;
+        $view = 'single_roster';
+        $requestQuery = $request->query();
+        if((auth()->user()->isAdmin() || $roster->isAuthor()) && isset($requestQuery['edit_view']) && $requestQuery['edit_view'] === 'true') {
+            $branchID = auth()->user()->branch_id;
+            $staffs = User::whereNotIn('user_type_id', [1, 2])->with(['user_type' => function($query) use ($branchID) {
+                $query->where('branch_id', $branchID);
+            }])->get();
+            $view = 'singleRosterAdmin';
+        }
+        return response()->view($view, [
             'roster' => $roster,
             'shifts' => $shifts,
             'userTypes' => $userTypes,
+            'staffs' => $staffs,
         ]);
     }
 
     public function getDataShift($rosterId){
         if(empty($rosterId)) return;
-        $shifts = Shift::withCount('userShifts')
-        ->where('roster_id', $rosterId)
-        ->orderBy('time_start', 'asc')
-        ->orderBy('date', 'asc')
-        ->get();
+        $shifts = Shift::withCount('userShifts')->with('userShifts.user')
+            ->where('roster_id', $rosterId)
+            ->orderBy('time_start', 'asc')
+            ->orderBy('date', 'asc')
+            ->get();
         return $shifts;
     }
 
@@ -256,5 +273,66 @@ class RosterController extends Controller
             $row += $countRow;
         }
         return $this;
+    }
+
+    public function updateTimeRegister(Request $request) {
+        $data = [
+            'time_open' => Carbon::createFromFormat('d-m-Y H:i', $request['timeBegin']),
+            'time_close' => Carbon::createFromFormat('d-m-Y H:i', $request['timeClose']),
+        ];
+        $idRoster = $request['idRoster'];
+        $roster = Roster::find($idRoster)->update($data);
+        if(empty($roster)) {
+            return response()->json([
+                'Status' => 'Fail',
+                'Message' => 'Update time fail',
+            ]);
+        }
+        $status = $this->checkRosterById($idRoster);
+
+        return response()->json([
+            'Status' => 'Success',
+            'Message' => 'Update time successfully',
+            'statusRoster' => $status
+        ]);
+    }
+
+    public function updateRoster(Request $request) {
+        $data = $request->all();
+        dd($data);
+        //remove
+        DB::beginTransaction();
+        try {
+            if(isset($data['data']['dataRemove']) && count($data['data']['dataRemove']) > 0) {
+                $idsRemove = $data['data']['dataRemove'];
+                UserShift::whereIn('id', $idsRemove)->delete();
+            }
+            //add
+            
+            if(isset($data['data']['dataAdd']) && count($data['data']['dataAdd']) > 0) {
+                $dataAdd = array_map(function($staff){
+                    return [
+                        'shift_id' => $staff['shiftID'],
+                        'user_id' => $staff['userID'],
+                        'status' => Config::get('constants.status_shift_user.OPEN'),
+                        'work_time' => 0
+                    ];
+                }, $data['data']['dataAdd']);
+                UserShift::insert($dataAdd);
+            }
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'Status' => 'Fail',
+                'Message' => $e->getMessage()
+            ]);
+        }
+
+        return response()->json([
+            'Status' => 'Success',
+            'Message' => 'Update roster successfully!'
+        ]);
     }
 }
