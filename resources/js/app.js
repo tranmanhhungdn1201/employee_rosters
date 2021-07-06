@@ -13,6 +13,7 @@ window.DataTable = require('datatables.net-dt');
 require('datatables.net-responsive-dt');
 window.datetimepicker = require('tempusdominus-bootstrap');
 window.toastr = require('toastr');
+window.select2 = require('select2');
 // require('moment-timezone');
 // require('popper.js');
 // require('bootstrap');
