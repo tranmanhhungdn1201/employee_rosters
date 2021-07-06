@@ -11,5 +11,31 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.js('resources/js/app.js', 'public/js')
-   .sass('resources/sass/app.scss', 'public/css');
+// mix.webpackConfig({
+//   module: {
+//     rules: [{
+//       test: /\.js?$/,
+//       use: [{
+//         loader: 'babel-loader',
+//         options: mix.config.babel()
+//       }]
+//     }]
+//   }
+// });
+
+// mix.autoload({
+//    jquery: ['$', 'window.jQuery',"jQuery","window.$","jquery","window.jquery"],
+//    moment: 'moment',
+//    DataTable : 'datatables.net-dt',
+// });
+
+// mix.webpackConfig({
+//    resolve: {
+//       alias: {
+//          jquery: "jquery/src/jquery"
+//       }
+//    }
+// });
+
+mix.sass('resources/sass/app.scss', 'public/css')
+   .js('resources/js/app.js', 'public/js');
