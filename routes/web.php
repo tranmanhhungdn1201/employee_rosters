@@ -11,7 +11,7 @@
 */
 Route::group(['middleware' => 'checkLogin'], function() {
         Route::get('/shifts/remove-shift-register/{id}','ShiftController@removeShift')->name('removeShift');
-        Route::get('/shifts/check-slot/{id}','ShiftController@registerShift')->name('registerShift');
+        Route::post('/shifts/check-slot/{id}','ShiftController@registerShift')->name('registerShift');
         Route::get('/rosters/{id}','RosterController@singleRoster')->name('singleRoster')->middleware('checkRoster');
         Route::get('/rosters/{branchID}/list','RosterController@listRoster')->name('listRoster');
         Route::get('/rosters/{branchID}/datatables-list','RosterController@getListRosterDatatables')->name('getListRosterDatatables');

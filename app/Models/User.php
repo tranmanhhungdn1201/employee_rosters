@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\models\UserType;
-use App\models\Branch;
+use App\Models\UserType;
+use App\Models\Branch;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Config;
@@ -18,7 +18,6 @@ class User extends Authenticatable
         'username',
         'phone',
         'password',
-        'phone',
         'first_name',
         'last_name',
         'gender',
@@ -45,12 +44,11 @@ class User extends Authenticatable
         return $this->first_name . ' ' . $this->last_name;
     }
 
-    
     public function isAdmin() {
         if($this->user_type_id === Config::get('constants.user.admin')) {
             return true;
         }
-        
+
         return false;
     }
 

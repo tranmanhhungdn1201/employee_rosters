@@ -19,8 +19,7 @@
           <div class="form-group row">
             <label class="col-4">Trạng thái:</label>
             <select name="status" class="form-control status col-4" disable="{{$disabled}}">
-              <option value="1">Trống</option>
-              <option value="2">Đầy</option>
+              <option value="4">Mở khóa</option>
               <option value="3">Khóa</option>
             </select>
           </div>
@@ -42,7 +41,7 @@
         </form>
       </div>
       <div class="modal-footer">
-        @if(empty($disabled))
+        @if(empty($disabled) && auth()->user()->id == $roster->user_created_id)
           <button type="button" class="btn btn-primary" id="btn-save-shift">Lưu</button>
         @endif
         <button type="button" class="btn btn-dark" data-dismiss="modal">Đóng</button>

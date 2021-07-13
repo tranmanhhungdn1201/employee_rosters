@@ -15,7 +15,7 @@ class ShiftController extends Controller
     use RosterTrait;
 
     public function getShiftById($id){
-        if(empty($id)) 
+        if(empty($id))
             return response()->json([
                 'Status' => 'Fail',
                 'Message' => 'Undefined id:'
@@ -33,11 +33,23 @@ class ShiftController extends Controller
     }
 
     public function updateAmountShift(Request $request, $id){
-        $rs = Shift::find($id)->update([
-            'status' => $request->status,
-            'amount' => $request->amount,
-        ]);
-        if(!$rs) 
+        $status = $request->status;
+        if($request->status == 3) {
+            $data = [
+                'status' => $request->status,
+                'amount' => $request->amount,
+            ];
+        } else {
+            $data = [
+                'amount' => $request->amount
+            ];
+        }
+        $rs = Shift::find($id)->update($data);
+        //unlock
+        if($request->status == 4) {
+            $status = $this->unLockShift($id);
+        }
+        if(!$rs)
             return response()->json([
                 'Status' => 'Fail',
                 'Message' => 'Update shift fail'
@@ -45,8 +57,22 @@ class ShiftController extends Controller
 
         return response()->json([
             'Status' => 'Success',
-            'Message' => 'Update shift successfully'
+            'Message' => 'Update shift successfully',
+            'statusCode' => $status
         ]);
+    }
+
+    public function unLockShift($id){
+        $shift = Shift::withCount('userShifts')->where('id', $id)->first();
+        $check = $shift->user_shifts_count < $shift->amount;
+        if($check) {
+            $status = Config::get('constants.status_shift.OPEN');
+        } else {
+            $status = Config::get('constants.status_shift.FULL');
+        }
+        $shift->update(['status', $status]);
+
+        return $status;
     }
 
     public function updateTimeShift(Request $request){
@@ -58,7 +84,7 @@ class ShiftController extends Controller
             'time_finish' => $request->shift_finish,
             'user_type_id' => $request->type
         ]);
-        if(!$rs) 
+        if(!$rs)
             return response()->json([
                 'Status' => 'Fail',
                 'Message' => 'Update shift fail'
@@ -84,7 +110,7 @@ class ShiftController extends Controller
                     'user_type_id' => $dataShift['type'],
                     'date' => $date,
                     'amount' => $dataShift['day_' . $i],
-                    'status' => $dataShift['day_' . $i] === 0 ? Config::get('constants.status_shift.OPEN') : Config::get('constants.status_shift.FULL'), 
+                    'status' => $dataShift['day_' . $i] === "0" ? Config::get('constants.status_shift.FULL') : Config::get('constants.status_shift.OPEN'),
                 ];
 
                 Shift::create($data);
@@ -107,7 +133,7 @@ class ShiftController extends Controller
             'Message' => 'Add shift fail'
         ]);
     }
-    
+
     public function delShift(Request $request){
         $shiftID = $request->shiftID;
         $shiftFirst = Shift::find($shiftID);
@@ -141,7 +167,7 @@ class ShiftController extends Controller
                 'Message' => 'Roster is expire!'
             ]);
         $isRegisted = $this->checkRegistered($id, $idUser);
-        if($isRegisted) 
+        if($isRegisted)
             return response()->json([
                 'Status' => 'Fail',
                 'Message' => 'You registered shift',

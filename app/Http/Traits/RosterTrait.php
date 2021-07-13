@@ -14,16 +14,16 @@ trait RosterTrait {
             //open
             $query->where('time_close', '>=', $date)
             ->where('time_open', '<=', $date)
-            ->where('status', Config::get('constants.status_roster.OPEN'))
+            ->where('status', '!=', Config::get('constants.status_roster.OPEN'))
             ->update(['status' => Config::get('constants.status_roster.OPEN')]);
             //close
             $query->where('time_close', '<=', $date)
-            ->where('status', Config::get('constants.status_roster.CLOSE'))
+            ->where('status', '!=',Config::get('constants.status_roster.CLOSE'))
             ->update(['status' => Config::get('constants.status_roster.CLOSE')]);
             //pending
             $query->where('time_open', '>=', $date)
             ->where('time_close', '<=', $date)
-            ->where('status', Config::get('constants.status_roster.PENDING'))
+            ->where('status', '!=',Config::get('constants.status_roster.PENDING'))
             ->update(['status' => Config::get('constants.status_roster.PENDING')]);
         });
 
@@ -33,7 +33,7 @@ trait RosterTrait {
     public function checkRosterById($id) {
         if(empty($id) || $id === 'undefined') return;
         $date = Carbon::createFromFormat('Y-m-d H:i:00', date('Y-m-d H:i:00'));
-        
+
         $roster = Roster::find($id);
         $timeOpen = Carbon::createFromFormat('Y-m-d H:i:s',  $roster->time_open);
         $timeClose = Carbon::createFromFormat('Y-m-d H:i:s',  $roster->time_close);
@@ -53,6 +53,6 @@ trait RosterTrait {
             return Config::get('constants.status_roster.PENDING');
         }
 
-        return true;
+        return $roster->status;
     }
 }

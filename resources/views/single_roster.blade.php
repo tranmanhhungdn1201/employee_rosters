@@ -12,7 +12,7 @@
             Bảng phân công
             @if(!auth()->user()->isStaff())
                 <div class="card-header__action">
-                    <a href="{{route('viewCreateRoster')}}" class="btn btn-outline-primary btn-export">
+                    <a href="#" class="btn btn-outline-primary btn-export">
                     <i class="fas fa-file-download"></i>
                     Xuất file
                     </a>
@@ -27,7 +27,7 @@
                             <label for="roster_start" class="col-xl-4 col-form-label"><span class="text-danger">*</span>&nbsp;Ngày bắt đầu</label>
                             <div class="col-xl-8">
                             <div class="input-group date" id="roster_start" data-target-input="nearest">
-                                <input type="text" placeholder="dd-mm-yyyy" class="form-control datetimepicker-input" name="roster_start" data-target="#roster_start" data-toggle="datetimepicker" 
+                                <input type="text" placeholder="dd-mm-yyyy" class="form-control datetimepicker-input" name="roster_start" data-target="#roster_start" data-toggle="datetimepicker"
                                     value="<?php echo date('d-m-Y', strtotime($roster->day_start)); ?>" disabled>
                                 <!-- <div class="input-group-append">
                                     <button class="btn btn-primary" type="button" data-target="#roster_start" data-toggle="datetimepicker"><i class="fas fa-calendar-alt"></i></button>
@@ -36,7 +36,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="col-md-6 pl-lg-4 pl-xl-5">
                         <div class="form-group row no-gutters">
                             <label for="roster_end" class="col-xl-4 col-form-label"><span class="text-danger">*</span>&nbsp;Ngày kết thúc</label>
@@ -55,7 +55,7 @@
                             <label for="roster_begin" class="col-xl-4 col-form-label"><span class="text-danger">*</span>&nbsp;Ngày giờ mở đăng kí</label>
                             <div class="col-xl-8">
                                 <div class="input-group date" id="roster_begin" data-target-input="nearest">
-                                    <input type="text" placeholder="dd-mm-yyyy hh:mm" class="form-control datetimepicker-input" name="roster_begin" data-target="#roster_begin" data-toggle="datetimepicker" 
+                                    <input type="text" placeholder="dd-mm-yyyy hh:mm" class="form-control datetimepicker-input" name="roster_begin" data-target="#roster_begin" data-toggle="datetimepicker"
                                         value="<?php echo date('d-m-Y H:i', strtotime($roster->time_open)); ?>" required pattern="^\d{2}-\d{2}-\d{4} \d\d:\d\d$">
                                     <div class="input-group-append">
                                         <button class="btn btn-primary" type="button" data-target="#roster_begin" data-toggle="datetimepicker"><i class="fas fa-calendar-alt"></i></button>
@@ -69,7 +69,7 @@
                             <label for="roster_close" class="col-xl-4 col-form-label"><span class="text-danger">*</span>&nbsp;Ngày giờ đóng đăng kí</label>
                             <div class="col-xl-8">
                             <div class="input-group date" id="roster_close" data-target-input="nearest">
-                                <input type="text" placeholder="dd-mm-yyyy hh:mm" class="form-control datetimepicker-input" name="roster_close" data-target="#roster_close" data-toggle="datetimepicker" 
+                                <input type="text" placeholder="dd-mm-yyyy hh:mm" class="form-control datetimepicker-input" name="roster_close" data-target="#roster_close" data-toggle="datetimepicker"
                                     value="<?php echo date('d-m-Y H:i', strtotime($roster->time_close)); ?>" required pattern="^\d{2}-\d{2}-\d{4} \d\d:\d\d$">
                                 <div class="input-group-append">
                                     <button class="btn btn-primary" type="button" data-target="#roster_close" data-toggle="datetimepicker"><i class="fas fa-calendar-alt"></i></button>
@@ -135,7 +135,8 @@
                         <tbody>
                             @if (is_array($shifts))
                                 @foreach($shifts as $key => $shift)
-                                <tr data-shift="{{ $shift[0] }}">
+                                @if(($shift[0]->user_type_id === auth()->user()->user_type_id && auth()->user()->isStaff()) || !auth()->user()->isStaff())
+                                <tr data-shift="{{ $shift[0] }}" class="{{$shift[0]->is_pm ? 'bg-warning' : ''}}">
                                     <td class="shift-row shift_start shift_finish"><div class="table-roster__time">{{ date('H:i', strtotime($shift[0]->time_start)) .' - '. date('H:i', strtotime($shift[0]->time_finish))}}</div></td>
                                     <td class="shift-row type"><div class="table-roster__type">{{ $shift[0]->user_type_name }}</div></td>
                                     @foreach($shift as $indexDay => $day)
@@ -165,7 +166,7 @@
                                                     <span>{{$day->user_shifts_count}}/{{ $day->amount }}</span>
                                                 </div>
                                                 <div class="table-roster__cell__action">
-                                                    @if(auth()->user()->isAdmin() || (auth()->user()->isManager() && auth()->user()->id === $roster->user_created_id))
+                                                    @if(auth()->user()->isAdmin() || (auth()->user()->isManager()))
                                                     <a href="#" data-action="edit" class="btn-edit-shift" data-id="{{$day->id}}"><i class="fas fa-pencil-alt"></i></a>
                                                     @endif
                                                 </div>
@@ -173,6 +174,7 @@
                                         </td>
                                     @endforeach
                                 </tr>
+                                @endif
                                 @endforeach
                             @else
                                 <tr>
@@ -246,9 +248,9 @@
             getDataShift(id).then(res => {
                 loading('hide');
                 if(res.Status === 'Success'){
-                    if(modeEdit) 
+                    if(modeEdit)
                         editModeShiftModal();
-                    else 
+                    else
                         viewModeShiftModal();
                     $('#shift-modal').modal('show');
                     setDataShift(res.Data);
@@ -285,7 +287,11 @@
 
             $('#shift-modal').find('.title').text(date + time);
             form.find('.amount').val(data.amount);
-            form.find('.status').val(data.status);
+            if(data.status === 3) {
+                form.find('.status').val(data.status);
+            } else {
+                form.find('.status').val(4);
+            }
             $('#btn-save-shift').attr('data-id', data.id);
 
             //table
@@ -322,14 +328,15 @@
                     toastr.success(res.Message);
                     $('#shift-modal').modal('hide');
                     // updateStatusUI(idShift, status);
-                    updateInfoShift(idShift, status, 0, amount);
+                    debugger
+                    updateInfoShift(idShift, res.statusCode, 0, amount);
                     btnSave.attr('');
                 } else {
                     toastr.error(res.Message);
                 }
             });
         })
-        
+
         function updateAmountShift(idShift, amount, status) {
             let url = "{{route('updateAmountShift', ':id')}}";
             url = url.replace(':id', idShift);
@@ -384,7 +391,7 @@
                 loading('show');
                 let data = $('#shift-time-form').serializeArray();
                 let objData = arrDataToObject(data);
-                
+
                 updateTimeShift(objData).then(res => {
                     if(res.Status === 'Success') {
                         $('#shift-time-modal').modal('hide');
@@ -434,6 +441,7 @@
             //TODO: error check validate
             if (checkValidateHTML('shift-form')) {
                 e.preventDefault();
+                loading('show');
                 let data = $('#create-row-shift #shift-form').serializeArray();
                 let objData = arrDataToObject(data);
                 const url = "{{route('addShift')}}";
@@ -448,11 +456,15 @@
                     },
                     success: function(res) {
                         if(res.Status === 'Success') {
-                            // location.reload();
+                            location.reload();
+                        } else {
+                            loading('hide');
+                            toastr.error(res.Message);
                         }
                         $('#create-row-shift').modal('hide');
                     },
                     error: function(err) {
+                        toastr.error('Error!');
                         console.error(err.message);
                     }
                 }
@@ -574,7 +586,7 @@
             dayWeek = dayWeek === '6' ? 0 : +dayWeek + 1;
             return `${DATE[dayWeek]} (${data.time_start.slice(0, -3)} - ${data.time_finish.slice(0, -3)})`;
         }
-        
+
         $('#register-shift').click(function(){
             let idShift = $(this).attr('data-id');
             if(!idShift) return;
@@ -583,16 +595,19 @@
                 loading('hide');
             });
         })
-        
+
         function registerShift(shiftID) {
             if(!shiftID) return;
             let url = "{{route('registerShift', ':id')}}";
             url = url.replace(':id', shiftID);
-            let note = $('#form-register').find('[name=note]');
+            let note = $('.form-register').find('[name=note]').val();
             const options = {
                 url,
-                method: 'GET',
-                data: note,
+                method: 'POST',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    note
+                },
                 success: function(res) {
                     if(res.Status === 'Success') {
                         toastr.success(res.Message);

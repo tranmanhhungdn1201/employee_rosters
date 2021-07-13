@@ -50,7 +50,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="col-md-6 pl-lg-4 pl-xl-5">
                         <div class="form-group row no-gutters">
                             <label for="roster_close" class="col-xl-4 col-form-label"><span class="text-danger">*</span>&nbsp;Ngày giờ đóng đăng kí</label>
@@ -113,7 +113,7 @@
 
         $(document).ready(function () {
             /**** format datepicker ****/
-            
+
             //start date of roster
             $('#roster_start').datetimepicker({
                 format: 'DD-MM-YYYY',
@@ -147,8 +147,8 @@
                     let item = {};
                     for(let j = 0; j < 7; j++) {
                         let index = i*7 + j;
-                        item['shift_finish'] = data[index]['time_finish'];
-                        item['shift_start'] = data[index]['time_start'];
+                        item['shift_finish'] = data[index]['time_finish'].slice(0, -3);
+                        item['shift_start'] = data[index]['time_start'].slice(0, -3);
                         item['type'] = data[index]['user_type_id'];
                         item['id'] = data[index]['id'];
                         item['day_' + j] = data[index]['amount'];
@@ -176,7 +176,7 @@
              * @param {number} id - id raw shift
              */
             function addRowHtml(data){
-                let contentRow = createHTMLRowSbhift(data);
+                let contentRow = createHTMLRowShift(data);
                 let rowHtml = '<tr data-id="'+ data.id +'">' +
                                 contentRow +
                             '</tr>';
@@ -187,9 +187,13 @@
              * Function create html row shift
              * @param {number} id - id raw shift
              */
-            function createHTMLRowSbhift(data){
+            function createHTMLRowShift(data){
                 const type = USER_TYPE;
-                return '<td class="shift_start shift_finish">' + data.shift_start + '-' + data.shift_finish + '</td>' +
+                let hightPM = '';
+                if(checkPM(data.shift_start, data.shift_finish)) {
+                    hightPM = ' bg-warning';
+                }
+                return '<td class="shift_start shift_finish'+ hightPM +'">' + data.shift_start + ' - ' + data.shift_finish + '</td>' +
                     '<td class="type">' + type[data.type] + '</td>' +
                     '<td class="day_0">' + data.day_0 + '</td>' +
                     '<td class="day_1">' + data.day_1 + '</td>' +
@@ -200,16 +204,25 @@
                     '<td class="day_6">' + data.day_6 + '</td>'
             }
 
+            function checkPM(shiftStart, shiftFinish) {
+                let hStart = shiftStart.slice(0, 2);
+                let hFinish = shiftFinish.slice(0, 2);
+                if(+hStart > 12 && +hFinish > 12) {
+                    return true;
+                }
+                return false;
+            }
+
             /**** Handle event ****/
 
             // change roster_start date => update roster_end date
             // update order of date of week in roster table
-            $('#roster_start').on("change.datetimepicker", ({date, oldDate}) => { // date: moment object          
+            $('#roster_start').on("change.datetimepicker", ({date, oldDate}) => { // date: moment object
                 let dayStart = moment($('[name="roster_start"]').val(), 'DD-MM-YYYY');
                 // end date = start date + 7
-                $('[name="roster_end"]').val(dayStart.add(7, 'days').format('DD-MM-YYYY'));
+                $('[name="roster_end"]').val(dayStart.add(6, 'days').format('DD-MM-YYYY'));
 
-                let colDateEles = $('#roster-table>thead>tr>th').splice(2); 
+                let colDateEles = $('#roster-table>thead>tr>th').splice(2);
                 let dayWeekBegin = dayStart.day();
                 const DATE_OF_WEEK = {
                         0: 'Chủ nhật',
@@ -220,8 +233,8 @@
                         5: 'Thứ 6',
                         6: 'Thứ 7',
                 };
-                
-                // update order of date of week by start date 
+
+                // update order of date of week by start date
                 for(let col of colDateEles) {
                     $(col).text(DATE_OF_WEEK[dayWeekBegin]);
                     dayWeekBegin++;
@@ -280,7 +293,7 @@
                     localStorage.setItem('dataRoster', JSON.stringify([...dataRoster]));
                     let assignRow = $('#roster-table tbody tr[data-id="'+ id +'"]');
                     assignRow.attr('data-id', objData.id);
-                    let contentRow = createHTMLRowSbhift(objData);
+                    let contentRow = createHTMLRowShift(objData);
                     assignRow.html(contentRow);
                 }
                 $('#create-row-shift').modal('hide');

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use App\Models\UserType;
+use App\Models\Roster;
 class Shift extends Model
 {
     protected $table = 'shifts';
@@ -22,9 +23,14 @@ class Shift extends Model
 
     protected $appends = [
         'isRegistered',
-        'user_type_name'
+        'user_type_name',
+        'is_pm'
     ];
-    
+
+    public function roster(){
+        return $this->belongsTo(Roster::class, 'roster_id', 'id');
+    }
+
     public function userShifts(){
         return $this->hasMany(UserShift::class);
     }
@@ -51,5 +57,15 @@ class Shift extends Model
     {
         $userType = $this->userType;
         return $this->attributes['user_type_name'] = empty($userType) ? '' : $userType->name;
+    }
+
+    public function getIsPmAttribute() {
+        $start = (int) substr($this->time_start, 0, 2);
+        $end = (int) substr($this->time_finish, 0, 2);
+        if($start > 12 && $end > 12) {
+            return true;
+        }
+
+        return false;
     }
 }

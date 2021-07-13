@@ -59,7 +59,7 @@ class RosterController extends Controller
             return $content;
         })
         ->addColumn('action', function($data) {
-            $href = "'.route('singleRoster', $data->id) .'";
+            $href = route('singleRoster', $data->id);
             if(auth()->user()->isAdmin() && $data->status === Config::get('constants.status_roster.CLOSE')) {
                 $href = route('singleRoster', $data->id) . '?edit_view=true';
             }
@@ -69,7 +69,7 @@ class RosterController extends Controller
             if(auth()->user()->isStaff()) {
                 $button = $buttonView;
             }
-            return $button; 
+            return $button;
         })
         ->rawColumns(['status_roster', 'action'])
         ->make(true);
@@ -87,7 +87,7 @@ class RosterController extends Controller
             'status' => Config::get('constants.status_roster.PENDING'),
             'user_created_id' => auth()->user()->id,
             'user_updated_id' => auth()->user()->id,
-            'branch_id' => 1       
+            'branch_id' => 1
         ];
         DB::beginTransaction();
         try {
@@ -112,8 +112,8 @@ class RosterController extends Controller
                         'user_type_id' => $shift['type'],
                         'date' => $date,
                         'amount' => $shift['day_' . $i],
-                        'status' => $shift['day_' . $i] === 0 ? Config::get('constants.status_shift.FULL') : Config::get('constants.status_shift.OPEN'), 
-                        'user_created_id' => auth()->user()->id, 
+                        'status' => $shift['day_' . $i] === "0" ? Config::get('constants.status_shift.FULL') : Config::get('constants.status_shift.OPEN'),
+                        'user_created_id' => auth()->user()->id,
                     ];
                     Shift::create($data);
                 }
@@ -127,7 +127,7 @@ class RosterController extends Controller
                 'Message' => $e->getMessage()
             ]);
         }
-        
+
         return response()->json([
             'Status' => 'Success',
             'Message' => 'Create roster successfully',
@@ -198,7 +198,7 @@ class RosterController extends Controller
     public function exportRoster($rosterId)
     {
         $roster = Roster::find($rosterId);
-        if(empty($roster))  
+        if(empty($roster))
             return response()->json([
                 'success' => false,
                 'message' => 'Không có dữ liệu.',
@@ -299,7 +299,6 @@ class RosterController extends Controller
 
     public function updateRoster(Request $request) {
         $data = $request->all();
-        dd($data);
         //remove
         DB::beginTransaction();
         try {
@@ -308,7 +307,7 @@ class RosterController extends Controller
                 UserShift::whereIn('id', $idsRemove)->delete();
             }
             //add
-            
+
             if(isset($data['data']['dataAdd']) && count($data['data']['dataAdd']) > 0) {
                 $dataAdd = array_map(function($staff){
                     return [

@@ -9,7 +9,7 @@ use App\Models\Branch;
 use Config;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Traits\RosterTrait;
-use App\models\UserType;
+use App\Models\UserType;
 use Datatables;
 
 class UserController extends Controller
@@ -28,7 +28,7 @@ class UserController extends Controller
                     return redirect()->route('listRoster', $branchId);
             }
         }
-        
+
         return view('login', ['isNonShowHeader' => true]);
     }
 
@@ -48,7 +48,7 @@ class UserController extends Controller
         $error = "Sai tên tài khoản hoặc mật khẩu. Vui longf thử lại!";
         return back()->withErrors(['error' => $error]);
     }
-    
+
     public function userList(){
         $branches = Branch::all();
         $userTypes = UserType::all();
@@ -61,7 +61,7 @@ class UserController extends Controller
 
     public function getUserListDatatables(){
         return Datatables::of(User::with(['user_type', 'branch'])
-        ->select('id', 'username', 'gender', 'first_name', 'last_name', 'branch_id', 'hire_date', 'phone', 'user_type_id')->get())
+        ->select('id', 'username', 'gender', 'first_name', 'last_name', 'branch_id', 'birth_date', 'phone', 'user_type_id')->get())
         ->addColumn('action', function($data) {
             $buttonEdit = '<button type="button" data-id="'.$data->id.'" class="btn btn-info btn-sm btn-edit"><i class="fas fa-edit"></i></button>';
             $buttonDelete = '&nbsp;<button type="button" data-id="'.$data->id.'" class="btn btn-danger btn-sm btn-remove"><i class="fas fa-trash"></i></button>';
@@ -69,7 +69,7 @@ class UserController extends Controller
             if(!$data->isStaff() && !auth()->user()->isAdmin() || auth()->user()->id === $data->id) {
                 $button = $buttonEdit;
             }
-            return $button; 
+            return $button;
         })
         ->make(true);
     }
@@ -79,7 +79,7 @@ class UserController extends Controller
 
         return redirect('/login');
     }
-    
+
     public function createUser(Request $request){
         $data = $request->all();
         $dataUser = [

@@ -30,7 +30,7 @@
             <th>Họ Tên</th>
             <th>Chức vụ</th>
             <th>Số điện thoại</th>
-            <th>Ngày làm</th>
+            <th>Ngày sinh</th>
             <th>Nhà hàng</th>
             <th>Action</th>
           </thead>
@@ -59,7 +59,7 @@
           { data: 'last_name', name: 'last_name' },
           { data: 'user_type.name', name: 'user_type.name' },
           { data: 'phone', name: 'phone' },
-          { data: 'hire_date', name: 'hire_date' },
+          { data: 'birth_date', name: 'birth_date' },
           { data: 'branch.name', name: 'branch.name' },
           { data: 'action', name: 'action' },
       ]
@@ -83,7 +83,7 @@
     let userId= $('#user-form [name="user_id"]').val();
     if(userId)
       editNewUser();
-    else 
+    else
       createNewUser();
   })
 
