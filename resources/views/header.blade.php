@@ -66,21 +66,18 @@
                                     Hoạt động
                                 </li>
                                 @if (!auth()->user()->isStaff())
-                                <li>
-                                    <a href="{{ route('setting.index') }}">Cài đặt</a>
-                                </li>
+                                    <li>
+                                        <a href="{{ route('setting.index') }}">Cài đặt</a>
+                                    </li>
                                 @endif
                                 <li>
-                                    <a href="#">Đổi mật khẩu</a>
-                                </li>
-                                <li>
-                                    <a href="#">Xem hồ sơ</a>
+                                    <a href="{{ route('indexProfile') }}">Trang cá nhân</a>
                                 </li>
                             </ul>
                         </div>
                     </div>
                 </div>
-            </div> 
+            </div>
             <div class="navbar__toggler">
                 <div class="navbar__line"></div>
                 <div class="navbar__line"></div>

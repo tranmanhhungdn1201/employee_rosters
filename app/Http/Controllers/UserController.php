@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\Roster;
 use App\Models\Branch;
-use Config;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Traits\RosterTrait;
 use App\Models\UserType;
@@ -88,7 +87,7 @@ class UserController extends Controller
             'phone' => $data['phone'],
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
-            'gender' => $data['sex'],
+            'gender' => $data['gender'],
             'user_type_id' => $data['type'],
             'birth_date' => $data['birth_date'],
             'hire_date' => date("Y-m-d"),
@@ -105,21 +104,38 @@ class UserController extends Controller
         $data = $request->all();
         if(!empty($data['password'])) {
             $dataUser['password'] = bcrypt($data['password']);
+        } else {
+            unset($data['password']);
+
         }
-        $dataUser = [
-            'username' => $data['username'],
-            'phone' => $data['phone'],
-            'first_name' => $data['first_name'],
-            'last_name' => $data['last_name'],
-            'gender' => $data['sex'],
-            'user_type_id' => $data['type'],
-            'birth_date' => $data['birth_date'],
-            'branch_id' => $data['branch_id'],
-        ];
-        User::find($data['user_id'])->update($dataUser);
+
+        User::find($data['user_id'])->update($data);
         return response()->json([
             'Status' => 'Success',
             'Message' => 'Update user successfully'
+        ]);
+    }
+
+    public function changePassword(Request $request) {
+        $data = $request->all();
+        $auth = auth()->user();
+        $password = $auth->password;
+        if(!Hash::check($data['old_password'], $password)) {
+            return response()->json([
+                'Status' => 'Fail',
+                'Message' => 'Wrong password'
+            ]);
+        }
+        $rs = User::find($auth->id)->update(['password' => bcrypt($data['new_password'])]);
+        if($rs) {
+            return response()->json([
+                'Status' => 'Success',
+                'Message' => 'Update password successfully'
+            ]);
+        }
+        return response()->json([
+            'Status' => 'Fail',
+            'Message' => 'Update password fail'
         ]);
     }
 
@@ -135,5 +151,9 @@ class UserController extends Controller
             'Status' => 'Fail',
             'Message' => 'Delete user Fail'
         ]);
+    }
+
+    public function indexProfile() {
+        return view('profile');
     }
 }

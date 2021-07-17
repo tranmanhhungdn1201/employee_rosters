@@ -37,6 +37,10 @@ Route::group(['middleware' => 'checkLogin'], function() {
         Route::post('/users/delete/{userID}','UserController@deleteUser')->name('deleteUser');
         Route::get('/users','UserController@userList')->name('userList');
         Route::get('/users/datatables/getList','UserController@getUserListDatatables')->name('getUserListDatatables');
+        //profile
+        Route::get('/profiles','UserController@indexProfile')->name('indexProfile');
+        Route::post('/proflies/change-password','UserController@changePassword')->name('changePassword');
+
 
         //settings
         Route::get('/settings','SettingController@index')->name('setting.index');

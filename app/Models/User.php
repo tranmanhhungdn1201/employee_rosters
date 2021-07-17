@@ -28,7 +28,8 @@ class User extends Authenticatable
     ];
 
     protected $appends = [
-        'full_name'
+        'full_name',
+        'branch_name'
     ];
 
     public function user_type() {
@@ -79,5 +80,10 @@ class User extends Authenticatable
     {
         $userType = $this->user_type;
         return $this->attributes['user_type_name'] = empty($userType) ? '' : $userType->name;
+    }
+
+    public function getBranchNameAttribute()
+    {
+        return $this->branch->name;
     }
 }

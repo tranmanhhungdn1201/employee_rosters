@@ -318,7 +318,7 @@
       else
         createUserType(dataObj);
     })
-    
+
     function createUserType(data) {
       const url = "{{ route('setting.createUserType') }}";
       const options = {
@@ -388,9 +388,11 @@
     })
 
     function setDataBranchSelect() {
+      loading('show');
       getDataBranch().then(res => {
+        loading('hide');
         let data = res.Data;
-        let content = data.map(branch => 
+        let content = data.map(branch =>
           `<option value="${branch.id}" data-user-type='${JSON.stringify(branch.user_types)}'>${branch.name}</option>`
         );
         $('.branch-select').empty();
@@ -405,13 +407,14 @@
         url,
         method: 'GET',
         error: (err) => {
+          loading('hide');
           toastr.error(err.message);
           console.log(err.message);
         }
       }
       return $.ajax(options);
     }
-    
+
     $('.branch-select').on('change', function() {
       $('#account').find('[name=branch_id]').val(this.value);
       setDataUserType();

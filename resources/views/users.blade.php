@@ -65,6 +65,12 @@
       ]
   });
 
+  table.on('order.dt search.dt', function () {
+    table.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+        cell.innerHTML = i + 1;
+    });
+  }).draw();
+
   $('.create-user').click(function(){
     $('#user-form').trigger('reset');
     if(!isAdmin) {
@@ -152,7 +158,7 @@
   }, 300));
 
   $('table').on('click', '.btn-edit', function() {
-    let dataUser = table.row($(this).closest('tr')).data();
+    let dataUser = table.row($(this).closest('tr')).data() ? table.row($(this).closest('tr')).data() : table.row($(this).closest('tr').prev()).data()
     showEditUser(dataUser);
   })
 
@@ -165,15 +171,16 @@
     userForm.find('[name="username"]').val(data.username);
     userForm.find('[name="first_name"]').val(data.first_name);
     userForm.find('[name="last_name"]').val(data.last_name);
-    userForm.find('[name="sex"]').filter('[value="'+ data.gender +'"]').click();
+    userForm.find('[name="gender"]').filter('[value="'+ data.gender +'"]').click();
     userForm.find('[name="birth_date"]').val(data.birth_date);
     userForm.find('[name="phone"]').val(data.phone);
+    userForm.find('[name="password"]').attr('required', false);
     $('#create-user-modal').find('.modal-title').text('Chỉnh sửa tài khoản');
     $('#create-user-modal').modal('show');
   }
 
   $('table').on('click', '.btn-remove', function() {
-    let userID = table.row($(this).closest('tr')).data().id;
+    let userID = $(this).attr('data-id');
     removeUser(userID);
   })
 

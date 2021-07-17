@@ -47,13 +47,13 @@
             <div class="col-5">
               <div class="row mx-0">
                 <div class="form-check mr-3">
-                  <input type="radio" value="1" name="sex" id="sex-man" class="form-check-input" checked />
+                  <input type="radio" value="1" name="gender" id="sex-man" class="form-check-input" checked />
                   <label class="form-check-label" for="sex-man">
                     Nam
                   </label>
                 </div>
                 <div class="form-check">
-                  <input type="radio" value="0" name="sex" id="sex-woman" class="form-check-input"/>
+                  <input type="radio" value="0" name="gender" id="sex-woman" class="form-check-input"/>
                   <label class="form-check-label" for="sex-woman">
                     Nữ
                   </label>

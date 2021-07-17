@@ -3,7 +3,7 @@
 
 <div class="row">
   @foreach ($branches as $branch)
-  <div class="col-sx-12 col-sm-6 col-md-6 col-lg-4">
+  <div class="col-sx-12 col-sm-6 col-md-6 col-lg-4 mb-1">
     <div class="card">
       <div class="card-header">
         <div class="card-header__icon">

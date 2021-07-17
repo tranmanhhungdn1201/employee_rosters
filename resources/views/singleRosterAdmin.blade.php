@@ -8,7 +8,7 @@
                 Bảng phân công
             </div>
             <div class="card-header__action">
-                <a href="{{route('viewCreateRoster')}}" class="btn btn-outline-primary btn-export">
+                <a href="#" class="btn btn-outline-primary btn-export">
                 <i class="fas fa-file-download"></i>
                 Xuất file
                 </a>
@@ -271,6 +271,7 @@
                 dataOrigin.forEach((user, idx) => {
                     let index = dataNew.findIndex(userNew => userNew.userID === user.userID);
                     if(index === -1) {
+                        isChange = true;
                         rs.push({
                             ...user,
                             isRemoved: true
@@ -336,7 +337,6 @@
                     initNewObjectShiftStaff(shiftID, rs);
                 }
             })
-            console.log(dataStaff);
         }
 
         function filterData() {
@@ -353,10 +353,6 @@
                         });
                 })
             }
-            console.log({
-                dataRemove,
-                dataAdd
-            })
             return {
                 dataRemove,
                 dataAdd
