@@ -185,7 +185,7 @@
                     </table>
                 </div>
             </div>
-            @if(empty($disabled) && (auth()->user()->isAdmin() || $roster->isAuthor()))
+            @if(auth()->user()->isAdmin() || $roster->isAuthor())
                 <div class="card-footer text-center">
                     <button type="submit" class="btn btn-success" id="btn-submit">Lưu</button>
                 </div>
@@ -318,8 +318,8 @@
 
         $('#btn-save-shift').click(function(){
             loading('show');
-            let amount = $('#shift-form .amount').val();
-            let status = $('#shift-form [name="status"]').val();
+            let amount = $('#shift-form-info .amount').val();
+            let status = $('#shift-form-info [name="status"]').val();
             let btnSave = $(this);
             let idShift = btnSave.attr('data-id');
             updateAmountShift(idShift, amount, status).then(res => {

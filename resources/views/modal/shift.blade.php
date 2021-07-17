@@ -11,7 +11,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <form id="shift-form">
+        <form id="shift-form-info">
           <div class="form-group row">
             <label class="col-4">Số lượng:</label>
             <input type="number" class="form-control col-4 amount" value="2" name="" disable="{{$disabled}}"/>

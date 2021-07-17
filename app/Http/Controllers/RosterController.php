@@ -175,7 +175,7 @@ class RosterController extends Controller
         $length = count($shifts);
         $lengthShift = $length/7;
         for($i = 0; $i < $lengthShift; $i++) {
-            $time = $shifts[7 * $i]->time_start .' - '. $shifts[7 * $i]->time_finish;
+            $time = $shifts[7 * $i]->time_start .' - '. $shifts[7 * $i]->time_finish .' - ' . $shifts[7 * $i]->user_type_id;
             $data[$time] = array();
             for($j = 7*$i; $j < 7*($i + 1); $j++) {
                 array_push($data[$time], $shifts[$j]);
@@ -301,10 +301,12 @@ class RosterController extends Controller
         $data = $request->all();
         //remove
         DB::beginTransaction();
+
+        $arrShiftID = $data['data']['dataRemove'];
         try {
             if(isset($data['data']['dataRemove']) && count($data['data']['dataRemove']) > 0) {
                 $idsRemove = $data['data']['dataRemove'];
-                UserShift::whereIn('id', $idsRemove)->delete();
+                // UserShift::whereIn('id', $idsRemove)->delete();
             }
             //add
 
@@ -317,8 +319,11 @@ class RosterController extends Controller
                         'work_time' => 0
                     ];
                 }, $data['data']['dataAdd']);
-                UserShift::insert($dataAdd);
+                $arrShiftID = array_merge($arrShiftID, array_column($dataAdd, 'shift_id'));
+                // UserShift::insert($dataAdd);
             }
+            dd(array_unique($arrShiftID));
+            $this->changeStatus($arrShiftID);
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
@@ -333,5 +338,17 @@ class RosterController extends Controller
             'Status' => 'Success',
             'Message' => 'Update roster successfully!'
         ]);
+    }
+    //TODO:error
+    public function changeStatus($arrID) {
+        foreach($arrID as $id) {
+            $shift = Shift::find($id);
+            $amount = $shift->amount;
+            $countUserRegister = UserShift::where('shift_id', $id)->count();
+            if($amount === $countUserRegister) {
+                $shift->update(['status' => Config::get('constants.status_shift.FULL')]);
+            }
+            $shift->update(['status' => Config::get('constants.status_shift.OPEN')]);
+        }
     }
 }

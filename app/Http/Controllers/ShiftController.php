@@ -98,6 +98,16 @@ class ShiftController extends Controller
 
     public function addShift(Request $request) {
         $dataShift = $request->all();
+        $countShift = Shift::where('roster_id', $dataShift['idRoster'])
+        ->where('time_start', $dataShift['shift_start'])
+        ->where('time_finish', $dataShift['shift_finish'])
+        ->where('user_type_id', $dataShift['type'])->count();
+        if($countShift > 0) {
+            return response()->json([
+                'Status' => 'Fail',
+                'Message' => 'Add shift fail'
+            ]);
+        }
         DB::beginTransaction();
 
         try {
