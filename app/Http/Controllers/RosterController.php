@@ -250,7 +250,7 @@ class RosterController extends Controller
         foreach($data as $key1 => $shift){
             $countRow = 1;
             $setCell
-                ->setCellValue('A' . $row, substr($shift->time_start, 0, 5) . ' - ' . substr($shift->time_finish, 0, 5));
+                ->setCellValue('A' . $row, substr($shift[0]->time_start, 0, 5) . ' - ' . substr($shift[0]->time_finish, 0, 5));
             for($i = 0; $i < 7; $i++) {
                 if($shift[$i]) {
                     $setCell

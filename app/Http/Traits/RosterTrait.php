@@ -4,29 +4,46 @@ namespace App\Http\Traits;
 use App\Models\Roster;
 use Config;
 use Carbon\Carbon;
-
+use DB;
 trait RosterTrait {
 
     public function checkAllRoster() {
         $date = Carbon::now()->format('Y-m-d H:i:00');
         //open
-        Roster::where(function($query) use ($date) {
-            //open
-            $query->where('time_close', '>=', $date)
-            ->where('time_open', '<=', $date)
-            ->where('status', '!=', Config::get('constants.status_roster.OPEN'))
-            ->update(['status' => Config::get('constants.status_roster.OPEN')]);
-            //close
-            $query->where('time_close', '<=', $date)
-            ->where('status', '!=',Config::get('constants.status_roster.CLOSE'))
-            ->update(['status' => Config::get('constants.status_roster.CLOSE')]);
-            //pending
-            $query->where('time_open', '>=', $date)
-            ->where('time_close', '<=', $date)
-            ->where('status', '!=',Config::get('constants.status_roster.PENDING'))
-            ->update(['status' => Config::get('constants.status_roster.PENDING')]);
-        });
-
+        // $rs = Roster::where(function($query) use ($date) {
+        //     //open
+        //     $query->where('time_close', '>=', $date)
+        //     ->where('time_open', '<=', $date)
+        //     ->where('status', '<>', Config::get('constants.status_roster.OPEN'))
+        //     ->update(['status' => Config::get('constants.status_roster.OPEN')]);
+        //     //close
+        //     $query->where('time_close', '<=', $date)
+        //     ->where('status', '<>',Config::get('constants.status_roster.CLOSE'))
+        //     ->update(['status' => Config::get('constants.status_roster.CLOSE')]);
+        //     //pending
+        //     $query->where('time_open', '>=', $date)
+        //     ->where('time_close', '<=', $date)
+        //     ->where('status', '<>',Config::get('constants.status_roster.PENDING'))
+        //     ->update(['status' => Config::get('constants.status_roster.PENDING')]);
+        // });
+        DB::select(
+            DB::raw("UPDATE rosters
+                    SET rosters.`status` =
+                    CASE
+                        WHEN rosters.time_close >= NOW()
+                                                    AND rosters.time_open <= NOW()
+                                                    AND rosters.`status` <> 2
+                                                THEN 2
+                        WHEN rosters.time_close <= NOW()
+                                                AND rosters.`status` <> 3
+                                                THEN 3
+                        WHEN rosters.time_open >= NOW()
+                                                AND rosters.time_close <= NOW()
+                                                AND rosters.`status` <> 1
+                                                THEN 1
+                                                ELSE rosters.`status`
+                    END")
+        );
         return true;
     }
 
